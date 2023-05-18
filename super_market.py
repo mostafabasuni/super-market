@@ -1102,27 +1102,27 @@ class Main(QMainWindow, MainUI):
         sql = ('''SELECT he_come FROM hodoor_ensraf WHERE he_date = %s AND he_employee_id = %s''')
         self.cur.execute(sql, [(he_date), (he_name_id)])
         data = self.cur.fetchone()
-        if data != '00:00:00' :            
-            msgbox = QMessageBox(QMessageBox.Warning, "تنويه", "لقد تم تسجيل حضور الموظف : %s بالفعل هذا اليوم" % emp_name, QMessageBox.Ok)
-            msgbox.exec_()
-            return
-        he_time = self.timeEdit_6.time()
-        he_time = he_time.toString(QtCore.Qt.ISODate)        
-        he_come = self.timeEdit_7.time()
-        he_come = he_come.toString(QtCore.Qt.ISODate)        
-        he_go = '' # he_go.toString(QtCore.Qt.ISODate)
-        he_diff = 0 # self.lineEdit_44.text()
-        he_note = '' # self.lineEdit_45.text()
-        he_user = '' # self.lineEdit_46.text()
-        self.cur.execute('''
-            INSERT INTO hodoor_ensraf(he_date, he_time, he_employee_id, he_come, he_go, he_difference, he_note, he_user)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
-              ''',(he_date, he_time, he_name_id, he_come, he_go, he_diff, he_note, he_user))                     
-        
-        msgbox = QMessageBox(QMessageBox.Information, "تنويه", "تم تسجيل حضور الموظف :  %s" % emp_name, QMessageBox.Ok)
-        msgbox.exec_()    
-        self.db.commit()        
-        self.Hodor_table_fill()
+        if data == None:
+            he_time = self.timeEdit_6.time()
+            he_time = he_time.toString(QtCore.Qt.ISODate)        
+            he_come = self.timeEdit_7.time()
+            he_come = he_come.toString(QtCore.Qt.ISODate)        
+            he_go = '' # he_go.toString(QtCore.Qt.ISODate)
+            he_diff = 0 # self.lineEdit_44.text()
+            he_note = '' # self.lineEdit_45.text()
+            he_user = '' # self.lineEdit_46.text()
+            self.cur.execute('''
+                INSERT INTO hodoor_ensraf(he_date, he_time, he_employee_id, he_come, he_go, he_difference, he_note, he_user)
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
+                ''',(he_date, he_time, he_name_id, he_come, he_go, he_diff, he_note, he_user))                     
+            
+            msgbox = QMessageBox(QMessageBox.Information, "تنويه", "تم تسجيل حضور الموظف :  %s" % emp_name, QMessageBox.Ok)
+            msgbox.exec_()    
+            self.db.commit()        
+            self.Hodor_table_fill()
+        else:                       
+            msgbox = QMessageBox(QMessageBox.Warning, "تنويه", "لقد تم تسجيل حضور الموظف : %s   هذا اليوم بالفعل" % emp_name, QMessageBox.Ok)
+            msgbox.exec_()            
 
     def hodor_delete(self):
         emp_name = self.comboBox_7.currentText()
