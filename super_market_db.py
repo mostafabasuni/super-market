@@ -4,7 +4,7 @@ db = MySQLDatabase('market', user='root', password=str(1234),
                    host='localhost', port=3306)
 
 class Users(Model):
-    un_id = BigIntegerField()
+    un_id = BigIntegerField(null=False)
     user_fullname = CharField(unique=True)
     user_gender = CharField()
     user_phone = CharField()
@@ -24,7 +24,7 @@ class Customers(Model):
     customer_phone = CharField()
     customer_address = CharField()
     customer_type = CharField()
-    customer_balance = DecimalField()
+    customer_balance = DecimalField(max_digits=10, decimal_places=2)
     customer_date = DateField()
     customer_time = TimeField()
 
@@ -36,7 +36,7 @@ class Importers(Model):
     importer_phone = CharField()
     importer_address = CharField()
     importer_type = CharField()
-    importer_balance = DecimalField()
+    importer_balance = DecimalField(max_digits=10, decimal_places=2)
     importer_date = DateField()
     importer_time = TimeField()    
 
@@ -44,44 +44,42 @@ class Importers(Model):
         database = db
 
 class Companies(Model):   
-    company_name = CharField(unique=True)
-    company_date = DateField()
-    company_time = TimeField()
-    company_user = CharField()
+    company_name = CharField(unique=True, null=False)
+    company_date = DateField(null=False)
+    company_time = TimeField(null=False)
+    company_user = CharField(null=False)
 
     class Meta:
         database = db
 
 class Places(Model):
-    place_name = CharField(unique=True)
-    place_date = DateField()
-    place_time = TimeField()
-    place_user = CharField()
+    place_name = CharField(unique=True, null=False)
+    place_date = DateField(null=False)
+    place_time = TimeField(null=False)
+    place_user = CharField(null=False)
 
     class Meta:
         database = db
 
 
 class Grps(Model):   
-    grp_name = CharField(unique=True)
-    grp_date = DateField()
-    grp_time = TimeField()
-    grp_user = CharField()
+    grp_name = CharField(unique=True, null=False)
+    grp_date = DateField(null=False)
+    grp_time = TimeField(null=False)
+    grp_user = CharField(null=False)
 
     class Meta:
         database = db
 
 class Items(Model):
-    item_barcode = CharField()
-    item_name = CharField()
-    item_group = ForeignKeyField(Grps, backref='item_group', null=True)    
-    item_company = ForeignKeyField(Companies, backref='item_company', null=True)    
-    item_place = ForeignKeyField(Places, backref='item_place', null=True)    
-    item_price = DecimalField()
+    item_barcode = CharField(null=False)
+    item_name = CharField(null=False)
+    item_group = CharField(max_length = 45)
+    item_company = CharField(max_length = 100)
+    item_place = CharField(max_length = 45)
+    item_price = DecimalField(max_digits=10, decimal_places=2)
     item_qty = IntegerField()
-    item_limit = CharField()    
-    item_discount = DecimalField()
-    item_earn = DecimalField()
+    item_unit = CharField(max_length = 100)
     item_date = DateField()
 
     class Meta:
@@ -90,41 +88,29 @@ class Items(Model):
 class Buypill(Model):
     buy_date = DateField()
     buy_time = TimeField()
-    buy_invoice_no = CharField()
-    buy_unit = CharField(null=True)
-    buy_importer = ForeignKeyField(Importers, backref='buy_importer')
+    buy_invoice_no = IntegerField()    
+    buy_importer_id = IntegerField(null=False)
     buy_cash = BooleanField()
     buy_postpone = BooleanField()
-    buy_user = ForeignKeyField(Users, backref='buy_user')
-    buy_totalG = DecimalField()
-    buy_totalB = DecimalField()
-    buy_item_count = IntegerField()
-    buy_earn = DecimalField()
-    buy_earn_percent = DecimalField()
-    buy_add = DecimalField()
-    buy_minus = DecimalField()
-    item_id = IntegerField()
-
+    buy_user_id = IntegerField(null=False, null=False)
+    buy_totalG = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_totalB = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_minus = DecimalField(max_digits=10, decimal_places=2, null=False)
     class Meta:
         database = db
 
 class Salepill(Model):    
-    sale_date = DateField()
-    sale_time = TimeField()
-    sale_customer = CharField()
-    sale_cash = BooleanField()
-    sale_postpone = BooleanField()
-    sale_visa = BooleanField()
-    sale_delivery = BooleanField()
-    sale_user = ForeignKeyField(Users, backref='sale_user')
-    sale_totalG = DecimalField()
-    sale_totalS = DecimalField()
-    sale_item_count = IntegerField()
-    sale_earn = DecimalField()
-    sale_earn_percent =DecimalField()
-    sale_add = DecimalField()
-    sale_minus = DecimalField()    
-
+    date = DateField(null=False)
+    time = TimeField(null=False)
+    customer = CharField()
+    invoice_total = CharField(max_digits=10, decimal_places=2)     
+    discount = DecimalField(max_digits=10, decimal_places=2)  
+    wanted = DecimalField(max_digits=10, decimal_places=2)
+    cash = DecimalField(max_digits=10, decimal_places=2, null=False)
+    cash_return = DecimalField(max_digits=10, decimal_places=2, null=False)
+    visa = DecimalField(max_digits=10, decimal_places=2)
+    rest_cash = DecimalField(max_digits=10, decimal_places=2, null=False)
+    user = CharField()
     class Meta:
         database = db
 
@@ -132,10 +118,15 @@ class Salepill(Model):
 class Rebuypill(Model):    
     rebuy_date = DateField()
     rebuy_time = TimeField()
-    rebuy_user = ForeignKeyField(Users, backref='rebuy_user')
-    rebuy_totalG = DecimalField()
+    buypill_id = IntegerField()
+    detail_pill_id = IntegerField()
+    import_pill_id = IntegerField()
+    rebuy_item_name = CharField()
     rebuy_item_count = IntegerField()
-
+    unit_price = DecimalField(max_digits=10, decimal_places=2)
+    rebuy_totalG = DecimalField(max_digits=10, decimal_places=2)
+    importer = CharField(max_digits=10, decimal_places=2)
+    rebuy_user_id = IntegerField()
     class Meta:
         database = db
 
@@ -143,9 +134,8 @@ class Resalepill(Model):
     resale_date = DateField()
     resale_time = TimeField()
     resale_user = CharField()
-    resale_totalG = DecimalField()
+    resale_totalG = DecimalField(max_digits=10, decimal_places=2)
     resale_item_count = IntegerField()
-
     class Meta:
         database = db
 
@@ -153,32 +143,30 @@ class Operations(Model):
     buy_id = IntegerField(null=True)
     sale_id = IntegerField(null=True)
     rebuy_id = IntegerField(null=True)
-    resale_id = IntegerField(null=True)
+    employee_id = IntegerField(null=True)
     oper_item = CharField()
-    oper_item_exp = DateField(null=True)
+    oper_item_exp = DateField(null=True)    
     buy_qty = IntegerField(null=True)
-    buy_totalG = DecimalField(null=True)
-    buy_discount = DecimalField(null=True)
-    buy_unit_price = DecimalField(null=True)
-    buy_totalB = DecimalField(null=True)
-    buy_earn = DecimalField(null=True)
-    buy_notes = CharField(null=True)
+    buy_extra_exp = DecimalField(max_digits=10, decimal_places=2)    
+    buy_discount = DecimalField(null=True, max_digits=10, decimal_places=2)    
+    buy_unit_price = DecimalField(null=True, max_digits=10, decimal_places=2)
     sale_qty = IntegerField(null=True)
-    sale_totalG = DecimalField(null=True)
-    sale_discount = DecimalField(null=True)
-    sale_unit_price = DecimalField(null=True)
-    sale_totalB = DecimalField(null=True)
-    sale_notes = CharField(null=True)
+    sale_cash = DecimalField()    
+    sale_discount = DecimalField(null=True, max_digits=10, decimal_places=2)    
+    sale_unit_price = DecimalField(null=True, max_digits=10, decimal_places=2)
+    sale_qty = IntegerField()
+    sale_visa = DecimalField(max_digits=10, decimal_places=2)
+    sale_notes = CharField()
     rebuy_qty = IntegerField(null=True)
-    rebuy_totalG = DecimalField(null=True)
+    rebuy_totalG = DecimalField(null=True, max_digits=10, decimal_places=2)
     rebuy_notes = CharField(null=True)
-    resale_qty = IntegerField(null=True)
-    resale_totalG = DecimalField(null=True)
+    shift_no = IntegerField()    
+    resale_totalG = DecimalField(null=True, max_digits=10, decimal_places=2)
+    casher_name = CharField()
     resale_notes = CharField(null=True)
     oper_date = DateField()
     oper_time = TimeField()
-    oper_user = CharField(null=True)    
-
+    oper_user = CharField(null=True)
     class Meta:
         database = db
 
@@ -186,7 +174,7 @@ class Operations(Model):
 class Hodoor_Ensraf(Model):    
     he_date = DateField()
     he_time = TimeField()
-    he_employee = ForeignKeyField(Users, backref='he_employee')
+    he_employee = IntegerField()
     he_come = TimeField(null=True)
     he_go = TimeField(null=True)
     he_difference = TimeField(null=True)
