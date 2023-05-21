@@ -56,8 +56,8 @@ class Main(QMainWindow, MainUI):
         self.timeEdit_4.setTime(QTime.currentTime())       
         self.timeEdit_5.setTime(QTime.currentTime())
         self.timeEdit_6.setTime(QTime.currentTime())        
-        self.timeEdit_7.setTime(QTime.currentTime())
-        self.timeEdit_8.setTime(QTime.currentTime())
+        # self.timeEdit_7.setTime(QTime.currentTime())
+        # self.timeEdit_8.setTime(QTime.currentTime())
         self.timeEdit_9.setTime(QTime.currentTime())
         self.timeEdit_10.setTime(QTime.currentTime())
         self.timeEdit_11.setTime(QTime.currentTime())
@@ -1090,6 +1090,7 @@ class Main(QMainWindow, MainUI):
 
     def hodor_save(self):
 
+        self.timeEdit_6.setTime(QTime.currentTime())
         self.timeEdit_7.setTime(QTime.currentTime())
         emp_name = self.comboBox_7.currentText()
         he_date = self.dateEdit_8.date()
@@ -1136,6 +1137,7 @@ class Main(QMainWindow, MainUI):
         self.Hodor_table_fill()
 
     def hodor_update(self):
+        self.timeEdit_6.setTime(QTime.currentTime())
         self.timeEdit_8.setTime(QTime.currentTime())
         he_date = self.dateEdit_8.date()
         he_date = he_date.toString(QtCore.Qt.ISODate)       
