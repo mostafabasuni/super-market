@@ -135,7 +135,7 @@ class Main(QMainWindow, MainUI):
         
 
     def db_connect(self):
-        self.db = mysql.connector.connect(user='root', password=str(1234),
+        self.db = mysql.connector.connect(user='root', password=str(""),
                     host='localhost', db='market')
         self.cur = self.db.cursor(buffered=True)
 

@@ -92,7 +92,7 @@ class Buypill(Model):
     buy_importer_id = IntegerField(null=False)
     buy_cash = BooleanField()
     buy_postpone = BooleanField()
-    buy_user_id = IntegerField(null=False, null=False)
+    buy_user_id = IntegerField(null=False)
     buy_totalG = DecimalField(max_digits=10, decimal_places=2, null=False)
     buy_totalB = DecimalField(max_digits=10, decimal_places=2, null=False)
     buy_minus = DecimalField(max_digits=10, decimal_places=2, null=False)
@@ -103,7 +103,7 @@ class Salepill(Model):
     date = DateField(null=False)
     time = TimeField(null=False)
     customer = CharField()
-    invoice_total = CharField(max_digits=10, decimal_places=2)     
+    invoice_total = CharField()     
     discount = DecimalField(max_digits=10, decimal_places=2)  
     wanted = DecimalField(max_digits=10, decimal_places=2)
     cash = DecimalField(max_digits=10, decimal_places=2, null=False)
@@ -125,7 +125,7 @@ class Rebuypill(Model):
     rebuy_item_count = IntegerField()
     unit_price = DecimalField(max_digits=10, decimal_places=2)
     rebuy_totalG = DecimalField(max_digits=10, decimal_places=2)
-    importer = CharField(max_digits=10, decimal_places=2)
+    importer = CharField()
     rebuy_user_id = IntegerField()
     class Meta:
         database = db
