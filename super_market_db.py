@@ -3,7 +3,11 @@ from peewee import *
 db = MySQLDatabase('market', user='root', password=str(""),
                    host='localhost', port=3306)
 
-class Users(Model):
+class BaseModel(Model):
+    class Meta:
+        database = db
+
+class User(BaseModel):
     un_id = BigIntegerField(null=False)
     user_fullname = CharField(unique=True)
     user_gender = CharField()
@@ -15,23 +19,13 @@ class Users(Model):
     user_date = DateField()
     is_user = BooleanField()
 
-    class Meta:
-        database = db
-
-class Customers(Model):    
-    customer_name = CharField()
-    customer_gender = CharField()
+class Customer(BaseModel):    
+    customer_name = CharField()    
     customer_phone = CharField()
     customer_address = CharField()
-    customer_type = CharField()
-    customer_balance = DecimalField(max_digits=10, decimal_places=2)
-    customer_date = DateField()
-    customer_time = TimeField()
+    
 
-    class Meta:
-        database = db
-
-class Importers(Model):
+class Importer(BaseModel):
     importer_name = CharField()  
     importer_phone = CharField()
     importer_address = CharField()
@@ -40,66 +34,44 @@ class Importers(Model):
     importer_date = DateField()
     importer_time = TimeField()    
 
-    class Meta:
-        database = db
-
-class Companies(Model):   
-    company_name = CharField(unique=True, null=False)
-    company_date = DateField(null=False)
-    company_time = TimeField(null=False)
-    company_user = CharField(null=False)
-
-    class Meta:
-        database = db
-
-class Places(Model):
-    place_name = CharField(unique=True, null=False)
-    place_date = DateField(null=False)
-    place_time = TimeField(null=False)
-    place_user = CharField(null=False)
-
-    class Meta:
-        database = db
-
-
-class Grps(Model):   
+class Grp(BaseModel):   
     grp_name = CharField(unique=True, null=False)
     grp_date = DateField(null=False)
     grp_time = TimeField(null=False)
-    grp_user = CharField(null=False)
+    grp_user = ForeignKeyField(User, backref='grps', null=False)
 
-    class Meta:
-        database = db
+class Company(BaseModel):   
+    company_name = CharField(unique=True, null=False)
+    company_date = DateField(null=False)
+    company_time = TimeField(null=False)
+    company_user = ForeignKeyField(User, backref='companies', null=False)
+    company_grp = ForeignKeyField(Grp, backref='companies', Update='CASCADE', Delete='CASCADE')
 
-class Items(Model):
-    item_barcode = CharField(null=False)
+
+class Item(BaseModel):
+    item_barcode = BigIntegerField(null=False)
     item_name = CharField(null=False)
-    item_group = CharField(max_length = 45)
-    item_company = CharField(max_length = 100)
-    item_place = CharField(max_length = 45)
-    item_price = DecimalField(max_digits=10, decimal_places=2)
+    item_group = ForeignKeyField(Grp, backref='items', on_update='CASCADE', on_delete='CASCADE')
+    item_company = ForeignKeyField(Company, backref='items', on_update='CASCADE', on_delete='CASCADE')    
+    item_price = DecimalField(max_digits=10, decimal_places=2) # سعر شراء المنتج
+    item_public_price = DecimalField(max_digits=10, decimal_places=2) # سعر البيع للجمهور
+    item_discount = DecimalField(max_digits=6, decimal_places=2)
     item_qty = IntegerField()
-    item_unit = CharField(max_length = 100)
+    item_unit = CharField(max_length = 50)
     item_date = DateField()
 
-    class Meta:
-        database = db
-
-class Buypill(Model):
+class Buybill(BaseModel):
     buy_date = DateField()
-    buy_time = TimeField()
-    buy_invoice_no = IntegerField()    
-    buy_importer_id = IntegerField(null=False)
+    buy_time = TimeField()    
+    buy_importer = ForeignKeyField(Importer, backref='buybills', null=False)
     buy_cash = BooleanField()
     buy_postpone = BooleanField()
-    buy_user_id = IntegerField(null=False)
+    buy_user = ForeignKeyField(User, null=False)
     buy_totalG = DecimalField(max_digits=10, decimal_places=2, null=False)
     buy_totalB = DecimalField(max_digits=10, decimal_places=2, null=False)
     buy_minus = DecimalField(max_digits=10, decimal_places=2, null=False)
-    class Meta:
-        database = db
 
-class Salepill(Model):    
+class Sellbill(BaseModel):    
     date = DateField(null=False)
     time = TimeField(null=False)
     customer = CharField()
@@ -111,37 +83,31 @@ class Salepill(Model):
     visa = DecimalField(max_digits=10, decimal_places=2)
     rest_cash = DecimalField(max_digits=10, decimal_places=2, null=False)
     user = CharField()
-    class Meta:
-        database = db
 
 
-class Rebuypill(Model):    
+class Rebuybill(BaseModel):    
     rebuy_date = DateField()
     rebuy_time = TimeField()
-    buypill_id = IntegerField()
-    detail_pill_id = IntegerField()
-    import_pill_id = IntegerField()
+    buybill_id = IntegerField()
+    detail_bill_id = IntegerField()
+    import_bill_id = IntegerField()
     rebuy_item_name = CharField()
     rebuy_item_count = IntegerField()
     unit_price = DecimalField(max_digits=10, decimal_places=2)
     rebuy_totalG = DecimalField(max_digits=10, decimal_places=2)
     importer = CharField()
     rebuy_user_id = IntegerField()
-    class Meta:
-        database = db
 
-class Resalepill(Model):
-    resale_date = DateField()
-    resale_time = TimeField()
-    resale_user = CharField()
-    resale_totalG = DecimalField(max_digits=10, decimal_places=2)
-    resale_item_count = IntegerField()
-    class Meta:
-        database = db
+class Resellbill(BaseModel):
+    resell_date = DateField()
+    resell_time = TimeField()
+    resell_user = CharField()
+    resell_totalG = DecimalField(max_digits=10, decimal_places=2)
+    resell_item_count = IntegerField()
 
-class Operations(Model):
+class Operation(BaseModel):
     buy_id = IntegerField(null=True)
-    sale_id = IntegerField(null=True)
+    sell_id = IntegerField(null=True)
     rebuy_id = IntegerField(null=True)
     employee_id = IntegerField(null=True)
     oper_item = CharField()
@@ -150,28 +116,26 @@ class Operations(Model):
     buy_extra_exp = DecimalField(max_digits=10, decimal_places=2)    
     buy_discount = DecimalField(null=True, max_digits=10, decimal_places=2)    
     buy_unit_price = DecimalField(null=True, max_digits=10, decimal_places=2)
-    sale_qty = IntegerField(null=True)
-    sale_cash = DecimalField()    
-    sale_discount = DecimalField(null=True, max_digits=10, decimal_places=2)    
-    sale_unit_price = DecimalField(null=True, max_digits=10, decimal_places=2)
-    sale_qty = IntegerField()
-    sale_visa = DecimalField(max_digits=10, decimal_places=2)
-    sale_notes = CharField()
+    sell_qty = IntegerField(null=True)
+    sell_cash = DecimalField()    
+    sell_discount = DecimalField(null=True, max_digits=10, decimal_places=2)    
+    sell_unit_price = DecimalField(null=True, max_digits=10, decimal_places=2)
+    sell_qty = IntegerField()
+    sell_visa = DecimalField(max_digits=10, decimal_places=2)
+    sell_notes = CharField()
     rebuy_qty = IntegerField(null=True)
     rebuy_totalG = DecimalField(null=True, max_digits=10, decimal_places=2)
     rebuy_notes = CharField(null=True)
     shift_no = IntegerField()    
-    resale_totalG = DecimalField(null=True, max_digits=10, decimal_places=2)
+    resell_totalG = DecimalField(null=True, max_digits=10, decimal_places=2)
     casher_name = CharField()
-    resale_notes = CharField(null=True)
+    resell_notes = CharField(null=True)
     oper_date = DateField()
     oper_time = TimeField()
     oper_user = CharField(null=True)
-    class Meta:
-        database = db
 
 
-class Hodoor_Ensraf(Model):    
+class Hodoor_Ensraf(BaseModel):    
     he_date = DateField()
     he_time = TimeField()
     he_employee = IntegerField()
@@ -181,13 +145,10 @@ class Hodoor_Ensraf(Model):
     he_note = CharField(null=True)
     he_user = CharField(null=True)
 
-    class Meta:
-        database = db
-
 db.connect()
-db.create_tables([Users, Customers, \
-    Importers, Items, Companies, \
-    Places, Grps, Buypill, \
-    Salepill, Rebuypill, Resalepill, \
-    Operations, Hodoor_Ensraf])
+db.create_tables([User, Customer, \
+    Importer, Item, Company, \
+    Grp, Buybill, \
+    sellbill, Rebuybill, Resellbill, \
+    Operation, Hodoor_Ensraf])
 
