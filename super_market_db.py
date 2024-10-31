@@ -105,36 +105,6 @@ class Resellbill(BaseModel):
     resell_totalG = DecimalField(max_digits=10, decimal_places=2)
     resell_item_count = IntegerField()
 
-class Operation(BaseModel):
-    buy_id = IntegerField(null=True)
-    sell_id = IntegerField(null=True)
-    rebuy_id = IntegerField(null=True)
-    employee_id = IntegerField(null=True)
-    oper_item = CharField()
-    oper_item_exp = DateField(null=True)    
-    buy_qty = IntegerField(null=True)
-    buy_extra_exp = DecimalField(max_digits=10, decimal_places=2)    
-    buy_discount = DecimalField(null=True, max_digits=10, decimal_places=2)    
-    buy_unit_price = DecimalField(null=True, max_digits=10, decimal_places=2)
-    sell_qty = IntegerField(null=True)
-    sell_cash = DecimalField()    
-    sell_discount = DecimalField(null=True, max_digits=10, decimal_places=2)    
-    sell_unit_price = DecimalField(null=True, max_digits=10, decimal_places=2)
-    sell_qty = IntegerField()
-    sell_visa = DecimalField(max_digits=10, decimal_places=2)
-    sell_notes = CharField()
-    rebuy_qty = IntegerField(null=True)
-    rebuy_totalG = DecimalField(null=True, max_digits=10, decimal_places=2)
-    rebuy_notes = CharField(null=True)
-    shift_no = IntegerField()    
-    resell_totalG = DecimalField(null=True, max_digits=10, decimal_places=2)
-    casher_name = CharField()
-    resell_notes = CharField(null=True)
-    oper_date = DateField()
-    oper_time = TimeField()
-    oper_user = CharField(null=True)
-
-
 class Hodoor_Ensraf(BaseModel):    
     he_date = DateField()
     he_time = TimeField()
@@ -146,9 +116,7 @@ class Hodoor_Ensraf(BaseModel):
     he_user = CharField(null=True)
 
 db.connect()
-db.create_tables([User, Customer, \
-    Importer, Item, Company, \
-    Grp, Buybill, \
-    sellbill, Rebuybill, Resellbill, \
-    Operation, Hodoor_Ensraf])
+db.create_tables([User, Customer, Importer, \
+     Item, Company, Grp, Buybill, Sellbill, Rebuybill, \
+     Resellbill, Hodoor_Ensraf])
 
