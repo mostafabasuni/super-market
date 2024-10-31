@@ -47,6 +47,16 @@ class Company(BaseModel):
     company_user = ForeignKeyField(User, backref='companies', null=False)
     company_grp = ForeignKeyField(Grp, backref='companies', Update='CASCADE', Delete='CASCADE')
 
+class Buybill(BaseModel):
+    buy_date = DateField()
+    buy_time = TimeField()    
+    buy_importer = ForeignKeyField(Importer, backref='buybills', null=False)
+    buy_cash = BooleanField()
+    buy_postpone = BooleanField()
+    buy_user = ForeignKeyField(User, null=False)
+    buy_totalG = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_totalB = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_minus = DecimalField(max_digits=10, decimal_places=2, null=False)
 
 class Item(BaseModel):
     item_barcode = BigIntegerField(null=False)
@@ -60,16 +70,6 @@ class Item(BaseModel):
     item_unit = CharField(max_length = 50)
     item_date = DateField()
 
-class Buybill(BaseModel):
-    buy_date = DateField()
-    buy_time = TimeField()    
-    buy_importer = ForeignKeyField(Importer, backref='buybills', null=False)
-    buy_cash = BooleanField()
-    buy_postpone = BooleanField()
-    buy_user = ForeignKeyField(User, null=False)
-    buy_totalG = DecimalField(max_digits=10, decimal_places=2, null=False)
-    buy_totalB = DecimalField(max_digits=10, decimal_places=2, null=False)
-    buy_minus = DecimalField(max_digits=10, decimal_places=2, null=False)
 
 class Sellbill(BaseModel):    
     date = DateField(null=False)
