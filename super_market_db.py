@@ -49,16 +49,16 @@ class Company(BaseModel):
 
 class Buybill(BaseModel):
     buy_date = DateField()
-    buy_time = TimeField()    
-    buy_importer = ForeignKeyField(Importer, backref='buybills', null=False)
-    buy_cash = BooleanField()
-    buy_postpone = BooleanField()
+    buy_time = TimeField() 
+    buy_item = CharField(unique=True, null=False) # اسم المنتج
+    buy_item_qty = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_importer = ForeignKeyField(Importer, backref='buybills', null=False) # اسم المورد    
     buy_user = ForeignKeyField(User, null=False)
-    buy_totalG = DecimalField(max_digits=10, decimal_places=2, null=False)
-    buy_totalB = DecimalField(max_digits=10, decimal_places=2, null=False)
-    buy_minus = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_total_price = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_discount = DecimalField(max_digits=10, decimal_places=2, null=False)
 
 class Item(BaseModel):
+    item_buybill_id = ForeignKeyField(Buybill) # رقم فاتورة المورد
     item_barcode = BigIntegerField(null=False)
     item_name = CharField(null=False)
     item_group = ForeignKeyField(Grp, backref='items', on_update='CASCADE', on_delete='CASCADE')
@@ -68,8 +68,16 @@ class Item(BaseModel):
     item_discount = DecimalField(max_digits=6, decimal_places=2)
     item_qty = IntegerField()
     item_unit = CharField(max_length = 50)
-    item_date = DateField()
 
+class Buybill_details(BaseModel):
+    date = DateField()
+    time = TimeField()
+    customer = ForeignKeyField(Customer, backref='buybills')    
+    item_id = ForeignKeyField(Item)
+    item_price = DecimalField(max_digits=10, decimal_places=2)
+    item_qty = DecimalField(max_digits=6, decimal_places=2)
+    item_discount = DecimalField(max_digits=4, decimal_places=2)
+    item_count = IntegerField()
 
 class Sellbill(BaseModel):    
     date = DateField(null=False)
@@ -82,7 +90,7 @@ class Sellbill(BaseModel):
     cash_return = DecimalField(max_digits=10, decimal_places=2, null=False)
     visa = DecimalField(max_digits=10, decimal_places=2)
     rest_cash = DecimalField(max_digits=10, decimal_places=2, null=False)
-    user = CharField()
+    user = CharField(User, backref='sellbills')
 
 
 class Rebuybill(BaseModel):    
