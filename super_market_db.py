@@ -45,7 +45,7 @@ class Company(BaseModel):
     company_date = DateField(null=False)
     company_time = TimeField(null=False)
     company_user = ForeignKeyField(User, backref='companies', null=False)
-    company_grp = ForeignKeyField(Grp, backref='companies', Update='CASCADE', Delete='CASCADE')
+    company_grp = ForeignKeyField(Grp, backref='companies', on_delete='CASCADE', on_update='CASCADE')
 
 class Buybill(BaseModel):
     buy_date = DateField()
@@ -56,11 +56,12 @@ class Buybill(BaseModel):
     buy_user = ForeignKeyField(User, null=False)
     buy_total_price = DecimalField(max_digits=10, decimal_places=2, null=False)
     buy_discount = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_item_count = IntegerField()  # عدد الفطع للفاتورة الواحدة
 
 class Item(BaseModel):
     item_buybill_id = ForeignKeyField(Buybill) # رقم فاتورة المورد
     item_barcode = BigIntegerField(null=False)
-    item_name = CharField(null=False)
+    item_name = CharField(max_length= 100, null=False)
     item_group = ForeignKeyField(Grp, backref='items', on_update='CASCADE', on_delete='CASCADE')
     item_company = ForeignKeyField(Company, backref='items', on_update='CASCADE', on_delete='CASCADE')    
     item_price = DecimalField(max_digits=10, decimal_places=2) # سعر شراء المنتج
@@ -77,41 +78,58 @@ class Buybill_details(BaseModel):
     item_price = DecimalField(max_digits=10, decimal_places=2)
     item_qty = DecimalField(max_digits=6, decimal_places=2)
     item_discount = DecimalField(max_digits=4, decimal_places=2)
-    item_count = IntegerField()
+    
 
-class Sellbill(BaseModel):    
+class Salebill(BaseModel):    
     date = DateField(null=False)
     time = TimeField(null=False)
-    customer = CharField()
-    invoice_total = CharField()     
+    customer = ForeignKeyField(Customer, backref='salebills')
+    bill_total = DecimalField(max_digits=10, decimal_places=2)
     discount = DecimalField(max_digits=10, decimal_places=2)  
     wanted = DecimalField(max_digits=10, decimal_places=2)
     cash = DecimalField(max_digits=10, decimal_places=2, null=False)
     cash_return = DecimalField(max_digits=10, decimal_places=2, null=False)
-    visa = DecimalField(max_digits=10, decimal_places=2)
-    rest_cash = DecimalField(max_digits=10, decimal_places=2, null=False)
-    user = CharField(User, backref='sellbills')
+    visa = DecimalField(max_digits=10, decimal_places=2)    
+    user = ForeignKeyField(User, backref='salebills')
 
+class Salebill_details(BaseModel):
+    bill_id = ForeignKeyField(Salebill, on_delete='CASCADE', on_update='CASCADE')
+    item_barcode = BigIntegerField(null=False)
+    item_name = CharField(max_length= 100, null=False)
+    item_price = DecimalField(max_digits=10, decimal_places=2)
+    item_qty = DecimalField(max_digits=6, decimal_places=2)
+    item_discount = DecimalField(max_digits=4, decimal_places=2)
+    total_price = DecimalField(max_digits=10, decimal_places=2)
 
+ 
 class Rebuybill(BaseModel):    
     rebuy_date = DateField()
-    rebuy_time = TimeField()
-    buybill_id = IntegerField()
-    detail_bill_id = IntegerField()
-    import_bill_id = IntegerField()
-    rebuy_item_name = CharField()
-    rebuy_item_count = IntegerField()
-    unit_price = DecimalField(max_digits=10, decimal_places=2)
-    rebuy_totalG = DecimalField(max_digits=10, decimal_places=2)
-    importer = CharField()
-    rebuy_user_id = IntegerField()
+    rebuy_time = TimeField()    
+    buybill_id = ForeignKeyField(Buybill, backref='rebuybills', on_update='CASCADE', on_delete='CASCADE')    
+    rebuy_total_price = DecimalField(max_digits=10, decimal_places=2)
+    importer = ForeignKeyField(Importer, backref='rebuybills')
+    rebuy_user= ForeignKeyField(User, backref='rebuybills')
 
-class Resellbill(BaseModel):
-    resell_date = DateField()
-    resell_time = TimeField()
-    resell_user = CharField()
-    resell_totalG = DecimalField(max_digits=10, decimal_places=2)
-    resell_item_count = IntegerField()
+class Rebuybill_details(BaseModel):
+    bill_id = ForeignKeyField(Rebuybill)
+    rebuy_item_id = ForeignKeyField(Item, backref='rebuybills')
+    rebuy_item_name = CharField(max_length=100)
+    rebuy_item_qty = DecimalField(max_digits=6, decimal_places=2)
+    unit_price = DecimalField(max_digits=10, decimal_places=2)
+
+class Resalebill(BaseModel):
+    resale_date = DateField()
+    resale_time = TimeField()    
+    salebill_id = ForeignKeyField(Salebill, backref='resalebills', on_update='CASCADE', on_delete='CASCADE')
+    resale_total_price = DecimalField(max_digits=10, decimal_places=2)    
+    resale_user= ForeignKeyField(User, backref='resalebills')
+
+class Resalebill_details(BaseModel):
+    resalebill_id = ForeignKeyField(Resalebill)
+    resale_item_id = ForeignKeyField(Item, backref='resalebills')
+    resale_item_name = CharField(max_length=100)
+    resale_item_qty = DecimalField(max_digits=6, decimal_places=2)
+    unit_price = DecimalField(max_digits=10, decimal_places=2)
 
 class Hodoor_Ensraf(BaseModel):    
     he_date = DateField()
@@ -124,7 +142,7 @@ class Hodoor_Ensraf(BaseModel):
     he_user = CharField(null=True)
 
 db.connect()
-db.create_tables([User, Customer, Importer, \
-     Item, Company, Grp, Buybill, Sellbill, Rebuybill, \
-     Resellbill, Hodoor_Ensraf])
+db.create_tables([User, Customer, Importer, Grp, Company, Buybill, \
+    Item, Buybill_details,Salebill, Salebill_details,Rebuybill, \
+    Rebuybill_details, Resalebill, Resalebill_details, Hodoor_Ensraf])
 
