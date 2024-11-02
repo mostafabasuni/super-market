@@ -226,7 +226,7 @@ class Main(QMainWindow, MainUI):
     def user_table_select(self):
         row = self.tableWidget.currentItem().row()
         id = self.tableWidget.item(row, 0).text()
-        sql = f"SELECT * FROM users WHERE id={id}"
+        sql = f"SELECT * FROM user WHERE id={id}"
         self.cur.execute(sql) #, [(id)])
         data = self.cur.fetchone()
         self.lineEdit_2.setText(str(data[0]))
@@ -252,7 +252,7 @@ class Main(QMainWindow, MainUI):
     def user_table_fill(self):        
         self.tableWidget.setRowCount(0)
         self.tableWidget.insertRow(0)
-        self.cur.execute('''SELECT * FROM users ''')
+        self.cur.execute('''SELECT * FROM user ''')
         data = self.cur.fetchall()
         for row, form in enumerate(data):
             for col, item in enumerate(form):
@@ -262,7 +262,7 @@ class Main(QMainWindow, MainUI):
             self.tableWidget.insertRow(row_pos)
 
     def user_add_new(self):
-        self.cur.execute(''' SELECT id FROM users ORDER BY id ''')
+        self.cur.execute(''' SELECT id FROM user ORDER BY id ''')
         row = self.cur.fetchall()
         self.lineEdit_2.setText(str(row[-1][0] + 1))
         self.lineEdit_3.setText('')
@@ -299,7 +299,7 @@ class Main(QMainWindow, MainUI):
             user_password = ''
 
         self.cur.execute('''
-            INSERT INTO users(user_fullname, un_id, user_gender, user_phone, user_address, user_job, user_date, user_name, user_password, is_user)
+            INSERT INTO user(user_fullname, un_id, user_gender, user_phone, user_address, user_job, user_date, user_name, user_password, is_user)
             VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
               ''',(user_full_name, user_nid, user_gender, user_phone, user_address, user_job, user_date, user_name, user_password, is_user))
 
@@ -314,7 +314,7 @@ class Main(QMainWindow, MainUI):
         if name == '' :
             QMessageBox.warning(self, 'رسالة تنبيه', 'من فضلك ادخل الاسم المراد البحث عنه', QMessageBox.Ok)
             return
-        sql = f''' SELECT * FROM users WHERE user_fullname LIKE '%{name}%' '''
+        sql = f''' SELECT * FROM user WHERE user_fullname LIKE '%{name}%' '''
         # sql = f"SELECT *, ROW_NUMBER()\
         #     OVER (ORDER BY id) FROM users WHERE user_fullname LIKE\
         #     '%{name}%' "        
@@ -357,7 +357,7 @@ class Main(QMainWindow, MainUI):
             user_password = ''
 
         self.cur.execute('''
-        UPDATE users SET un_id=%s, user_fullname=%s, user_gender=%s, user_phone=%s, user_address=%s, user_job=%s, user_name=%s, user_password=%s, user_date=%s, is_user=%s
+        UPDATE user SET un_id=%s, user_fullname=%s, user_gender=%s, user_phone=%s, user_address=%s, user_job=%s, user_name=%s, user_password=%s, user_date=%s, is_user=%s
         WHERE id=%s''', (user_nid, user_full_name, user_gender, user_phone, user_address, user_job, user_name, user_password, user_date, is_user, u_id))
 
         self.db.commit()       
@@ -368,7 +368,7 @@ class Main(QMainWindow, MainUI):
     def user_delete(self):
         
         u_id = self.lineEdit_2.text()
-        sql = ('''DELETE FROM users WHERE id = %s ''')
+        sql = ('''DELETE FROM user WHERE id = %s ''')
         self.cur.execute(sql, [(u_id)])
 
         self.db.commit()       
@@ -382,7 +382,7 @@ class Main(QMainWindow, MainUI):
     def customer_table_select(self):
         row = self.tableWidget_2.currentItem().row()
         id = self.tableWidget_2.item(row, 0).text()
-        sql = f"SELECT * FROM customers WHERE id={id}"
+        sql = f"SELECT * FROM customer WHERE id={id}"
         self.cur.execute(sql) #, [(id)])
         data = self.cur.fetchone()
         h, m, s = map(int, (str(data[8]).split(":")))
@@ -411,7 +411,7 @@ class Main(QMainWindow, MainUI):
         self.tableWidget_2.setRowCount(0)
         self.tableWidget_2.insertRow(0)
         self.cur.execute('''
-        SELECT id, customer_name, customer_type, customer_gender, customer_phone, customer_address, customer_balance, customer_date FROM customers
+        SELECT id, customer_name, customer_phone, customer_address FROM customer
         ''')
         data = self.cur.fetchall()
 
@@ -424,7 +424,7 @@ class Main(QMainWindow, MainUI):
 
     def customer_add_new(self):
         self.cur.execute('''
-        SELECT id FROM customers
+        SELECT id FROM customer
         ''')
         row = self.cur.fetchall()
         self.lineEdit_9.setText(str(row[-1][0] + 1))
@@ -452,9 +452,9 @@ class Main(QMainWindow, MainUI):
             QMessageBox.warning(self, 'رسالة تحذير', 'من فضلك ادخل جميع البيانات المطلوبة', QMessageBox.Ok)
             return
         self.cur.execute('''
-            INSERT INTO customers(customer_name, customer_type, customer_gender, customer_phone, customer_address, customer_balance, customer_date, customer_time)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
-              ''',(customer_name, customer_type,customer_gender, customer_phone, customer_address, customer_balance, customer_date, customer_time))
+            INSERT INTO customer(customer_name, customer_phone, customer_address)
+            VALUES(%s, %s, %s)
+              ''',(customer_name, customer_phone, customer_address))
 
         self.db.commit()        
         self.customer_table_fill()
@@ -465,7 +465,7 @@ class Main(QMainWindow, MainUI):
         if name == '' :
             QMessageBox.warning(self, 'رسالة تنبيه', 'من فضلك ادخل الاسم المراد البحث عنه', QMessageBox.Ok)
             return        
-        sql = f''' SELECT * FROM customers WHERE customer_name LIKE '%{name}%' '''                    
+        sql = f''' SELECT * FROM customer WHERE customer_name LIKE '%{name}%' '''                    
         self.cur.execute(sql)
         data = self.cur.fetchall()        
         if data == []:
@@ -500,15 +500,15 @@ class Main(QMainWindow, MainUI):
         customer_time = customer_time.toString(QtCore.Qt.ISODate)
         
         self.cur.execute('''
-        UPDATE customers SET customer_name=%s, customer_gender=%s, customer_phone=%s, customer_address=%s, customer_type=%s, customer_balance=%s, customer_date=%s, customer_time=%s
-        WHERE id=%s''', (customer_name, customer_gender, customer_phone, customer_address, customer_type, customer_balance, customer_date, customer_time, id))
+        UPDATE customer SET customer_name=%s, customer_phone=%s, customer_address=%s
+        WHERE id=%s''', (customer_name, customer_phone, customer_address, id))
 
         self.db.commit()       
         self.customer_table_fill()
 
     def customer_delete(self):        
         id = self.lineEdit_9.text()
-        sql = ('''DELETE FROM customers WHERE id = %s ''')
+        sql = ('''DELETE FROM customer WHERE id = %s ''')
         self.cur.execute(sql, [(id)])
 
         self.db.commit()       
@@ -519,7 +519,7 @@ class Main(QMainWindow, MainUI):
     def importer_table_select(self):
         row = self.tableWidget_3.currentItem().row()
         id = self.tableWidget_3.item(row, 0).text()
-        sql = f"SELECT * FROM importers WHERE id = {id}"
+        sql = f"SELECT * FROM importer WHERE id = {id}"
         self.cur.execute(sql)
         data = self.cur.fetchone()
         h, m, s = map(int, (str(data[7])).split(":"))
