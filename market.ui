@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>1</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -1255,27 +1255,12 @@
       </column>
       <column>
        <property name="text">
-        <string>نوع العميل</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>الجنس</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>موبايل</string>
        </property>
       </column>
       <column>
        <property name="text">
         <string>العنوان</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>رصيد العميل</string>
        </property>
       </column>
       <column>

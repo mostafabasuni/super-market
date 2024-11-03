@@ -23,6 +23,7 @@ class Customer(BaseModel):
     customer_name = CharField()    
     customer_phone = CharField()
     customer_address = CharField()
+    customer_date = DateField()
     
 
 class Importer(BaseModel):
