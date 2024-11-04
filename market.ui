@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -679,7 +679,7 @@
       </column>
       <column>
        <property name="text">
-        <string>رقم الموظف</string>
+        <string>الجنس</string>
        </property>
       </column>
       <column>
@@ -689,12 +689,12 @@
       </column>
       <column>
        <property name="text">
-        <string>الوظيفة</string>
+        <string>العنوان</string>
        </property>
       </column>
       <column>
        <property name="text">
-        <string>العنوان</string>
+        <string>الوظيفة</string>
        </property>
       </column>
       <column>

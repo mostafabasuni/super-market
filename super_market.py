@@ -71,6 +71,7 @@ class Main(QMainWindow, MainUI):
         self.comboBox_15.activated.connect(self.shift_change)
         self.lineEdit_3.textEdited.connect(self.user_save_enabled)
         self.lineEdit_10.textEdited.connect(self.customer_save_enabled)
+        self.lineEdit_18.textEdited.connect(self.importer_save_enabled)
         self.lineEdit_25.textEdited.connect(self.item_save_enabled)    
         self.lineEdit_36.textEdited.connect(self.grp_save_enabled)
         self.lineEdit_38.textEdited.connect(self.company_save_enabled)        
@@ -226,8 +227,8 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_3.setText(str(data[1]))
         self.comboBox.setCurrentText(data[3])
         self.lineEdit_5.setText(str(data[4]))
-        self.lineEdit_6.setText(str(data[6]))
-        self.comboBox_2.setCurrentText(data[5])
+        self.lineEdit_6.setText(str(data[5]))
+        self.comboBox_2.setCurrentText(data[6])
         self.lineEdit_7.setText(str(data[7]))
         self.lineEdit_8.setText(str(data[8]))
         self.dateEdit.setDate(data[9])
@@ -320,8 +321,8 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_3.setText(str(data[0][1]))
         self.comboBox.setCurrentText(data[0][3])
         self.lineEdit_5.setText(str(data[0][4]))
-        self.lineEdit_6.setText(str(data[0][6]))
-        self.comboBox_2.setCurrentText(data[0][5])
+        self.lineEdit_6.setText(str(data[0][5]))
+        self.comboBox_2.setCurrentText(data[0][6])
         self.lineEdit_7.setText(str(data[0][7]))
         self.lineEdit_8.setText(str(data[0][8]))
         self.dateEdit.setDate(data[0][9])
@@ -459,21 +460,22 @@ class Main(QMainWindow, MainUI):
             return        
         sql = f''' SELECT * FROM customer WHERE customer_name LIKE '%{name}%' '''                    
         self.cur.execute(sql)
-        data = self.cur.fetchall()        
+        data = self.cur.fetchall()
+        print(data)
         if data == []:
             QMessageBox.warning(self, 'لا توجد بيانات',  'لا توجد بيانات تخص المعلومات التي أدخلتها', QMessageBox.Ok)
             return        
-        h, m, s = map(int, (str(data[0][8])).split(":"))        
-        x = QTime(h, m)        
+        #h, m, s = map(int, (str(data[0][8])).split(":"))        
+        #x = QTime(h, m)        
         self.lineEdit_9.setText(str(data[0][0]))
         self.lineEdit_10.setText(str(data[0][1]))
-        self.lineEdit_11.setText(str(data[0][5]))
-        self.comboBox_3.setCurrentText(data[0][2])
-        self.lineEdit_12.setText(str(data[0][3]))
-        self.lineEdit_13.setText(str(data[0][4]))
-        self.lineEdit_14.setText(str(data[0][6]))
-        self.dateEdit_2.setDate(data[0][7])        
-        self.timeEdit.setTime(x) 
+        #self.lineEdit_11.setText(str(data[0][5]))
+        #self.comboBox_3.setCurrentText(data[0][2])
+        self.lineEdit_12.setText(str(data[0][2]))
+        self.lineEdit_13.setText(str(data[0][3]))
+        #self.lineEdit_14.setText(str(data[0][6]))
+        self.dateEdit_2.setDate(data[0][4])        
+        #self.timeEdit.setTime(x) 
         self.lineEdit_15.setText('')
         item = self.tableWidget_2.findItems(self.lineEdit_10.text(), Qt.MatchContains)        
         self.tableWidget_2.setCurrentItem(item[0])
@@ -508,6 +510,10 @@ class Main(QMainWindow, MainUI):
         self.customer_clear()
 
 # =========== Importers ===========
+
+    def importer_save_enabled(self):
+        self.pushButton_13.setEnabled(True)
+
     def importer_table_select(self):
         row = self.tableWidget_3.currentItem().row()
         id = self.tableWidget_3.item(row, 0).text()
@@ -808,14 +814,25 @@ class Main(QMainWindow, MainUI):
         grp_time = self.timeEdit_3.time()
         grp_time = grp_time.toString(QtCore.Qt.ISODate)
         grp_user = self.comboBox_17.currentText()
+        self.cur.execute(f"SELECT id FROM user WHERE user_fullname = {grp_user}")
+        row = self.cur.fetchone()
+        grp_user_id = row[0]
+        print(grp_user_id)
+        
+        #self.cur.execute('''
+        #    INSERT INTO grp (grp_name, grp_date, grp_time, grp_user_id) VALUES(%s, %s, %s, %s), (SELECT  id FROM user WHERE user_fullname = grp_user) 
+        #      ''',(grp_name, grp_date, grp_time, grp_user))
 
         self.cur.execute('''
-            INSERT INTO grp (grp_name, grp_date, grp_time, grp_user)
-            VALUES(%s, %s, %s, %s)
-              ''',(grp_name, grp_date, grp_time, grp_user))
+            INSERT INTO grp (grp_name, grp_date, grp_time, grp_user_id) 
+        VALUES (grp_name, grp_date, grp_time), 
+       (SELECT id FROM user WHERE user_fullname = grp_user)
+        ''')
+
 
         self.db.commit()        
         self.grp_table_fill()
+    
         self.pushButton_21.setEnabled(False)
 
     def grp_update(self):
@@ -1186,7 +1203,7 @@ class Main(QMainWindow, MainUI):
     
     def imp_info(self):
         imp_name = self.comboBox_9.currentText()
-        sql = '''SELECT importer_phone, importer_balance FROM importers WHERE importer_name=%s'''
+        sql = '''SELECT importer_phone, importer_balance FROM importer WHERE importer_name=%s'''
         self.cur.execute(sql, [(imp_name)])
         data = self.cur.fetchone()
         self.lineEdit_49.setText(str(data[0]))

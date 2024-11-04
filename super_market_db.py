@@ -8,8 +8,8 @@ class BaseModel(Model):
         database = db
 
 class User(BaseModel):
-    un_id = BigIntegerField(null=False)
     user_fullname = CharField(unique=True)
+    un_id = BigIntegerField(null=False)    
     user_gender = CharField()
     user_phone = CharField()
     user_address = CharField()
