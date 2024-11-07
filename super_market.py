@@ -807,45 +807,44 @@ class Main(QMainWindow, MainUI):
         self.pushButton_22.setEnabled(False)
         self.pushButton_54.setEnabled(False)
 
-    def grp_save(self):        
+    def grp_save(self):
+        # Get values from the UI
         grp_name = self.lineEdit_36.text()
-        grp_date = self.dateEdit_5.date()
-        grp_date = grp_date.toString(QtCore.Qt.ISODate)
-        grp_time = self.timeEdit_3.time()
-        grp_time = grp_time.toString(QtCore.Qt.ISODate)
+        grp_date = self.dateEdit_5.date().toString(Qt.ISODate)
+        grp_time = self.timeEdit_3.time().toString(Qt.ISODate)
         grp_user = self.comboBox_17.currentText()
-        self.cur.execute(f"SELECT id FROM user WHERE user_fullname = {grp_user}")
-        row = self.cur.fetchone()
-        grp_user_id = row[0]
-        print(grp_user_id)
-        
-        #self.cur.execute('''
-        #    INSERT INTO grp (grp_name, grp_date, grp_time, grp_user_id) VALUES(%s, %s, %s, %s), (SELECT  id FROM user WHERE user_fullname = grp_user) 
-        #      ''',(grp_name, grp_date, grp_time, grp_user))
 
-        self.cur.execute('''
-            INSERT INTO grp (grp_name, grp_date, grp_time, grp_user_id) 
-        VALUES (grp_name, grp_date, grp_time), 
-       (SELECT id FROM user WHERE user_fullname = grp_user)
-        ''')
+        # Insert directly using a subquery to get the user_id
+        insert_sql = '''
+            INSERT INTO grp (grp_name, grp_date, grp_time, grp_user_id)
+            SELECT %s, %s, %s, id
+            FROM user
+            WHERE user_fullname = %s
+        '''
 
+        # Execute the SQL with the appropriate parameters
+        try:
+            self.cur.execute(insert_sql, (grp_name, grp_date, grp_time, grp_user))
+            
+            # Commit the transaction
+            self.db.commit()
 
-        self.db.commit()        
-        self.grp_table_fill()
-    
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            self.db.rollback()
+            print(f"Error: {e}")  # Optionally log or show the error to the user        
+        self.grp_table_fill()    
         self.pushButton_21.setEnabled(False)
 
     def grp_update(self):
-        id = self.lineEdit_35.text()
+        grp_id = self.lineEdit_35.text()
         grp_name = self.lineEdit_36.text()        
-        grp_date = self.dateEdit_5.date()
-        grp_date = grp_date.toString(QtCore.Qt.ISODate)
-        grp_time = self.timeEdit_3.time()
-        grp_time = grp_time.toString(QtCore.Qt.ISODate)
+        grp_date = self.dateEdit_5.date().toString(QtCore.Qt.ISODate)        
+        grp_time = self.timeEdit_3.time().toString(QtCore.Qt.ISODate)        
         grp_user = self.comboBox_17.currentText()        
         self.cur.execute('''
-        UPDATE grp SET grp_name=%s, grp_date=%s, grp_time=%s, grp_user=%s
-        WHERE id=%s''', (grp_name, grp_date, grp_time, grp_user, id))
+        UPDATE grp SET grp_name=%s, grp_date=%s, grp_time=%s
+        WHERE id=%s''', (grp_name, grp_date, grp_time, grp_id))
         self.db.commit()       
         self.grp_table_fill()
 
@@ -853,7 +852,6 @@ class Main(QMainWindow, MainUI):
         id = self.lineEdit_35.text()
         sql = ('''DELETE FROM grp WHERE id = %s ''')
         self.cur.execute(sql, [(id)])
-
         self.db.commit()       
         self.grp_table_fill()
         self.grp_combo_fill()
@@ -864,6 +862,7 @@ class Main(QMainWindow, MainUI):
         grops = self.cur.fetchall()
         for grop in grops:
             self.comboBox_4.addItem(grop[0])
+            self.comboBox_21.addItem(grop[0])
 
     def grp_save_enabled(self):
         self.pushButton_21.setEnabled(True)
@@ -909,28 +908,41 @@ class Main(QMainWindow, MainUI):
 
     def company_save(self):        
         company_name = self.lineEdit_38.text()
-        company_date = self.dateEdit_6.date()
-        company_date = company_date.toString(QtCore.Qt.ISODate)
-        company_time = self.timeEdit_4.time()
-        company_time = company_time.toString(QtCore.Qt.ISODate)
+        company_date = self.dateEdit_6.date().toString(Qt.ISODate)        
+        company_time = self.timeEdit_4.time().toString(Qt.ISODate)        
         company_user = self.comboBox_18.currentText()
+        company_grp = self.comboBox_21.currentText()
 
-        self.cur.execute('''
-            INSERT INTO company (company_name, company_date, company_time, company_user)
-            VALUES(%s, %s, %s, %s)
-              ''',(company_name, company_date, company_time, company_user))
+        # Combine the SELECT queries into the INSERT statement
+        insert_sql = '''
+            INSERT INTO company (company_name, company_date, company_time, company_user_id, company_grp_id)
+            SELECT %s, %s, %s,
+                (SELECT id FROM user WHERE user_fullname = %s),
+                (SELECT id FROM grp WHERE grp_name = %s)
+        '''
+        
+        # Execute the combined query
+        try:
+            self.cur.execute(insert_sql, (company_name, company_date, company_time, company_user, company_grp))
+            
+            # Commit the transaction
+            self.db.commit()
 
-        self.db.commit()        
+        except Exception as e:
+            # Rollback the transaction if an error occurs
+            self.db.rollback()
+            print(f"Error: {e}")
+            # Optionally, you could show an error message to the user
+
+
         self.company_table_fill()
         self.pushButton_23.setEnabled(False)
 
     def company_update(self):
         id = self.lineEdit_37.text()
         company_name = self.lineEdit_38.text()        
-        company_date = self.dateEdit_6.date()
-        company_date = company_date.toString(QtCore.Qt.ISODate)
-        company_time = self.timeEdit_4.time()
-        company_time = company_time.toString(QtCore.Qt.ISODate)
+        company_date = self.dateEdit_6.date().toString(QtCore.Qt.ISODate)        
+        company_time = self.timeEdit_4.time().toString(QtCore.Qt.ISODate)        
         company_user = self.comboBox_18.currentText()        
         self.cur.execute('''
         UPDATE company SET company_name=%s, company_date=%s, company_time=%s, company_user=%s
