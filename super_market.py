@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QApplication, QPushButton
 from PyQt5.QtCore import *
 from PyQt5.QtCore import QDate, QTime, QDateTime, Qt
 from PyQt5 import QtCore
+from PyQt5.QtCore import QTime
 from PyQt5.uic import loadUiType
 import sys
 
@@ -841,12 +842,19 @@ class Main(QMainWindow, MainUI):
         grp_name = self.lineEdit_36.text()        
         grp_date = self.dateEdit_5.date().toString(QtCore.Qt.ISODate)        
         grp_time = self.timeEdit_3.time().toString(QtCore.Qt.ISODate)        
-        grp_user = self.comboBox_17.currentText()        
-        self.cur.execute('''
-        UPDATE grp SET grp_name=%s, grp_date=%s, grp_time=%s
-        WHERE id=%s''', (grp_name, grp_date, grp_time, grp_id))
-        self.db.commit()       
-        self.grp_table_fill()
+        grp_user = self.comboBox_17.currentText()
+
+        # Single query using a subquery to get user_id
+        sql = '''
+        UPDATE grp 
+        SET grp_name=%s, grp_date=%s, grp_time=%s, grp_user_id=(
+            SELECT id FROM user WHERE user_fullname=%s
+        )
+        WHERE id=%s
+        '''
+        self.cur.execute(sql, (grp_name, grp_date, grp_time, grp_user, grp_id))
+        self.db.commit()
+        self.grp_table_fill()    
 
     def grp_delete(self):
         id = self.lineEdit_35.text()
@@ -883,15 +891,27 @@ class Main(QMainWindow, MainUI):
 
     def grp_table_select(self):
         row = self.tableWidget_5.currentItem().row()
-        id = self.tableWidget_5.item(row, 0).text()
-        sql = f"SELECT * FROM grp WHERE id={id}"
+        grp_id = self.tableWidget_5.item(row, 0).text()
+        user_id = self.tableWidget_5.item(row, 4).text()
+        # Combined SQL query with JOINs to get user_fullname and grp_name in one query
+        sql = f"""
+        SELECT grp.*, user.user_fullname
+        FROM grp
+        LEFT JOIN user ON user.id = {user_id}       
+        WHERE grp.id = {grp_id}
+        """
         self.cur.execute(sql)
-        data = self.cur.fetchone()
+        data = self.cur.fetchone()        
         self.lineEdit_35.setText(str(data[0]))
         self.lineEdit_36.setText(str(data[1]))
-        self.comboBox_17.setCurrentText(str(data[4]))                     
-        self.dateEdit_2.setDate(data[2])
-        #self.timeEdit_3.setTime(data[3])        
+        self.dateEdit_5.setDate(data[2])       
+        # Convert timedelta to hours, minutes, and seconds
+        hours, remainder = divmod(data[3].total_seconds(), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        # Set the time in QTimeEdit
+        self.timeEdit_3.setTime(QTime(int(hours), int(minutes), int(seconds)))        
+        user_name = data[5]
+        self.comboBox_17.setCurrentText(user_name)               
         self.pushButton_21.setEnabled(False)
         self.pushButton_22.setEnabled(True)
         self.pushButton_54.setEnabled(True)
@@ -943,10 +963,13 @@ class Main(QMainWindow, MainUI):
         company_name = self.lineEdit_38.text()        
         company_date = self.dateEdit_6.date().toString(QtCore.Qt.ISODate)        
         company_time = self.timeEdit_4.time().toString(QtCore.Qt.ISODate)        
-        company_user = self.comboBox_18.currentText()        
+        company_user = self.comboBox_18.currentText()
+        company_grp = self.comboBox_21.currentText()
         self.cur.execute('''
-        UPDATE company SET company_name=%s, company_date=%s, company_time=%s, company_user=%s
-        WHERE id=%s''', (company_name, company_date, company_time, company_user, id))
+        UPDATE company SET company_name=%s, company_date=%s, company_time=%s, 
+        company_user_id=(SELECT id FROM user WHERE user_fullname=%s),
+        company_grp_id=(SELECT id FROM grp WHERE grp_name=%s)
+        WHERE id=%s''', (company_name, company_date, company_time, company_user, company_grp, id))
         self.db.commit()       
         self.company_table_fill()
 
@@ -986,15 +1009,43 @@ class Main(QMainWindow, MainUI):
 
     def company_table_select(self):
         row = self.tableWidget_6.currentItem().row()
-        id = self.tableWidget_6.item(row, 0).text()
-        sql = f"SELECT * FROM company WHERE id={id}"
+        company_id = self.tableWidget_6.item(row, 0).text()
+        user_id = self.tableWidget_6.item(row, 4).text()
+        grp_id = self.tableWidget_6.item(row, 5).text()
+        
+        
+        # Combined SQL query with JOINs to get user_fullname and grp_name in one query
+        sql = f"""
+        SELECT company.*, user.user_fullname, grp.grp_name 
+        FROM company
+        LEFT JOIN user ON user.id = {user_id}
+        LEFT JOIN grp ON grp.id = {grp_id}
+        WHERE company.id = {company_id}
+        """        
         self.cur.execute(sql)
         data = self.cur.fetchone()
+
+        # Assuming data is in this order: company.*, user_fullname, grp_name
         self.lineEdit_37.setText(str(data[0]))
-        self.lineEdit_38.setText(str(data[1]))
-        self.comboBox_18.setCurrentText(str(data[4]))                     
+        self.lineEdit_38.setText(str(data[1]))                            
         self.dateEdit_6.setDate(data[2])
-        #self.timeEdit_4.setTime(data[3])        
+
+        # Convert timedelta to hours, minutes, and seconds
+        hours, remainder = divmod(data[3].total_seconds(), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        
+        # Set the time in QTimeEdit
+        self.timeEdit_4.setTime(QTime(int(hours), int(minutes), int(seconds)))
+
+        # user_fullname and grp_name are at the end of the fetched row
+        user_name = data[-2]
+        grp_name = data[-1]
+        
+        # Set user_fullname and grp_name in combo boxes
+        self.comboBox_18.setCurrentText(user_name)
+        self.comboBox_21.setCurrentText(grp_name)
+
+        # Enable/Disable buttons
         self.pushButton_23.setEnabled(False)
         self.pushButton_24.setEnabled(True)
         self.pushButton_56.setEnabled(True)
