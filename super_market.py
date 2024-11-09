@@ -258,7 +258,10 @@ class Main(QMainWindow, MainUI):
     def user_add_new(self):
         self.cur.execute(''' SELECT id FROM user ORDER BY id ''')
         row = self.cur.fetchall()
-        self.lineEdit_2.setText(str(row[-1][0] + 1))
+        if row == [] :
+            self.lineEdit_2.setText('1')
+        else:
+            self.lineEdit_2.setText(str(row[-1][0] + 1))
         self.lineEdit_3.setText('')
         self.lineEdit_4.setText('')
         self.lineEdit_5.setText('')
@@ -299,6 +302,7 @@ class Main(QMainWindow, MainUI):
 
         self.db.commit()        
         self.user_table_fill()
+        self.user_combo_fill()
         self.groupBox_3.setEnabled(False)
         self.checkBox.setChecked(False)
         self.pushButton_2.setEnabled(False)
@@ -421,7 +425,10 @@ class Main(QMainWindow, MainUI):
         SELECT id FROM customer
         ''')
         row = self.cur.fetchall()
-        self.lineEdit_9.setText(str(row[-1][0] + 1))
+        if row == [] :
+            self.lineEdit_9.setText('1')
+        else:
+            self.lineEdit_9.setText(str(row[-1][0] + 1))
         self.lineEdit_10.setText('')
         self.lineEdit_11.setText('')
         self.lineEdit_12.setText('')
@@ -546,7 +553,7 @@ class Main(QMainWindow, MainUI):
         self.tableWidget_3.setRowCount(0)
         self.tableWidget_3.insertRow(0)
         self.cur.execute('''
-        SELECT id, importer_name, importer_type, importer_phone, importer_address, importer_balance, importer_date, importer_time FROM importer
+        SELECT id, importer_name, importer_phone, importer_address, importer_grp_id, importer_company_id, importer_balance, importer_date, importer_time FROM importer
         ''')
         data = self.cur.fetchall()
         for row, form in enumerate(data):
@@ -561,7 +568,10 @@ class Main(QMainWindow, MainUI):
         SELECT id FROM importer
         ''')
         row = self.cur.fetchall()
-        self.lineEdit_17.setText(str(row[-1][0] + 1))
+        if row == [] :
+            self.lineEdit_17.setText('1')
+        else:
+            self.lineEdit_17.setText(str(row[-1][0] + 1))
         self.lineEdit_18.setText('')
         self.lineEdit_19.setText('')
         self.lineEdit_20.setText('')
@@ -572,21 +582,23 @@ class Main(QMainWindow, MainUI):
         self.pushButton_15.setEnabled(False)
         
 
-    def importer_save(self):        
-        importer_name = self.lineEdit_18.text()
-        importer_type = self.lineEdit_19.text()       
+    def importer_save(self):
+        importer_name = self.lineEdit_18.text()        
         importer_phone = self.lineEdit_20.text()
         importer_address = self.lineEdit_21.text()
         importer_balance = self.lineEdit_22.text()
-        importer_date = self.dateEdit_3.date()
-        importer_date = importer_date.toString(QtCore.Qt.ISODate)
-        importer_time = self.timeEdit_2.time()
-        importer_time = importer_time.toString(QtCore.Qt.ISODate)
-        self.cur.execute('''
-            INSERT INTO importer(importer_name, importer_type, importer_phone, importer_address, importer_balance, importer_date, importer_time)
-            VALUES(%s, %s, %s, %s, %s, %s, %s)
-              ''',(importer_name, importer_type, importer_phone, importer_address, importer_balance, importer_date, importer_time))
+        importer_grp = self.comboBox_22.currentText()
+        importer_company = self.comboBox_23.currentText()
+        importer_date = self.dateEdit_3.date().toString(QtCore.Qt.ISODate)
+        importer_time = self.timeEdit_2.time().toString(QtCore.Qt.ISODate)
 
+        insert_sql = '''
+            INSERT INTO importer(importer_name, importer_phone, importer_address, importer_balance, importer_date, importer_time, importer_grp_id, importer_company_id)
+            SELECT %s, %s, %s, %s, %s, %s,
+                         (SELECT id FROM grp WHERE grp_name = %s),
+                         (SELECT id FROM company WHERE company_name = %s)
+              '''
+        self.cur.execute(insert_sql,(importer_name, importer_phone, importer_address, importer_balance, importer_date, importer_time, importer_grp, importer_company))
         self.db.commit()        
         self.importer_table_fill()
 
@@ -701,8 +713,12 @@ class Main(QMainWindow, MainUI):
         self.cur.execute('''
         SELECT id FROM item ORDER BY id ''')
         row = self.cur.fetchall()
-        self.lineEdit_23.setText('')
-        self.lineEdit_24.setText(str(row[-1][0] + 1))        
+        # when using database first time
+        if row == []:
+            self.lineEdit_24.setText('1')
+        else:
+            self.lineEdit_24.setText(str(row[-1][0] + 1))
+        self.lineEdit_23.setText('')                
         self.lineEdit_25.setText('')
         self.lineEdit_26.setText('')
         self.lineEdit_27.setText('')
@@ -717,22 +733,18 @@ class Main(QMainWindow, MainUI):
         item_barcode = self.lineEdit_25.text()
         item_name = str(self.lineEdit_26.text())       
         item_price = self.lineEdit_27.text()
-        item_qty = self.lineEdit_28.text()
-        item_limit = self.lineEdit_29.text()
+        item_qty = self.lineEdit_28.text()        
         item_discount = self.lineEdit_30.text()
         item_unit = self.lineEdit_31.text()
         item_group = self.comboBox_4.currentText()
-        item_company = self.comboBox_5.currentText()
-        item_place = self.comboBox_6.currentText()
-        item_date = self.dateEdit_4.date()
-        item_date = item_date.toString(QtCore.Qt.ISODate)
+        item_company = self.comboBox_5.currentText()        
         if item_name == '' or item_price == '' or item_qty == '' :
             QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل البيانات الناقصة', QMessageBox.Ok)
             return
         self.cur.execute('''
-            INSERT INTO item(item_barcode, item_name, item_group, item_company, item_price, item_qty, item_discount, item_unit, item_date)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-              ''',(item_barcode, item_name, item_group, item_company, item_place, item_price, item_qty, item_limit, item_discount, item_unit, item_date))
+            INSERT INTO item(item_buybill_id, item_barcode, item_name, item_group_id, item_company_id, item_price, item_public_price, item_discount, item_qty, item_unit)
+            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+              ''',(item_barcode, item_name, item_group, item_company, item_price, item_qty, item_discount, item_unit))
 
         self.db.commit()        
         self.item_table_fill()
@@ -802,8 +814,11 @@ class Main(QMainWindow, MainUI):
 
     def grp_add_new(self):
         self.cur.execute('''SELECT id FROM grp ORDER BY id ''')
-        row = self.cur.fetchall()        
-        self.lineEdit_35.setText(str(row[-1][0] + 1))        
+        row = self.cur.fetchall()
+        if row == [] :
+            self.lineEdit_35.setText('1')
+        else:        
+            self.lineEdit_35.setText(str(row[-1][0] + 1))        
         self.lineEdit_36.setText('')
         self.pushButton_22.setEnabled(False)
         self.pushButton_54.setEnabled(False)
@@ -834,7 +849,8 @@ class Main(QMainWindow, MainUI):
             # Rollback the transaction in case of an error
             self.db.rollback()
             print(f"Error: {e}")  # Optionally log or show the error to the user        
-        self.grp_table_fill()    
+        self.grp_table_fill()
+        self.grp_combo_fill()
         self.pushButton_21.setEnabled(False)
 
     def grp_update(self):
@@ -860,17 +876,24 @@ class Main(QMainWindow, MainUI):
         id = self.lineEdit_35.text()
         sql = ('''DELETE FROM grp WHERE id = %s ''')
         self.cur.execute(sql, [(id)])
-        self.db.commit()       
+        self.db.commit()
+        self.lineEdit_35.setText('')
+        self.lineEdit_36.setText('')
         self.grp_table_fill()
         self.grp_combo_fill()
+        self.company_combo_fill
+        self.company_table_fill
 
     def grp_combo_fill(self):
         self.comboBox_4.clear()
+        self.comboBox_21.clear()
         self.cur.execute('''SELECT grp_name FROM grp ORDER BY id ''')
         grops = self.cur.fetchall()
         for grop in grops:
             self.comboBox_4.addItem(grop[0])
             self.comboBox_21.addItem(grop[0])
+            self.comboBox_22.addItem(grop[0])
+            
 
     def grp_save_enabled(self):
         self.pushButton_21.setEnabled(True)
@@ -920,8 +943,11 @@ class Main(QMainWindow, MainUI):
 
     def company_add_new(self):
         self.cur.execute('''SELECT id FROM company ORDER BY id ''')
-        row = self.cur.fetchall()        
-        self.lineEdit_37.setText(str(row[-1][0] + 1))        
+        row = self.cur.fetchall()
+        if row == [] :
+            self.lineEdit_37.setText('1')
+        else:        
+            self.lineEdit_37.setText(str(row[-1][0] + 1))        
         self.lineEdit_38.setText('')
         self.pushButton_24.setEnabled(False)
         self.pushButton_56.setEnabled(False)
@@ -981,6 +1007,8 @@ class Main(QMainWindow, MainUI):
         self.db.commit()       
         self.company_table_fill()
         self.company_combo_fill()
+        self.lineEdit_37.setText('')
+        self.lineEdit_38.setText('')
 
     def company_combo_fill(self):
         self.comboBox_5.clear()
@@ -988,6 +1016,7 @@ class Main(QMainWindow, MainUI):
         companies = self.cur.fetchall()
         for company in companies:
             self.comboBox_5.addItem(company[0])
+            self.comboBox_23.addItem(company[0])
 
     def company_save_enabled(self):
         self.pushButton_23.setEnabled(True)

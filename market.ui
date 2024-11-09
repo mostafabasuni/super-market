@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -1503,7 +1503,7 @@
        <property name="geometry">
         <rect>
          <x>20</x>
-         <y>150</y>
+         <y>187</y>
          <width>191</width>
          <height>22</height>
         </rect>
@@ -1540,7 +1540,7 @@
        <property name="geometry">
         <rect>
          <x>220</x>
-         <y>150</y>
+         <y>187</y>
          <width>71</width>
          <height>20</height>
         </rect>
@@ -1612,7 +1612,7 @@
        <property name="geometry">
         <rect>
          <x>330</x>
-         <y>150</y>
+         <y>187</y>
          <width>191</width>
          <height>22</height>
         </rect>
@@ -1631,7 +1631,7 @@
        <property name="geometry">
         <rect>
          <x>550</x>
-         <y>155</y>
+         <y>187</y>
          <width>41</width>
          <height>20</height>
         </rect>
@@ -1643,6 +1643,72 @@
        </property>
        <property name="text">
         <string>الـوقـت</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_141">
+       <property name="geometry">
+        <rect>
+         <x>530</x>
+         <y>150</y>
+         <width>61</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>اسم المجموعة</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="comboBox_22">
+       <property name="geometry">
+        <rect>
+         <x>330</x>
+         <y>150</y>
+         <width>191</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="comboBox_23">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>150</y>
+         <width>191</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_142">
+       <property name="geometry">
+        <rect>
+         <x>220</x>
+         <y>150</y>
+         <width>61</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <pointsize>10</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>اسم الشركة</string>
        </property>
       </widget>
      </widget>
@@ -1688,17 +1754,22 @@
       </column>
       <column>
        <property name="text">
-        <string>نوع المورد</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>موبايل</string>
        </property>
       </column>
       <column>
        <property name="text">
         <string>العنوان</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>المجموعة</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>الشركة</string>
        </property>
       </column>
       <column>
@@ -4380,7 +4451,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_12">
        <attribute name="title">

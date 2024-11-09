@@ -24,16 +24,6 @@ class Customer(BaseModel):
     customer_phone = CharField()
     customer_address = CharField()
     customer_date = DateField()
-    
-
-class Importer(BaseModel):
-    importer_name = CharField()  
-    importer_phone = CharField()
-    importer_address = CharField()
-    importer_type = CharField()
-    importer_balance = DecimalField(max_digits=10, decimal_places=2)
-    importer_date = DateField()
-    importer_time = TimeField()    
 
 class Grp(BaseModel):   
     grp_name = CharField(unique=True, null=False)
@@ -48,33 +38,40 @@ class Company(BaseModel):
     company_user = ForeignKeyField(User, backref='companies', null=False)
     company_grp = ForeignKeyField(Grp, backref='companies', on_delete='CASCADE', on_update='CASCADE')
 
+class Importer(BaseModel):
+    importer_name = CharField()  
+    importer_phone = CharField()
+    importer_address = CharField()
+    importer_grp = ForeignKeyField(Grp, backref='importers', on_delete='CASCADE', on_update='CASCADE')
+    importer_company = ForeignKeyField(Company, backref='importers', on_delete='CASCADE', on_update='CASCADE')
+    importer_balance = DecimalField(max_digits=10, decimal_places=2)
+    importer_date = DateField()
+    importer_time = TimeField()
+
 class Buybill(BaseModel):
     buy_date = DateField()
-    buy_time = TimeField() 
-    buy_item = CharField(unique=True, null=False) # اسم المنتج
-    buy_item_qty = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_time = TimeField()    
     buy_importer = ForeignKeyField(Importer, backref='buybills', null=False) # اسم المورد    
     buy_user = ForeignKeyField(User, null=False)
     buy_total_price = DecimalField(max_digits=10, decimal_places=2, null=False)
     buy_discount = DecimalField(max_digits=10, decimal_places=2, null=False)
     buy_item_count = IntegerField()  # عدد الفطع للفاتورة الواحدة
 
-class Item(BaseModel):
+class Item(BaseModel):    
     item_buybill_id = ForeignKeyField(Buybill) # رقم فاتورة المورد
     item_barcode = BigIntegerField(null=False)
     item_name = CharField(max_length= 100, null=False)
-    item_group = ForeignKeyField(Grp, backref='items', on_update='CASCADE', on_delete='CASCADE')
-    item_company = ForeignKeyField(Company, backref='items', on_update='CASCADE', on_delete='CASCADE')    
+    item_importer = ForeignKeyField(Importer, backref='items')
     item_price = DecimalField(max_digits=10, decimal_places=2) # سعر شراء المنتج
     item_public_price = DecimalField(max_digits=10, decimal_places=2) # سعر البيع للجمهور
     item_discount = DecimalField(max_digits=6, decimal_places=2)
-    item_qty = IntegerField()
+    item_qty = DecimalField(max_digits=10, decimal_places=2, null=False)
     item_unit = CharField(max_length = 50)
 
 class Buybill_details(BaseModel):
     date = DateField()
     time = TimeField()
-    customer = ForeignKeyField(Customer, backref='buybills')    
+    buybill_id = ForeignKeyField(Buybill, on_update='CASCADE', on_delete='CASCADE')
     item_id = ForeignKeyField(Item)
     item_price = DecimalField(max_digits=10, decimal_places=2)
     item_qty = DecimalField(max_digits=6, decimal_places=2)
@@ -143,7 +140,7 @@ class Hodoor_Ensraf(BaseModel):
     he_user = CharField(null=True)
 
 db.connect()
-db.create_tables([User, Customer, Importer, Grp, Company, Buybill, \
+db.create_tables([User, Customer, Grp, Company,  Importer, Buybill, \
     Item, Buybill_details,Salebill, Salebill_details,Rebuybill, \
     Rebuybill_details, Resalebill, Resalebill_details, Hodoor_Ensraf])
 
