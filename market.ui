@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1075</width>
-    <height>581</height>
+    <height>577</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -188,6 +188,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Arial Black</family>
          <pointsize>14</pointsize>
         </font>
        </property>
@@ -224,7 +225,8 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>14</pointsize>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
         </font>
        </property>
       </widget>
@@ -275,6 +277,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Arial Black</family>
          <pointsize>12</pointsize>
         </font>
        </property>
@@ -347,7 +350,8 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>14</pointsize>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
         </font>
        </property>
        <item>
@@ -372,7 +376,8 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>14</pointsize>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
         </font>
        </property>
        <item>
@@ -412,6 +417,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Arial Black</family>
          <pointsize>12</pointsize>
         </font>
        </property>
@@ -490,7 +496,8 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>14</pointsize>
+         <family>Arial Black</family>
+         <pointsize>12</pointsize>
         </font>
        </property>
       </widget>
@@ -564,6 +571,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Arial Black</family>
          <pointsize>11</pointsize>
         </font>
        </property>
@@ -579,6 +587,7 @@
        </property>
        <property name="font">
         <font>
+         <family>Arial Black</family>
          <pointsize>11</pointsize>
         </font>
        </property>
@@ -636,7 +645,7 @@
       </property>
       <property name="font">
        <font>
-        <family>ae_AlMateen</family>
+        <family>Arial Black</family>
         <pointsize>11</pointsize>
         <kerning>false</kerning>
        </font>
@@ -4451,7 +4460,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_12">
        <attribute name="title">
@@ -4943,7 +4952,7 @@
          </font>
         </property>
         <property name="text">
-         <string>الرقم المرجعي للفاتورة</string>
+         <string>رقم الفاتورة</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_56">
@@ -4985,7 +4994,7 @@
          </font>
         </property>
         <property name="text">
-         <string>إجمالي الفاتورة</string>
+         <string>إجمالي الخصم</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_57">
@@ -5027,7 +5036,7 @@
          </font>
         </property>
         <property name="text">
-         <string>إجمالي سعر البيع</string>
+         <string>إجمالي الفاتورة</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_58">
@@ -5069,7 +5078,7 @@
          </font>
         </property>
         <property name="text">
-         <string>مصاريف إضافية</string>
+         <string>عدد الأصناف</string>
         </property>
        </widget>
        <widget class="QPushButton" name="pushButton_35">
@@ -5393,8 +5402,8 @@
        <widget class="QComboBox" name="comboBox_12">
         <property name="geometry">
          <rect>
-          <x>670</x>
-          <y>30</y>
+          <x>20</x>
+          <y>210</y>
           <width>151</width>
           <height>24</height>
          </rect>
@@ -5408,8 +5417,8 @@
        <widget class="QLabel" name="label_81">
         <property name="geometry">
          <rect>
-          <x>880</x>
-          <y>30</y>
+          <x>216</x>
+          <y>210</y>
           <width>71</width>
           <height>25</height>
          </rect>
@@ -5420,7 +5429,7 @@
          </font>
         </property>
         <property name="text">
-         <string>اسم الصنف</string>
+         <string>اسم المورد</string>
         </property>
        </widget>
        <widget class="QPushButton" name="pushButton_33">
@@ -5451,7 +5460,7 @@
         <property name="geometry">
          <rect>
           <x>670</x>
-          <y>207</y>
+          <y>180</y>
           <width>151</width>
           <height>24</height>
          </rect>
@@ -5469,7 +5478,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>180</y>
+          <y>150</y>
           <width>151</width>
           <height>25</height>
          </rect>
@@ -5504,7 +5513,7 @@
          </font>
         </property>
         <property name="text">
-         <string>عدد وحدات الشراء</string>
+         <string>الكمية</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_70">
@@ -5571,7 +5580,7 @@
         <property name="geometry">
          <rect>
           <x>670</x>
-          <y>147</y>
+          <y>210</y>
           <width>151</width>
           <height>25</height>
          </rect>
@@ -5592,7 +5601,7 @@
         <property name="geometry">
          <rect>
           <x>220</x>
-          <y>180</y>
+          <y>150</y>
           <width>69</width>
           <height>19</height>
          </rect>
@@ -5621,7 +5630,7 @@
          </font>
         </property>
         <property name="text">
-         <string>اسم وحدة الشراء</string>
+         <string>كود الصنف</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_99">
@@ -5639,14 +5648,14 @@
          </font>
         </property>
         <property name="text">
-         <string>سعر وحدة الشراء</string>
+         <string>الوحدة</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_94">
         <property name="geometry">
          <rect>
           <x>880</x>
-          <y>151</y>
+          <y>214</y>
           <width>71</width>
           <height>25</height>
          </rect>
@@ -5664,7 +5673,7 @@
         <property name="geometry">
          <rect>
           <x>200</x>
-          <y>152</y>
+          <y>122</y>
           <width>92</width>
           <height>19</height>
          </rect>
@@ -5685,7 +5694,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>150</y>
+          <y>120</y>
           <width>151</width>
           <height>25</height>
          </rect>
@@ -5706,7 +5715,7 @@
         <property name="geometry">
          <rect>
           <x>860</x>
-          <y>210</y>
+          <y>183</y>
           <width>91</width>
           <height>25</height>
          </rect>
@@ -5717,7 +5726,7 @@
          </font>
         </property>
         <property name="text">
-         <string>اسم وحدة البيع</string>
+         <string>سعر شراء الوحدة</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_66">
@@ -5727,7 +5736,7 @@
         <property name="geometry">
          <rect>
           <x>670</x>
-          <y>177</y>
+          <y>150</y>
           <width>151</width>
           <height>25</height>
          </rect>
@@ -5751,7 +5760,7 @@
         <property name="geometry">
          <rect>
           <x>180</x>
-          <y>124</y>
+          <y>94</y>
           <width>108</width>
           <height>19</height>
          </rect>
@@ -5762,7 +5771,7 @@
          </font>
         </property>
         <property name="text">
-         <string>سعر بيع القطعة للجمهور</string>
+         <string>سعر بيع الوحدة للجمهور</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_53">
@@ -5772,7 +5781,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>210</y>
+          <y>180</y>
           <width>151</width>
           <height>24</height>
          </rect>
@@ -5814,7 +5823,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>120</y>
+          <y>90</y>
           <width>151</width>
           <height>25</height>
          </rect>
@@ -5838,7 +5847,7 @@
         <property name="geometry">
          <rect>
           <x>810</x>
-          <y>181</y>
+          <y>154</y>
           <width>141</width>
           <height>25</height>
          </rect>
@@ -5849,14 +5858,14 @@
          </font>
         </property>
         <property name="text">
-         <string>عدد القطع في وحدة الشراء</string>
+         <string>الخصم %</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_78">
         <property name="geometry">
          <rect>
           <x>227</x>
-          <y>208</y>
+          <y>178</y>
           <width>62</width>
           <height>19</height>
          </rect>
@@ -5909,7 +5918,7 @@
          </font>
         </property>
         <property name="text">
-         <string>رقم فاتورة المورد</string>
+         <string>رقم الفاتورة</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_73">
@@ -5918,8 +5927,8 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>62</y>
+          <x>670</x>
+          <y>30</y>
           <width>151</width>
           <height>24</height>
          </rect>
@@ -5939,8 +5948,8 @@
        <widget class="QLabel" name="label_102">
         <property name="geometry">
          <rect>
-          <x>180</x>
-          <y>68</y>
+          <x>842</x>
+          <y>36</y>
           <width>109</width>
           <height>19</height>
          </rect>
@@ -5951,7 +5960,7 @@
          </font>
         </property>
         <property name="text">
-         <string>الرقم المرجعي للفاتورة</string>
+         <string>اسم الصنف</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_74">
@@ -5961,7 +5970,7 @@
         <property name="geometry">
          <rect>
           <x>20</x>
-          <y>91</y>
+          <y>61</y>
           <width>151</width>
           <height>24</height>
          </rect>
@@ -5985,7 +5994,7 @@
         <property name="geometry">
          <rect>
           <x>210</x>
-          <y>96</y>
+          <y>66</y>
           <width>77</width>
           <height>19</height>
          </rect>

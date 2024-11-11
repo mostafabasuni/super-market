@@ -525,18 +525,25 @@ class Main(QMainWindow, MainUI):
     def importer_table_select(self):
         row = self.tableWidget_3.currentItem().row()
         id = self.tableWidget_3.item(row, 0).text()
-        sql = f"SELECT * FROM importer WHERE id = {id}"
+        grp_id = self.tableWidget_3.item(row, 4).text()
+        company_id = self.tableWidget_3.item(row, 5).text()
+        sql = f'''SELECT i.*, g.grp_name, c.company_name
+                FROM importer i
+                LEFT JOIN grp g ON g.id = {grp_id}
+                LEFT JOIN company c ON c.id = {company_id}
+                WHERE i.id = {id}'''
         self.cur.execute(sql)
-        data = self.cur.fetchone()
-        h, m, s = map(int, (str(data[7])).split(":"))
+        data = self.cur.fetchone()        
+        h, m, s = map(int, (str(data[8])).split(":"))
         x = QTime(h, m)
         self.lineEdit_17.setText(str(data[0]))
-        self.lineEdit_18.setText(str(data[1]))
-        self.lineEdit_19.setText(str(data[4]))
+        self.lineEdit_18.setText(str(data[1]))        
         self.lineEdit_20.setText(str(data[2]))
         self.lineEdit_21.setText(str(data[3]))
-        self.lineEdit_22.setText(str(data[5]))
-        self.dateEdit_3.setDate(data[6])        
+        self.lineEdit_22.setText(str(data[6]))
+        self.comboBox_22.setCurrentText(data[9])
+        self.comboBox_23.setCurrentText(data[10])
+        self.dateEdit_3.setDate(data[7])        
         self.timeEdit_2.setTime(x)
         self.pushButton_14.setEnabled(True)
         self.pushButton_15.setEnabled(True)
@@ -552,9 +559,7 @@ class Main(QMainWindow, MainUI):
     def importer_table_fill(self):        
         self.tableWidget_3.setRowCount(0)
         self.tableWidget_3.insertRow(0)
-        self.cur.execute('''
-        SELECT id, importer_name, importer_phone, importer_address, importer_grp_id, importer_company_id, importer_balance, importer_date, importer_time FROM importer
-        ''')
+        self.cur.execute("SELECT * FROM importer")
         data = self.cur.fetchall()
         for row, form in enumerate(data):
             for col, item in enumerate(form):
@@ -564,9 +569,7 @@ class Main(QMainWindow, MainUI):
             self.tableWidget_3.insertRow(row_pos)
 
     def importer_add_new(self):
-        self.cur.execute('''
-        SELECT id FROM importer
-        ''')
+        self.cur.execute("SELECT id FROM importer")
         row = self.cur.fetchall()
         if row == [] :
             self.lineEdit_17.setText('1')
@@ -1407,23 +1410,54 @@ class Main(QMainWindow, MainUI):
         self.pushButton_34.setEnabled(False)
 
     def buy_bill_add_new(self):
-        if self.lineEdit_51.text() == '':
-            QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم فاتورة المورد', QMessageBox.Ok)
-            return        
-        #self.cur.execute("SELECT * FROM buypill WHERE id=(SELECT max(id) FROM buypill)")
-        self.cur.execute("SELECT MAX( id ) FROM buypill")
+        importer_name = self.comboBox_9.currentText()
+        user_name = self.comboBox_11.currentText()
+        buy_date = self.dateEdit_11.date().toString(Qt.ISODate)        
+        buy_time = self.timeEdit_9.time().toString(Qt.ISODate)
+
+        #if self.lineEdit_52.text() == '':
+        #    QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم الفاتورة ', QMessageBox.Ok)
+        #    return        
+        #self.cur.execute("SELECT * FROM buybill WHERE id=(SELECT max(id) FROM buybill)")
+        self.cur.execute("SELECT MAX( id ) FROM buybill")
         id = self.cur.fetchone()        
-        # هذه الخطوة للتغلب فيما إذا تم حذف السجل الأخير من قاعدة البيانات
-        self.cur.execute(f"ALTER TABLE buypill AUTO_INCREMENT = {id[0]}")
-        self.cur.execute("SELECT MAX( id ) FROM buypill")
-        id = self.cur.fetchone()        
-        # self.cur.execute("SELECT id FROM buypill ORDER BY id")
+        if id[0] == None :
+            id = (0,)
+        else:
+            # هذه الخطوة للتغلب فيما إذا تم حذف السجل الأخير من قاعدة البيانات
+            self.cur.execute(f"ALTER TABLE buybill AUTO_INCREMENT = {id[0]}")
+            self.cur.execute("SELECT MAX( id ) FROM buybill")
+            id = self.cur.fetchone()
+        
+        # self.cur.execute("SELECT id FROM buybill ORDER BY id")
         # data = self.cur.fetchall()
         #print(data[-1][0])
-        #id = self.cur.lastrowid        
-        self.lineEdit_52.setText(str(id[0]+1))
-        self.lineEdit_73.setText(str(id[0]+1))
-        self.lineEdit_72.setText(self.lineEdit_51.text())        
+        #id = self.cur.lastrowid            
+        id = id[0] + 1
+        self.lineEdit_52.setText(str(id))
+        #self.lineEdit_73.setText(str(id[0]+1))
+        self.lineEdit_72.setText(self.lineEdit_52.text())
+        # Combine the SELECT queries into the INSERT statement
+        insert_sql = '''
+            INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
+            SELECT %s,%s,%s,
+                (SELECT id FROM importer WHERE importer_name = %s),
+                (SELECT id FROM user WHERE user_fullname = %s)                
+        '''
+        
+        # Execute the combined query
+        try:
+            self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
+            
+            # Commit the transaction
+            self.db.commit()
+
+        except Exception as e:
+            # Rollback the transaction if an error occurs
+            self.db.rollback()
+            print(f"Error: {e}")
+            # Optionally, you could show an error message to the user        
+        
         self.pushButton_34.setEnabled(False)
         self.pushButton_36.setEnabled(False)
         self.pushButton_37.setEnabled(False)
