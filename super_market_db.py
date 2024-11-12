@@ -57,20 +57,18 @@ class Buybill(BaseModel):
     buy_discount = DecimalField(max_digits=10, decimal_places=2, null=False)
     buy_item_count = IntegerField()  # عدد الفطع للفاتورة الواحدة
 
-class Item(BaseModel):    
-    item_buybill_id = ForeignKeyField(Buybill) # رقم فاتورة المورد
-    item_barcode = BigIntegerField(null=False)
+class Item(BaseModel):
     item_name = CharField(max_length= 100, null=False)
+    item_barcode = BigIntegerField(null=False)
+    item_unit = CharField(max_length = 50)
+    item_buybill_id = ForeignKeyField(Buybill) # رقم فاتورة المورد    
     item_importer = ForeignKeyField(Importer, backref='items')
     item_price = DecimalField(max_digits=10, decimal_places=2) # سعر شراء المنتج
-    item_public_price = DecimalField(max_digits=10, decimal_places=2) # سعر البيع للجمهور
-    item_discount = DecimalField(max_digits=6, decimal_places=2)
     item_qty = DecimalField(max_digits=10, decimal_places=2, null=False)
-    item_unit = CharField(max_length = 50)
+    item_discount = DecimalField(max_digits=6, decimal_places=2)
+    item_public_price = DecimalField(max_digits=10, decimal_places=2) # سعر البيع للجمهور
 
-class Buybill_details(BaseModel):
-    date = DateField()
-    time = TimeField()
+class Buybill_details(BaseModel):    
     buybill_id = ForeignKeyField(Buybill, on_update='CASCADE', on_delete='CASCADE')
     item_id = ForeignKeyField(Item)
     item_price = DecimalField(max_digits=10, decimal_places=2)

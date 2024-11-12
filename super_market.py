@@ -79,9 +79,8 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_69.textChanged.connect(self.total_buy_unit) 
         self.lineEdit_70.textChanged.connect(self.total_buy_unit) 
         self.lineEdit_66.textChanged.connect(self.buy_item_price) 
-        self.lineEdit_65.textChanged.connect(self.total_sale_price) 
-        self.lineEdit_55.textChanged.connect(self.total_earn) 
-        self.lineEdit_65.textEdited.connect(self.item_pill_save_but)
+        self.lineEdit_65.textChanged.connect(self.buybill_details_add_new)      
+        
         self.lineEdit_75.textEdited.connect(self.rebuypill_save_but)
         self.lineEdit_80.textEdited.connect(self.rebuypill_save_but)
         self.lineEdit_64.textChanged.connect(self.cash_rset)
@@ -104,7 +103,7 @@ class Main(QMainWindow, MainUI):
         validator = QRegExpValidator(QRegExp(r'[0-9]+')) 
         
         self.lineEdit_73.setValidator(QIntValidator())
-        self.lineEdit_73.setMaxLength(7)
+        self.lineEdit_73.setMaxLength(13)
         self.lineEdit_69.setValidator(QDoubleValidator())
         self.lineEdit_69.setMaxLength(7)
         self.lineEdit_70.setValidator(QDoubleValidator(0.00,999.99,2))
@@ -114,7 +113,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_35.setEnabled(False)
         self.pushButton_40.setEnabled(False)
         self.pushButton_43.setEnabled(False)
-        
+       
 
         self.db_connect()
         self.handel_buttons()
@@ -1252,13 +1251,16 @@ class Main(QMainWindow, MainUI):
     def importer_combo_fill(self):
         self.comboBox_9.clear()
         self.comboBox_10.clear()
+        self.comboBox_24.clear()
         self.cur.execute('''SELECT importer_name, importer_phone, importer_balance FROM importer ORDER BY id ''')
         importers = self.cur.fetchall()
         # self.lineEdit_49.setText(str(importers[0][1]))
         # self.lineEdit_50.setText(str(importers[0][2]))
         for importer in importers:
             self.comboBox_9.addItem(importer[0])
-            self.comboBox_10.addItem(importer[0])
+            self.comboBox_10.addItem(importer[0])            
+            self.comboBox_24.addItem(importer[0])
+            
 
     def user_combo_fill(self):
         self.comboBox_7.clear()
@@ -1286,13 +1288,11 @@ class Main(QMainWindow, MainUI):
             
 
     def item_combo_fill(self):        
-        self.comboBox_12.clear()
         self.comboBox_13.clear()
         self.comboBox_16.clear()
         self.cur.execute('''SELECT item_name FROM item ORDER BY id ''')
         items = self.cur.fetchall()
         for item in items:            
-            self.comboBox_12.addItem(item[0])
             self.comboBox_13.addItem(item[0])
             self.comboBox_16.addItem(item[0])
     
@@ -1310,8 +1310,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_67.setText('0')
         self.lineEdit_69.setText('1')
         self.lineEdit_70.setText('0')
-        self.lineEdit_66.setText('1')
-        self.lineEdit_65.setText('0')
+        self.lineEdit_66.setText('1')        
         self.lineEdit_55.setText('0')
         self.lineEdit_74.setText('0')
         self.lineEdit_54.setText('0')
@@ -1334,8 +1333,7 @@ class Main(QMainWindow, MainUI):
         sale_unit = self.lineEdit_71.text()        
         total_buy = self.lineEdit_67.text()
         item_count_peruint = self.lineEdit_66.text()
-        item_buy_price = self.lineEdit_74.text()
-        buy_item_sale = self.lineEdit_65.text()
+        item_buy_price = self.lineEdit_74.text()        
         total_sale = self.lineEdit_54.text() 
         buy_minus = self.lineEdit_55.text()      
         minus += float(self.lineEdit_55.text())        
@@ -1419,21 +1417,26 @@ class Main(QMainWindow, MainUI):
         #    QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم الفاتورة ', QMessageBox.Ok)
         #    return        
         #self.cur.execute("SELECT * FROM buybill WHERE id=(SELECT max(id) FROM buybill)")
-        self.cur.execute("SELECT MAX( id ) FROM buybill")
-        id = self.cur.fetchone()        
-        if id[0] == None :
-            id = (0,)
+        self.cur.execute("SELECT MAX(id), buy_item_count FROM buybill")
+        data = self.cur.fetchone()        
+        if data != [] :
+            if data[1] == 0:
+                id = data[0]
+            else:
+                id = data[0] + 1        
+            
         else:
+            id = 0
             # هذه الخطوة للتغلب فيما إذا تم حذف السجل الأخير من قاعدة البيانات
-            self.cur.execute(f"ALTER TABLE buybill AUTO_INCREMENT = {id[0]}")
-            self.cur.execute("SELECT MAX( id ) FROM buybill")
-            id = self.cur.fetchone()
+            #self.cur.execute(f"ALTER TABLE buybill AUTO_INCREMENT = {id[0]}")
+            #self.cur.execute("SELECT MAX( id ) FROM buybill")
+            #id = self.cur.fetchone()
         
         # self.cur.execute("SELECT id FROM buybill ORDER BY id")
         # data = self.cur.fetchall()
         #print(data[-1][0])
         #id = self.cur.lastrowid            
-        id = id[0] + 1
+        # id = id[0] + 1
         self.lineEdit_52.setText(str(id))
         #self.lineEdit_73.setText(str(id[0]+1))
         self.lineEdit_72.setText(self.lineEdit_52.text())
@@ -1475,8 +1478,7 @@ class Main(QMainWindow, MainUI):
         self.tableWidget_11.setRowCount(0)
         self.tableWidget_11.insertRow(0)        
         self.lineEdit_54.setText('0')
-        self.lineEdit_55.setText('0')
-        self.lineEdit_65.setText('0')
+        self.lineEdit_55.setText('0')        
         self.lineEdit_66.setText('1')
         self.lineEdit_67.setText('0')
         self.lineEdit_68.setText('')
@@ -1569,7 +1571,26 @@ class Main(QMainWindow, MainUI):
             row_pos = self.tableWidget_10.rowCount()
             self.tableWidget_10.insertRow(row_pos)
     
+    def buybill_details_add_new(self):
+        code = self.lineEdit_73.text()
+        name = self.lineEdit_68.text()
+        qty = self.lineEdit_69.text()
+        unit = self.lineEdit_66.text()
+        discount = self.lineEdit_70.text()
+        bill_id = self.lineEdit_72.text()
+        price = self.lineEdit_71.text()
+        total = self.lineEdit_67.text()
+        public = self.lineEdit_65.text()
+        importer = self.comboBox_24.currentText()
+        query = "INSERT INTO buybill_details (buybill_id, item_id, item_price, item_qty, item_discount) VALUES (%s,%s,%s,%s,%s)"
+        self.cur.execute(query, (bill_id, code, price, qty, discount))
+        self.db.commit()
+                               
+        
+
+
     def total_buy_unit(self):
+        '''
         buy_unit_count = self.lineEdit_69.text()
         unit_price = self.lineEdit_70.text()
         sale_unit = self.lineEdit_71.text()
@@ -1577,8 +1598,9 @@ class Main(QMainWindow, MainUI):
         total_buy = self.lineEdit_67.setText(str(x))
         total_buy = self.lineEdit_67.text()        
         self.buy_item_price
-
-    def buy_item_price(self):        
+       ''' 
+    def buy_item_price(self):
+        ''' 
         buy_unit_count = self.lineEdit_69.text()
         item_count_peruint = self.lineEdit_66.text()
         x = int(buy_unit_count) * int(item_count_peruint)
@@ -1588,13 +1610,12 @@ class Main(QMainWindow, MainUI):
         item_buy_price = self.lineEdit_74.setText(str(y))
         item_buy_price = self.lineEdit_74.text()
         self.total_sale_price
-
+        '''
     def total_sale_price(self):
         buy_unit_count = self.lineEdit_69.text()
         item_count_peruint = self.lineEdit_66.text()
         total_buy = self.lineEdit_67.text()
-        x = float(total_buy)
-        buy_item_sale = self.lineEdit_65.text()
+        x = float(total_buy)        
         y = int(buy_unit_count) * int(item_count_peruint) * float(buy_item_sale)
         total_sale = self.lineEdit_54.setText(str(y))
         total_sale = self.lineEdit_54.text()
@@ -1822,8 +1843,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_69.setText(str(data[5]))
         self.lineEdit_70.setText(str(data[6]))
         self.lineEdit_71.setText(str(data[7]))
-        self.lineEdit_66.setText(str(data[8]))
-        self.lineEdit_65.setText(str(data[10]))
+        self.lineEdit_66.setText(str(data[8]))        
         self.lineEdit_67.setText(str(data[11]))        
         self.lineEdit_55.setText(str(data[13]))
         self.lineEdit_53.setText(str(data[14]))   
@@ -1843,8 +1863,7 @@ class Main(QMainWindow, MainUI):
         unit_price = self.lineEdit_70.text()
         sale_unit = self.lineEdit_71.text()        
         item_count_peruint = self.lineEdit_66.text()
-        item_buy_price = self.lineEdit_74.text()
-        buy_item_sale = self.lineEdit_65.text()
+        item_buy_price = self.lineEdit_74.text()        
         total_buy = self.lineEdit_67.text()
         total_sale = self.lineEdit_54.text() 
         buy_minus = self.lineEdit_55.text()
