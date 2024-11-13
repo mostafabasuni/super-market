@@ -61,8 +61,7 @@ class Item(BaseModel):
     item_name = CharField(max_length= 100, null=False)
     item_barcode = BigIntegerField(null=False)
     item_unit = CharField(max_length = 50)
-    item_buybill_id = ForeignKeyField(Buybill) # رقم فاتورة المورد    
-    item_importer = ForeignKeyField(Importer, backref='items')
+    item_buybill_id = ForeignKeyField(Buybill) # رقم فاتورة المورد     
     item_price = DecimalField(max_digits=10, decimal_places=2) # سعر شراء المنتج
     item_qty = DecimalField(max_digits=10, decimal_places=2, null=False)
     item_discount = DecimalField(max_digits=6, decimal_places=2)

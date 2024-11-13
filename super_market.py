@@ -102,7 +102,7 @@ class Main(QMainWindow, MainUI):
 
         validator = QRegExpValidator(QRegExp(r'[0-9]+')) 
         
-        self.lineEdit_73.setValidator(QIntValidator())
+        self.lineEdit_73.setValidator(QDoubleValidator())
         self.lineEdit_73.setMaxLength(13)
         self.lineEdit_69.setValidator(QDoubleValidator())
         self.lineEdit_69.setMaxLength(7)
@@ -889,6 +889,7 @@ class Main(QMainWindow, MainUI):
     def grp_combo_fill(self):
         self.comboBox_4.clear()
         self.comboBox_21.clear()
+        self.comboBox_22.clear()
         self.cur.execute('''SELECT grp_name FROM grp ORDER BY id ''')
         grops = self.cur.fetchall()
         for grop in grops:
@@ -1014,6 +1015,7 @@ class Main(QMainWindow, MainUI):
 
     def company_combo_fill(self):
         self.comboBox_5.clear()
+        self.comboBox_23.clear()
         self.cur.execute('''SELECT company_name FROM company ORDER BY id ''')
         companies = self.cur.fetchall()
         for company in companies:
@@ -1418,15 +1420,36 @@ class Main(QMainWindow, MainUI):
         #    return        
         #self.cur.execute("SELECT * FROM buybill WHERE id=(SELECT max(id) FROM buybill)")
         self.cur.execute("SELECT MAX(id), buy_item_count FROM buybill")
-        data = self.cur.fetchone()        
-        if data != [] :
+        data = self.cur.fetchone()
+        print(data)        
+        if data != (None, None) :
             if data[1] == 0:
                 id = data[0]
             else:
-                id = data[0] + 1        
+                id = data[0] + 1
+                # Combine the SELECT queries into the INSERT statement
+                insert_sql = '''
+                    INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
+                    SELECT %s,%s,%s,
+                        (SELECT id FROM importer WHERE importer_name = %s),
+                        (SELECT id FROM user WHERE user_fullname = %s)                
+                '''
+                
+                # Execute the combined query
+                try:
+                    self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
+                    
+                    # Commit the transaction
+                    self.db.commit()
+
+                except Exception as e:
+                    # Rollback the transaction if an error occurs
+                    self.db.rollback()
+                    print(f"Error: {e}")
+                    # Optionally, you could show an error message to the user  
             
         else:
-            id = 0
+            id = 1
             # هذه الخطوة للتغلب فيما إذا تم حذف السجل الأخير من قاعدة البيانات
             #self.cur.execute(f"ALTER TABLE buybill AUTO_INCREMENT = {id[0]}")
             #self.cur.execute("SELECT MAX( id ) FROM buybill")
@@ -1440,26 +1463,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_52.setText(str(id))
         #self.lineEdit_73.setText(str(id[0]+1))
         self.lineEdit_72.setText(self.lineEdit_52.text())
-        # Combine the SELECT queries into the INSERT statement
-        insert_sql = '''
-            INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
-            SELECT %s,%s,%s,
-                (SELECT id FROM importer WHERE importer_name = %s),
-                (SELECT id FROM user WHERE user_fullname = %s)                
-        '''
-        
-        # Execute the combined query
-        try:
-            self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
-            
-            # Commit the transaction
-            self.db.commit()
-
-        except Exception as e:
-            # Rollback the transaction if an error occurs
-            self.db.rollback()
-            print(f"Error: {e}")
-            # Optionally, you could show an error message to the user        
+              
         
         self.pushButton_34.setEnabled(False)
         self.pushButton_36.setEnabled(False)
@@ -1582,12 +1586,12 @@ class Main(QMainWindow, MainUI):
         total = self.lineEdit_67.text()
         public = self.lineEdit_65.text()
         importer = self.comboBox_24.currentText()
-        query = "INSERT INTO buybill_details (buybill_id, item_id, item_price, item_qty, item_discount) VALUES (%s,%s,%s,%s,%s)"
-        self.cur.execute(query, (bill_id, code, price, qty, discount))
+        query = "INSERT INTO item (item_name, item_barcode, item_unit, item_buybill_id, item_price, item_qty, item_discount, item_public_price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        self.cur.execute(query, (name, code, unit, bill_id, price, qty, discount, public) )
         self.db.commit()
-                               
-        
-
+        query = "INSERT INTO buybill_details (buybill_id, item_price, item_qty, item_discount, item_id) SELECT %s,%s,%s,%s, (SELECT id FROM item WHERE item_barcode=%s) "
+        self.cur.execute(query, (bill_id, price, qty, discount, code))
+        self.db.commit()
 
     def total_buy_unit(self):
         '''
