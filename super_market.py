@@ -75,11 +75,9 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_18.textEdited.connect(self.importer_save_enabled)
         self.lineEdit_25.textEdited.connect(self.item_save_enabled)    
         self.lineEdit_36.textEdited.connect(self.grp_save_enabled)
-        self.lineEdit_38.textEdited.connect(self.company_save_enabled)        
-        self.lineEdit_69.textChanged.connect(self.total_buy_unit) 
-        self.lineEdit_70.textChanged.connect(self.total_buy_unit) 
-        self.lineEdit_66.textChanged.connect(self.buy_item_price) 
-        self.lineEdit_65.textChanged.connect(self.buybill_details_add_new)      
+        self.lineEdit_38.textEdited.connect(self.company_save_enabled)
+        self.lineEdit_71.textChanged.connect(self.total_buy_unit)
+        
         
         self.lineEdit_75.textEdited.connect(self.rebuypill_save_but)
         self.lineEdit_80.textEdited.connect(self.rebuypill_save_but)
@@ -88,7 +86,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_86.returnPressed.connect(self.get_sale_item_info)
         self.lineEdit_87.textChanged.connect(self.visa)
         # self.lineEdit_84.textChanged.connect(self.sale_item_add)        
-        #dself.tableWidget_11.selectionModel().selectionChanged.connect(self.buybill_details_table_select)
+        # self.tableWidget_11.selectionModel().selectionChanged.connect(self.buybill_details_table_select)
         self.tableWidget.itemClicked.connect(self.user_table_select)
         self.tableWidget_2.itemClicked.connect(self.customer_table_select)
         self.tableWidget_3.itemClicked.connect(self.importer_table_select)
@@ -174,7 +172,7 @@ class Main(QMainWindow, MainUI):
 
         self.pushButton_31.clicked.connect(self.buy_bill_save)
         self.pushButton_32.clicked.connect(self.buy_bill_add_new)
-        self.pushButton_33.clicked.connect(self.buy_bill_add_new)
+        self.pushButton_33.clicked.connect(self.buybill_details_add_new)
         self.pushButton_34.clicked.connect(self.buy_bill_save_item)
         self.pushButton_35.clicked.connect(self.buy_bill_update)
 
@@ -656,7 +654,16 @@ class Main(QMainWindow, MainUI):
         self.db.commit()       
         self.importer_table_fill()
         self.importer_clear()
-
+    def importer_combo_fill(self):        
+        self.comboBox_9.clear()
+        self.comboBox_24.clear()
+        self.comboBox_10.clear()
+        self.cur.execute('''SELECT importer_name FROM importer ORDER BY id ''')
+        importers = self.cur.fetchall()
+        for importer in importers:
+            self.comboBox_9.addItem(importer[0])
+            self.comboBox_24.addItem(importer[0])
+            self.comboBox_10.addItem(importer[0])
 # =========== Items ===========
     def item_save_enabled(self):
         self.pushButton_17.setEnabled(True)
@@ -1420,36 +1427,33 @@ class Main(QMainWindow, MainUI):
         #    return        
         #self.cur.execute("SELECT * FROM buybill WHERE id=(SELECT max(id) FROM buybill)")
         self.cur.execute("SELECT MAX(id), buy_item_count FROM buybill")
-        data = self.cur.fetchone()
-        print(data)        
+        data = self.cur.fetchone()        
         if data != (None, None) :
             if data[1] == 0:
                 id = data[0]
             else:
-                id = data[0] + 1
-                # Combine the SELECT queries into the INSERT statement
-                insert_sql = '''
-                    INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
-                    SELECT %s,%s,%s,
-                        (SELECT id FROM importer WHERE importer_name = %s),
-                        (SELECT id FROM user WHERE user_fullname = %s)                
-                '''
-                
-                # Execute the combined query
-                try:
-                    self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
-                    
-                    # Commit the transaction
-                    self.db.commit()
-
-                except Exception as e:
-                    # Rollback the transaction if an error occurs
-                    self.db.rollback()
-                    print(f"Error: {e}")
-                    # Optionally, you could show an error message to the user  
-            
+                id = data[0] + 1            
         else:
             id = 1
+        # Combine the SELECT queries into the INSERT statement
+        insert_sql = '''
+            INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
+            SELECT %s,%s,%s,
+                (SELECT id FROM importer WHERE importer_name = %s),
+                (SELECT id FROM user WHERE user_fullname = %s)                
+        '''        
+        # Execute the combined query
+        try:
+            self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
+            
+            # Commit the transaction
+            self.db.commit()
+
+        except Exception as e:
+            # Rollback the transaction if an error occurs
+            self.db.rollback()
+            print(f"Error: {e}")
+            # Optionally, you could show an error message to the user
             # هذه الخطوة للتغلب فيما إذا تم حذف السجل الأخير من قاعدة البيانات
             #self.cur.execute(f"ALTER TABLE buybill AUTO_INCREMENT = {id[0]}")
             #self.cur.execute("SELECT MAX( id ) FROM buybill")
@@ -1463,8 +1467,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_52.setText(str(id))
         #self.lineEdit_73.setText(str(id[0]+1))
         self.lineEdit_72.setText(self.lineEdit_52.text())
-              
-        
+        self.pushButton_33.setEnabled(True)
         self.pushButton_34.setEnabled(False)
         self.pushButton_36.setEnabled(False)
         self.pushButton_37.setEnabled(False)
@@ -1594,20 +1597,17 @@ class Main(QMainWindow, MainUI):
         self.db.commit()
 
     def total_buy_unit(self):
-        '''
-        buy_unit_count = self.lineEdit_69.text()
-        unit_price = self.lineEdit_70.text()
-        sale_unit = self.lineEdit_71.text()
-        x = int(buy_unit_count) * float(unit_price)
-        total_buy = self.lineEdit_67.setText(str(x))
-        total_buy = self.lineEdit_67.text()        
-        self.buy_item_price
-       ''' 
+        qty = self.lineEdit_69.text()
+        unit_price = self.lineEdit_71.text()        
+        x = int(qty) * float(unit_price)
+        self.lineEdit_67.setText(str(x))
+        
+         
     def buy_item_price(self):
         ''' 
-        buy_unit_count = self.lineEdit_69.text()
+        qty = self.lineEdit_69.text()
         item_count_peruint = self.lineEdit_66.text()
-        x = int(buy_unit_count) * int(item_count_peruint)
+        x = int(qty) * int(item_count_peruint)
         total_buy = self.lineEdit_67.text()        
         y = float(total_buy) / x
         y = float("{:.2f}".format(y))
