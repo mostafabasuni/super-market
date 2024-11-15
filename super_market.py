@@ -1376,16 +1376,26 @@ class Main(QMainWindow, MainUI):
         QMessageBox.warning(self, 'رسالة تأكيد', 'تم حفظ البيانات بنجاج', QMessageBox.Ok)
 
     def buy_item_table_fill(self):        
-        total_buy = 0
-        total_sale = 0
-        buy_minus = 0        
-        pill_id = self.lineEdit_52.text()
+               
+        bill_id = self.lineEdit_72.text()
         self.tableWidget_11.setRowCount(0)
         self.tableWidget_11.insertRow(0)
-        sql = "SELECT * FROM buypill_details WHERE buypill_id = %s"
-        self.cur.execute(sql, [(pill_id)] )
+        sql = f''' SELECT i.item_name, i.item_barcode, i.item_unit,
+        b.item_price, b.item_qty, b.item_discount, (b.item_price * b.item_qty) AS total       
+        FROM buybill_details b 
+        LEFT JOIN item i ON b.item_id = i.id
+        WHERE b.buybill_id = {bill_id}
+        '''
+        self.cur.execute(sql)
         data = self.cur.fetchall()        
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                self.tableWidget_11.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = self.tableWidget_11.rowCount()
+            self.tableWidget_11.insertRow(row_pos)
         
+        '''
         for row, form in enumerate(data):
             for col, item in enumerate(form):
                 self.tableWidget_11.setItem(row, col, QTableWidgetItem(str(item)))
@@ -1415,7 +1425,7 @@ class Main(QMainWindow, MainUI):
         self.cur.execute(sql)
         self.db.commit()
         self.pushButton_34.setEnabled(False)
-
+        '''
     def buy_bill_add_new(self):
         importer_name = self.comboBox_9.currentText()
         user_name = self.comboBox_11.currentText()
@@ -1426,44 +1436,34 @@ class Main(QMainWindow, MainUI):
         #    QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم الفاتورة ', QMessageBox.Ok)
         #    return        
         #self.cur.execute("SELECT * FROM buybill WHERE id=(SELECT max(id) FROM buybill)")
-        self.cur.execute("SELECT MAX(id), buy_item_count FROM buybill")
+        self.cur.execute("SELECT MAX(id), buy_total_price FROM buybill")
         data = self.cur.fetchone()        
-        if data != (None, None) :
-            if data[1] == 0:
-                id = data[0]
-            else:
-                id = data[0] + 1            
+        if data != (None, None) and data[1] == 0:
+            id = data[0]
         else:
-            id = 1
-        # Combine the SELECT queries into the INSERT statement
-        insert_sql = '''
-            INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
-            SELECT %s,%s,%s,
-                (SELECT id FROM importer WHERE importer_name = %s),
-                (SELECT id FROM user WHERE user_fullname = %s)                
-        '''        
-        # Execute the combined query
-        try:
-            self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
-            
-            # Commit the transaction
-            self.db.commit()
+            if data == (None, None):
+                id = 1
+            elif data[1] != 0:
+                id = data[1] + 1
+            # Combine the SELECT queries into the INSERT statement
+            insert_sql = '''
+                INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
+                SELECT %s,%s,%s,
+                    (SELECT id FROM importer WHERE importer_name = %s),
+                    (SELECT id FROM user WHERE user_fullname = %s)                
+            '''        
+            # Execute the combined query
+            try:
+                self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
+                
+                # Commit the transaction
+                self.db.commit()
 
-        except Exception as e:
-            # Rollback the transaction if an error occurs
-            self.db.rollback()
-            print(f"Error: {e}")
-            # Optionally, you could show an error message to the user
-            # هذه الخطوة للتغلب فيما إذا تم حذف السجل الأخير من قاعدة البيانات
-            #self.cur.execute(f"ALTER TABLE buybill AUTO_INCREMENT = {id[0]}")
-            #self.cur.execute("SELECT MAX( id ) FROM buybill")
-            #id = self.cur.fetchone()
-        
-        # self.cur.execute("SELECT id FROM buybill ORDER BY id")
-        # data = self.cur.fetchall()
-        #print(data[-1][0])
-        #id = self.cur.lastrowid            
-        # id = id[0] + 1
+            except Exception as e:
+                # Rollback the transaction if an error occurs
+                self.db.rollback()
+                print(f"Error: {e}")        
+            
         self.lineEdit_52.setText(str(id))
         #self.lineEdit_73.setText(str(id[0]+1))
         self.lineEdit_72.setText(self.lineEdit_52.text())
@@ -1548,36 +1548,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_36.setEnabled(True)
         self.pushButton_38.setEnabled(True)
         self.pushButton_43.setEnabled(True)       
-    
-    def buy_bill_table_fill(self):
-        pill_id = self.lineEdit_52.text()
-        self.tableWidget_10.setRowCount(0)
-        self.tableWidget_10.insertRow(0)
-        sql = "SELECT * FROM buypill WHERE id = %s "
-        self.cur.execute(sql, [(pill_id)] )
-        data = self.cur.fetchall()        
-        for row, form in enumerate(data):
-            for col, item in enumerate(form):
-                if col == 4:                    
-                    sql = '''SELECT importer_name FROM importers WHERE id=%s'''
-                    self.cur.execute(sql, [((item))])                    
-                    imp_name = self.cur.fetchone()                    
-                    if imp_name != None:
-                        importer_name = imp_name[0]                        
-                        self.tableWidget_10.setItem(row, col, QTableWidgetItem(importer_name))
-                elif col == 7:                    
-                    sql = '''SELECT user_fullname FROM users WHERE id=%s'''
-                    self.cur.execute(sql, [((item))])                    
-                    emp_name = self.cur.fetchone()                    
-                    if emp_name != None:
-                        employee_name = emp_name[0]                        
-                        self.tableWidget_10.setItem(row, col, QTableWidgetItem(employee_name))
-                else:
-                    self.tableWidget_10.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_10.rowCount()
-            self.tableWidget_10.insertRow(row_pos)
-    
+
     def buybill_details_add_new(self):
         code = self.lineEdit_73.text()
         name = self.lineEdit_68.text()
@@ -1595,6 +1566,15 @@ class Main(QMainWindow, MainUI):
         query = "INSERT INTO buybill_details (buybill_id, item_price, item_qty, item_discount, item_id) SELECT %s,%s,%s,%s, (SELECT id FROM item WHERE item_barcode=%s) "
         self.cur.execute(query, (bill_id, price, qty, discount, code))
         self.db.commit()
+        self.lineEdit_73.setText('')
+        self.lineEdit_68.setText('')
+        self.lineEdit_69.setText('0')
+        self.lineEdit_66.setText('')
+        self.lineEdit_70.setText('0')
+        self.lineEdit_71.setText('0')
+        self.lineEdit_65.setText('0')
+        self.buy_item_table_fill()
+
 
     def total_buy_unit(self):
         qty = self.lineEdit_69.text()

@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>5</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -4460,7 +4460,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_12">
        <attribute name="title">
@@ -5325,11 +5325,6 @@
         </property>
         <column>
          <property name="text">
-          <string>مسلسل</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>اسم الصنف</string>
          </property>
         </column>
@@ -5345,16 +5340,6 @@
         </column>
         <column>
          <property name="text">
-          <string>رقم الفاتورة</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>اسم المورد</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>سعر الوحدة</string>
          </property>
         </column>
@@ -5366,11 +5351,6 @@
         <column>
          <property name="text">
           <string>الخصم</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>سعر البيع</string>
          </property>
         </column>
         <column>
@@ -5481,7 +5461,7 @@
          <set>Qt::ImhDigitsOnly|Qt::ImhFormattedNumbersOnly</set>
         </property>
         <property name="text">
-         <string/>
+         <string>0</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
