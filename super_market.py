@@ -1839,26 +1839,18 @@ class Main(QMainWindow, MainUI):
         self.pushButton_37.setEnabled(True)
         self.pushButton_39.setEnabled(True)
 
-    def buy_bill_item_update(self):
+    def buy_bill_item_update(self):        
         
-        row = self.tableWidget_11.currentItem().row()
-        id = self.tableWidget_11.item(row, 0).text()        
-        bb_id = self.lineEdit_73.text()
-        item_name = self.comboBox_12.currentText()
-        invoice_no = self.lineEdit_72.text()
-        buy_unit = self.lineEdit_68.text()
-        buy_unit_count = self.lineEdit_69.text()
-        unit_price = self.lineEdit_70.text()
-        sale_unit = self.lineEdit_71.text()        
-        item_count_peruint = self.lineEdit_66.text()
-        item_buy_price = self.lineEdit_74.text()        
-        total_buy = self.lineEdit_67.text()               
+        name = self.lineEdit_68.text()        
+        unit = self.lineEdit_66.text()
+        qty = self.lineEdit_69.text()
+        price = self.lineEdit_71.text()
+        public_price = self.lineEdit_65.text()
+        total = self.lineEdit_67.text()
+        discount = self.lineEdit_70.text()
         
-        self.cur.execute(''' UPDATE buypill_details SET item_name=%s, buy_invoice_no=%s, \
-            buy_unit=%s, buy_unit_count=%s, unit_price=%s, \
-            sale_unit=%s, item_count_in_buyunit=%s, \
-            item_buy_price=%s, buy_item_sale=%s, \
-            total_buy=%s, total_sale=%s, buy_minus=%s, buy_earn=%s \
+        self.cur.execute(''' UPDATE buybill_details SET item_price=%s, item_qty=%s, \
+            item_discount=%s, item_total=%s,            
             WHERE id=%s AND buypill_id=%s
 
         ''', (item_name, invoice_no, buy_unit, buy_unit_count, \
