@@ -70,9 +70,10 @@ class Item(BaseModel):
 class Buybill_details(BaseModel):    
     buybill_id = ForeignKeyField(Buybill, on_update='CASCADE', on_delete='CASCADE')
     item_id = ForeignKeyField(Item)
-    item_price = DecimalField(max_digits=10, decimal_places=2)
+    item_price = DecimalField(max_digits=8, decimal_places=2)
     item_qty = DecimalField(max_digits=6, decimal_places=2)
-    item_discount = DecimalField(max_digits=4, decimal_places=2)
+    item_discount = DecimalField(max_digits=8, decimal_places=2)
+    item_total = DecimalField(max_digits=10, decimal_places=2)
     
 
 class Salebill(BaseModel):    

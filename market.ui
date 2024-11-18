@@ -1934,7 +1934,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="documentMode">
        <bool>false</bool>
@@ -4460,7 +4460,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_12">
        <attribute name="title">
@@ -4492,7 +4492,7 @@
         </property>
         <column>
          <property name="text">
-          <string>مسلسل</string>
+          <string>رقم الفاتورة</string>
          </property>
         </column>
         <column>
@@ -4507,22 +4507,7 @@
         </column>
         <column>
          <property name="text">
-          <string>رقم فاتورة المورد</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>اسم المورد</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>نقدي</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>آجل</string>
          </property>
         </column>
         <column>
@@ -4537,12 +4522,12 @@
         </column>
         <column>
          <property name="text">
-          <string>إجمالي سعر الشراء</string>
+          <string>الخصم</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>مصاريف اضافية</string>
+          <string>عدد الأصناف</string>
          </property>
         </column>
        </widget>
@@ -5359,24 +5344,6 @@
          </property>
         </column>
        </widget>
-       <widget class="QLabel" name="label_81">
-        <property name="geometry">
-         <rect>
-          <x>210</x>
-          <y>80</y>
-          <width>71</width>
-          <height>25</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>10</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>اسم المورد</string>
-        </property>
-       </widget>
        <widget class="QPushButton" name="pushButton_33">
         <property name="enabled">
          <bool>false</bool>
@@ -5446,9 +5413,9 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>640</x>
+          <x>600</x>
           <y>190</y>
-          <width>181</width>
+          <width>221</width>
           <height>25</height>
          </rect>
         </property>
@@ -5473,9 +5440,9 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>640</x>
+          <x>600</x>
           <y>110</y>
-          <width>181</width>
+          <width>221</width>
           <height>24</height>
          </rect>
         </property>
@@ -5599,9 +5566,9 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>640</x>
+          <x>600</x>
           <y>150</y>
-          <width>181</width>
+          <width>221</width>
           <height>25</height>
          </rect>
         </property>
@@ -5617,7 +5584,7 @@
          <string/>
         </property>
         <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
        <widget class="QLabel" name="label_95">
@@ -5644,9 +5611,9 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>640</x>
+          <x>600</x>
           <y>70</y>
-          <width>181</width>
+          <width>221</width>
           <height>24</height>
          </rect>
         </property>
@@ -5749,9 +5716,9 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>640</x>
+          <x>600</x>
           <y>30</y>
-          <width>181</width>
+          <width>221</width>
           <height>24</height>
          </rect>
         </property>
@@ -5885,21 +5852,6 @@
         </property>
         <property name="text">
          <string>رجــــوع</string>
-        </property>
-       </widget>
-       <widget class="QComboBox" name="comboBox_24">
-        <property name="geometry">
-         <rect>
-          <x>18</x>
-          <y>80</y>
-          <width>151</width>
-          <height>22</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-         </font>
         </property>
        </widget>
       </widget>
