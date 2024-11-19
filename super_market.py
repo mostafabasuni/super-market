@@ -174,7 +174,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_31.clicked.connect(self.buy_bill_save)
         self.pushButton_32.clicked.connect(self.buy_bill_add_new)
         self.pushButton_33.clicked.connect(self.buybill_details_add_new)
-        self.pushButton_34.clicked.connect(self.buy_bill_save_item)
+        
         self.pushButton_35.clicked.connect(self.buy_bill_update)
 
         self.pushButton_36.clicked.connect(self.buy_bill_item_search)
@@ -991,6 +991,7 @@ class Main(QMainWindow, MainUI):
 
 
         self.company_table_fill()
+        self.company_combo_fill()
         self.pushButton_23.setEnabled(False)
 
     def company_update(self):
@@ -1325,52 +1326,6 @@ class Main(QMainWindow, MainUI):
         self.pushButton_33.setEnabled(True)
         self.pushButton_41.setEnabled(True)        
         
-    def buy_bill_save_item(self):
-        minus = float(self.lineEdit_58.text())
-        totalB = float(self.lineEdit_56.text())        
-        totalG = float(self.lineEdit_57.text())
-        buypill_id = self.lineEdit_73.text()
-        invoice_no = self.lineEdit_72.text()
-        item_name = self.comboBox_12.currentText()
-        buy_unit = self.lineEdit_68.text()
-        buy_unit_count = self.lineEdit_69.text()
-        unit_price = self.lineEdit_70.text()
-        sale_unit = self.lineEdit_71.text()        
-        total_buy = self.lineEdit_67.text()
-        item_count_peruint = self.lineEdit_66.text()
-        item_buy_price = self.lineEdit_74.text()        
-        total_sale = self.lineEdit_54.text() 
-        buy_minus = self.lineEdit_55.text()      
-        minus += float(self.lineEdit_55.text())        
-        buy_earn = self.lineEdit_53.text()
-        totalB += float(self.lineEdit_67.text())        
-        self.lineEdit_56.setText(str(totalB))
-        totalG += float(self.lineEdit_54.text())
-        self.lineEdit_57.setText(str(totalG))
-        self.lineEdit_58.setText(str(minus)) 
-
-        self.cur.execute('''
-            INSERT INTO buypill_details( buypill_id, item_name, buy_invoice_no, buy_unit, buy_unit_count, unit_price, sale_unit, item_count_in_buyunit, item_buy_price, buy_item_sale, total_buy, total_sale, buy_minus, buy_earn)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-              ''',(buypill_id, item_name, invoice_no, buy_unit, buy_unit_count, unit_price, sale_unit, item_count_peruint, item_buy_price, buy_item_sale, total_buy, total_sale, buy_minus, buy_earn))
-
-        self.cur.execute(''' SELECT item_qty FROM items WHERE item_name=%s ''', [(item_name)])
-        data = self.cur.fetchone()        
-        
-        item_qty = int(buy_unit_count) + data[0]
-
-        self.cur.execute(''' UPDATE items SET item_qty=%s, item_price=%s WHERE item_name=%s'''
-        , (item_qty, buy_item_sale, item_name))        
-
-        self.db.commit()
-        self.pushButton_31.setEnabled(True)
-        self.pushButton_34.setEnabled(False)
-        self.pushButton_32.setEnabled(False)
-        self.pushButton_38.setEnabled(False)
-        self.buy_item_table_fill()
-        self.buy_bill_add_new()
-        QMessageBox.warning(self, 'رسالة تأكيد', 'تم حفظ البيانات بنجاج', QMessageBox.Ok)
-
     def buy_item_table_fill(self):        
                
         bill_id = self.lineEdit_72.text()
@@ -1400,13 +1355,12 @@ class Main(QMainWindow, MainUI):
         #if self.lineEdit_52.text() == '':
         #    QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم الفاتورة ', QMessageBox.Ok)
         #    return        
-        #self.cur.execute("SELECT * FROM buybill WHERE id=(SELECT max(id) FROM buybill)")
-        self.cur.execute("SELECT MAX(id), buy_total_price FROM buybill")
+        self.cur.execute("SELECT id, buy_total_price FROM buybill WHERE id=(SELECT max(id) FROM buybill)")        
         data = self.cur.fetchone()        
-        if data != (None, None) and data[1] == 0:
+        if data != None and data[1] == 0:
             id = data[0]
         else:
-            if data == (None, None):
+            if data == None:
                 id = 1
             elif data[1] != 0:
                 id = data[0] + 1
@@ -1428,13 +1382,19 @@ class Main(QMainWindow, MainUI):
                 # Rollback the transaction if an error occurs
                 self.db.rollback()
                 print(f"Error: {e}")        
-            
-        self.lineEdit_52.setText(str(id))
-        #self.lineEdit_73.setText(str(id[0]+1))
+
+        self.lineEdit_73.setText('')
+        self.lineEdit_68.setText('')
+        self.lineEdit_69.setText('0')
+        self.lineEdit_66.setText('')
+        self.lineEdit_70.setText('0')
+        self.lineEdit_71.setText('0')
+        self.lineEdit_65.setText('0')    
+        self.lineEdit_52.setText(str(id))        
         self.lineEdit_72.setText(self.lineEdit_52.text())
         self.pushButton_33.setEnabled(True)
         self.pushButton_34.setEnabled(False)
-        self.pushButton_36.setEnabled(False)
+        self.pushButton_36.setEnabled(True)
         self.pushButton_37.setEnabled(False)
         self.pushButton_39.setEnabled(False)
         self.pushButton_43.setEnabled(False)        
@@ -1667,7 +1627,7 @@ class Main(QMainWindow, MainUI):
         self.groupBox_14.show()
         self.tableWidget_10.setRowCount(0)
         self.tableWidget_10.insertRow(0)        
-        sql = "SELECT * FROM buypill"
+        sql = "SELECT * FROM buybill"
         self.cur.execute(sql)
         data = self.cur.fetchall()
         for row, form in enumerate(data):
@@ -1788,15 +1748,34 @@ class Main(QMainWindow, MainUI):
         self.groupBox_14.hide()
 
     def buy_bill_item_search(self):
-        if self.lineEdit_73.text() == '':
-            QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل الرقم المرجعي للفاتورة', QMessageBox.Ok)
+
+        self.lineEdit_72.setEnabled(True)
+        bb_id = self.lineEdit_72.text()
+        code = self.lineEdit_73.text()
+        if self.lineEdit_72.text() == '' or self.lineEdit_73.text()=='':
+            QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم الفاتورة والباركود', QMessageBox.Ok)
             return
 
-        self.tableWidget_11.setRowCount(0)
-        self.tableWidget_11.insertRow(0)
-        bp_id = self.lineEdit_73.text()
-        sql = "SELECT * FROM buypill_details WHERE buypill_id = %s"
-        self.cur.execute(sql, [((bp_id))])
+        query = '''SELECT b.*,item_name, i.item_unit, i.item_public_price
+            FROM buybill_details b
+            LEFT JOIN item i 
+            ON i.item_barcode = %s
+            WHERE b.buybill_id = %s AND b.item_id=i.id
+            '''
+        self.cur.execute(query, (code, int(bb_id)))        
+        data = self.cur.fetchone()
+
+        if data == None:
+            QMessageBox.warning(self, 'بيانات خاطئة', 'هذا المنتج لايوجد في هذه الفاتورة', QMessageBox.Ok)
+            return
+        
+        self.lineEdit_68.setText(data[7])
+        self.lineEdit_69.setText(str(data[4]))
+        self.lineEdit_70.setText(str(data[5]))
+        self.lineEdit_71.setText(str(data[3]))
+        self.lineEdit_67.setText(str(data[6]))
+        self.lineEdit_65.setText(str(data[9]))          
+        self.lineEdit_66.setText(str(data[8]))
         data = self.cur.fetchall()
         for row, form in enumerate(data):
             for col, item in enumerate(form):
@@ -1839,27 +1818,42 @@ class Main(QMainWindow, MainUI):
         self.pushButton_37.setEnabled(True)
         self.pushButton_39.setEnabled(True)
 
-    def buy_bill_item_update(self):        
-        
+    def buy_bill_item_update(self):
+
+        code = self.lineEdit_73.text()
+        bb_id = self.lineEdit_72.text()
         name = self.lineEdit_68.text()        
         unit = self.lineEdit_66.text()
-        qty = self.lineEdit_69.text()
-        price = self.lineEdit_71.text()
-        public_price = self.lineEdit_65.text()
-        total = self.lineEdit_67.text()
-        discount = self.lineEdit_70.text()
-        
-        self.cur.execute(''' UPDATE buybill_details SET item_price=%s, item_qty=%s, \
-            item_discount=%s, item_total=%s,            
-            WHERE id=%s AND buypill_id=%s
+        qty = Decimal(self.lineEdit_69.text())
+        price = Decimal(self.lineEdit_71.text())
+        public_price = Decimal(self.lineEdit_65.text())
+        total = Decimal(self.lineEdit_67.text())
+        discount = Decimal(self.lineEdit_70.text())        
 
-        ''', (item_name, invoice_no, buy_unit, buy_unit_count, \
-           unit_price, sale_unit, item_count_peruint, \
-            item_buy_price, buy_item_sale, total_buy, \
-            total_sale, buy_minus, buy_earn, id, buypill_id ))
+        sql = '''
+            UPDATE buybill_details b
+            JOIN item i ON i.item_barcode = %s
+            SET 
+                b.item_price = %s, 
+                b.item_qty = %s, 
+                b.item_discount = %s, 
+                b.item_total = %s, 
+                i.item_name = %s, 
+                i.item_unit = %s, 
+                i.item_price = %s, 
+                i.item_qty = %s, 
+                i.item_discount = %s, 
+                i.item_public_price = %s
+            WHERE 
+                b.buybill_id = %s 
+                AND b.item_id = i.id;
+            '''
+        params = (code, price, qty, discount, total, name, unit, price, qty, discount, public_price, bb_id)
 
-        #self.execute("UPDATE buypill SET buy_totalB=%s, buy_totalG=%s, buy_minus=%s WHERE id=%s",(total_buy, total_sale, buy_minus, buypill_id))
-        self.db.commit() 
+            # تنفيذ الاستعلام
+        self.cur.execute(sql, params)
+
+        self.db.commit()
         self.buy_item_table_fill()
         
         self.pushButton_37.setEnabled(False)
