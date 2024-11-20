@@ -1477,20 +1477,19 @@ class Main(QMainWindow, MainUI):
     def buybill_table_select(self):
         row = self.tableWidget_10.currentItem().row()
         buybill_id = self.tableWidget_10.item(row, 0).text()
-        importer = self.tableWidget_10.item(row, 3).text()
-        user = self.tableWidget_10.item(row, 4).text()
-        
+        importer_id = int(self.tableWidget_10.item(row, 3).text())
+        user_id = int(self.tableWidget_10.item(row, 4).text())        
         
         # Combined SQL query with JOINs to get user_fullname and grp_name in one query
         sql = f'''
         SELECT b.*, i.importer_name, i.importer_phone, u.user_fullname
         FROM buybill b
-        LEFT JOIN importer i ON i.importer_name = '{importer}'
-        LEFT JOIN user u ON u.user_fullname = '{user}'
+        LEFT JOIN importer i ON i.id = '{importer_id}'
+        LEFT JOIN user u ON u.id = '{user_id}'
         WHERE b.id = {buybill_id}
         '''        
         self.cur.execute(sql)
-        data = self.cur.fetchone()
+        data = self.cur.fetchone()        
        
         h, m, s = map(int, (str(data[2])).split(":"))
         x = QTime(h, m)
@@ -1649,7 +1648,7 @@ class Main(QMainWindow, MainUI):
             row = self.lineEdit_32.text()            
         else:
             invoice_no = self.lineEdit_33.text()            
-            self.cur.execute(f"SELECT id FROM buypill WHERE buy_invoice_no={invoice_no}")
+            self.cur.execute(f"SELECT id FROM buybill WHERE buy_invoice_no={invoice_no}")
             row = self.cur.fetchone() 
                    
             if row == None:
@@ -1657,7 +1656,7 @@ class Main(QMainWindow, MainUI):
                 return
             else:
                 row = row[0]
-        self.cur.execute("SELECT id FROM buypill ORDER BY id")
+        self.cur.execute("SELECT id FROM buybill ORDER BY id")
         id_s = self.cur.fetchall()        
         for i in range(len(id_s)):
             rows.append(id_s[i][0])            
