@@ -61,7 +61,7 @@ class Item(BaseModel):
     item_name = CharField(max_length= 100, null=False)
     item_barcode = BigIntegerField(null=False, unique=True)
     item_unit = CharField(max_length = 50)
-    item_buybill_id = ForeignKeyField(Buybill) # رقم فاتورة المورد     
+    item_buybill_id = ForeignKeyField(Buybill, on_update='CASCADE', on_delete='CASCADE') # رقم الفاتورة    
     item_price = DecimalField(max_digits=10, decimal_places=2) # سعر شراء المنتج
     item_qty = DecimalField(max_digits=10, decimal_places=2, null=False)
     item_discount = DecimalField(max_digits=6, decimal_places=2)
