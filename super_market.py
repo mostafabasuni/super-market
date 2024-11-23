@@ -69,7 +69,7 @@ class Main(QMainWindow, MainUI):
 
 
         self.checkBox.stateChanged.connect(self.user_enabled)        
-        self.comboBox_9.currentTextChanged.connect(self.imp_info)
+        self.comboBox_9.currentTextChanged.connect(self.importer_info)
         self.comboBox_15.activated.connect(self.shift_change)
         self.lineEdit_3.textEdited.connect(self.user_save_enabled)
         self.lineEdit_10.textEdited.connect(self.customer_save_enabled)
@@ -77,7 +77,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_25.textEdited.connect(self.item_save_enabled)    
         self.lineEdit_36.textEdited.connect(self.grp_save_enabled)
         self.lineEdit_38.textEdited.connect(self.company_save_enabled)
-        self.lineEdit_71.textChanged.connect(self.total_buy_unit)
+        self.lineEdit_71.textChanged.connect(self.buy_unit_total)
         
         
         self.lineEdit_75.textEdited.connect(self.rebuypill_save_but)
@@ -87,7 +87,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_86.returnPressed.connect(self.get_sale_item_info)
         self.lineEdit_87.textChanged.connect(self.visa)
         # self.lineEdit_84.textChanged.connect(self.sale_item_add)        
-        # self.tableWidget_11.selectionModel().selectionChanged.connect(self.buybill_details_table_select)
+        # self.tableWidget_11.selectionModel().selectionChanged.connect(self.buy_item_table_select)
         self.tableWidget.itemClicked.connect(self.user_table_select)
         self.tableWidget_2.itemClicked.connect(self.customer_table_select)
         self.tableWidget_3.itemClicked.connect(self.importer_table_select)
@@ -95,7 +95,7 @@ class Main(QMainWindow, MainUI):
         self.tableWidget_5.itemClicked.connect(self.grp_table_select)
         self.tableWidget_6.itemClicked.connect(self.company_table_select)        
         self.tableWidget_10.itemClicked.connect(self.buybill_table_select)
-        self.tableWidget_11.itemClicked.connect(self.buybill_details_table_select)
+        self.tableWidget_11.itemClicked.connect(self.buy_item_table_select)
         self.tableWidget_12.itemClicked.connect(self.rebuy_item_select)
         self.tableWidget_13.itemClicked.connect(self.sale_item_select)
 
@@ -171,25 +171,25 @@ class Main(QMainWindow, MainUI):
         self.pushButton_29.clicked.connect(self.hodor_update)
         self.pushButton_30.clicked.connect(self.hodor_report)
 
-        self.pushButton_31.clicked.connect(self.buy_bill_save)
-        self.pushButton_32.clicked.connect(self.buy_bill_add_new)
-        self.pushButton_33.clicked.connect(self.buybill_details_add_new)
+        self.pushButton_31.clicked.connect(self.buybill_save)
+        self.pushButton_32.clicked.connect(self.buybill_add_new)
+        self.pushButton_33.clicked.connect(self.buy_item_add_new)
         
-        self.pushButton_35.clicked.connect(self.buy_bill_update)
+        self.pushButton_35.clicked.connect(self.buybill_update)
 
-        self.pushButton_36.clicked.connect(self.buy_bill_item_search)
-        self.pushButton_37.clicked.connect(self.buy_bill_item_update)
-        self.pushButton_38.clicked.connect(self.buy_bill_search)
-        self.pushButton_39.clicked.connect(self.buy_bill_item_delete)
-        self.pushButton_40.clicked.connect(self.buy_bill_delete)
+        self.pushButton_36.clicked.connect(self.buy_item_search)
+        self.pushButton_37.clicked.connect(self.buy_item_update)
+        self.pushButton_38.clicked.connect(self.buybill_search)
+        self.pushButton_39.clicked.connect(self.buy_item_delete)
+        self.pushButton_40.clicked.connect(self.buybill_delete)
 
-        self.pushButton_41.clicked.connect(self.buy_bill_return_to)
+        self.pushButton_41.clicked.connect(self.buybill_return_to)
         self.pushButton_42.clicked.connect(self.row_go)
-        self.pushButton_43.clicked.connect(self.buy_bill_return)
-        self.pushButton_44.clicked.connect(self.rebuy_bill_add)
-        self.pushButton_45.clicked.connect(self.rebuy_bill_save)
+        self.pushButton_43.clicked.connect(self.buybill_return)
+        self.pushButton_44.clicked.connect(self.rebuybill_add)
+        self.pushButton_45.clicked.connect(self.rebuybill_save)
 
-        self.pushButton_46.clicked.connect(self.rebuy_bill_search)
+        self.pushButton_46.clicked.connect(self.rebuybill_search)
         self.pushButton_47.clicked.connect(self.rebuypill_update)
         self.pushButton_48.clicked.connect(self.rebuy_delete)
         self.pushButton_49.clicked.connect(self.sale_item_update)        
@@ -210,6 +210,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_63.clicked.connect(self.buy_range_report)
         self.pushButton_64.clicked.connect(self.Items_inventory)
         self.pushButton_65.clicked.connect(self.salebill_print)
+        self.pushButton_66.clicked.connect(self.toggle_keypad)
 
 # =========== Usuers ===========
     def user_save_enabled(self):
@@ -371,6 +372,30 @@ class Main(QMainWindow, MainUI):
 
         self.db.commit()       
         self.user_table_fill()
+
+    def user_combo_fill(self):
+        self.comboBox_7.clear()
+        self.comboBox_8.clear()        
+        self.comboBox_11.clear()
+        self.comboBox_14.clear()
+        self.comboBox_15.clear()
+        self.comboBox_20.clear()
+        self.comboBox_17.clear()
+        self.comboBox_18.clear()
+        self.comboBox_19.clear()
+        self.cur.execute('''SELECT user_fullname, user_job FROM user ORDER BY id ''')
+        users = self.cur.fetchall()        
+        for user in users:            
+            self.comboBox_7.addItem(user[0])
+            self.comboBox_8.addItem(user[0])            
+            self.comboBox_11.addItem(user[0])    
+            self.comboBox_14.addItem(user[0])
+            if user[1] == 'كاشير' :
+                self.comboBox_15.addItem(user[0])
+                self.comboBox_20.addItem(user[0])
+            self.comboBox_17.addItem(user[0])
+            self.comboBox_18.addItem(user[0])
+            self.comboBox_19.addItem(user[0])
 
 # =========== Customers ===========
     
@@ -658,10 +683,18 @@ class Main(QMainWindow, MainUI):
         id = self.lineEdit_17.text()
         sql = ('''DELETE FROM importer WHERE id = %s ''')
         self.cur.execute(sql, [(id)])
-
         self.db.commit()       
         self.importer_table_fill()
         self.importer_clear()
+
+    def importer_info(self):
+        imp_name = self.comboBox_9.currentText()
+        sql = '''SELECT importer_phone, importer_balance FROM importer WHERE importer_name=%s'''
+        self.cur.execute(sql, [(imp_name)])
+        data = self.cur.fetchone()
+        self.lineEdit_49.setText(str(data[0]))
+        self.lineEdit_50.setText(str(data[1]))
+
     def importer_combo_fill(self):        
         self.comboBox_9.clear()        
         self.comboBox_10.clear()
@@ -669,7 +702,8 @@ class Main(QMainWindow, MainUI):
         importers = self.cur.fetchall()
         for importer in importers:
             self.comboBox_9.addItem(importer[0])           
-            self.comboBox_10.addItem(importer[0])
+            self.comboBox_10.addItem(importer[0])   
+    
 # =========== Items ===========
     def item_save_enabled(self):
         self.pushButton_17.setEnabled(True)
@@ -824,6 +858,22 @@ class Main(QMainWindow, MainUI):
         self.pushButton_16.setEnabled(True)        
         self.pushButton_18.setEnabled(False)
         self.pushButton_19.setEnabled(False)
+
+    def item_combo_fill(self):        
+        self.comboBox_13.clear()
+        self.comboBox_16.clear()
+        self.cur.execute('''SELECT item_name FROM item ORDER BY id ''')
+        items = self.cur.fetchall()
+        for item in items:            
+            self.comboBox_13.addItem(item[0])
+            self.comboBox_16.addItem(item[0])
+
+
+    def item_pill_save_but(self):
+        if self.pushButton_37.isEnabled():
+            self.pushButton_34.setEnabled(False)
+        else:
+            self.pushButton_34.setEnabled(True)
 
 # =========== Groups ===========
 
@@ -1267,261 +1317,9 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_47.setText(str(row_pos))
         self.lineEdit_48.setText(str(total_time))
 
-#=========== فاتورة الشراء ===========
-    def importer_combo_fill(self):
-        self.comboBox_9.clear()
-        self.comboBox_10.clear()       
-        self.cur.execute('''SELECT importer_name, importer_phone, importer_balance FROM importer ORDER BY id ''')
-        importers = self.cur.fetchall()
-        # self.lineEdit_49.setText(str(importers[0][1]))
-        # self.lineEdit_50.setText(str(importers[0][2]))
-        for importer in importers:
-            self.comboBox_9.addItem(importer[0])
-            self.comboBox_10.addItem(importer[0])            
+#=========== فاتورة الشراء =========== 
 
-    def user_combo_fill(self):
-        self.comboBox_7.clear()
-        self.comboBox_8.clear()        
-        self.comboBox_11.clear()
-        self.comboBox_14.clear()
-        self.comboBox_15.clear()
-        self.comboBox_20.clear()
-        self.comboBox_17.clear()
-        self.comboBox_18.clear()
-        self.comboBox_19.clear()
-        self.cur.execute('''SELECT user_fullname, user_job FROM user ORDER BY id ''')
-        users = self.cur.fetchall()        
-        for user in users:            
-            self.comboBox_7.addItem(user[0])
-            self.comboBox_8.addItem(user[0])            
-            self.comboBox_11.addItem(user[0])    
-            self.comboBox_14.addItem(user[0])
-            if user[1] == 'كاشير' :
-                self.comboBox_15.addItem(user[0])
-                self.comboBox_20.addItem(user[0])
-            self.comboBox_17.addItem(user[0])
-            self.comboBox_18.addItem(user[0])
-            self.comboBox_19.addItem(user[0])
-            
-
-    def item_combo_fill(self):        
-        self.comboBox_13.clear()
-        self.comboBox_16.clear()
-        self.cur.execute('''SELECT item_name FROM item ORDER BY id ''')
-        items = self.cur.fetchall()
-        for item in items:            
-            self.comboBox_13.addItem(item[0])
-            self.comboBox_16.addItem(item[0])
-    
-    def imp_info(self):
-        imp_name = self.comboBox_9.currentText()
-        sql = '''SELECT importer_phone, importer_balance FROM importer WHERE importer_name=%s'''
-        self.cur.execute(sql, [(imp_name)])
-        data = self.cur.fetchone()
-        self.lineEdit_49.setText(str(data[0]))
-        self.lineEdit_50.setText(str(data[1]))
-
-    def buy_bill_add_new(self):
-        self.lineEdit_68.setText('')
-        self.lineEdit_71.setText('')
-        self.lineEdit_67.setText('0')
-        self.lineEdit_69.setText('1')
-        self.lineEdit_70.setText('0')
-        self.lineEdit_66.setText('1')        
-        self.lineEdit_55.setText('0')
-        self.lineEdit_74.setText('0')
-        self.lineEdit_54.setText('0')
-        self.lineEdit_53.setText('0')
-        self.pushButton_37.setEnabled(False)
-        self.pushButton_39.setEnabled(False)
-        self.pushButton_33.setEnabled(True)
-        self.pushButton_41.setEnabled(True)        
-        
-    def buy_item_table_fill(self):        
-               
-        bill_id = self.lineEdit_72.text()
-        self.tableWidget_11.setRowCount(0)
-        self.tableWidget_11.insertRow(0)
-        sql = f''' SELECT i.item_name, i.item_barcode, i.item_unit,
-        b.item_price, b.item_qty, b.item_discount, b.item_total
-        FROM buybill_details b 
-        LEFT JOIN item i ON b.item_id = i.id
-        WHERE b.buybill_id = {bill_id}
-        '''
-        self.cur.execute(sql)
-        data = self.cur.fetchall()        
-        for row, form in enumerate(data):
-            for col, item in enumerate(form):
-                self.tableWidget_11.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_11.rowCount()
-            self.tableWidget_11.insertRow(row_pos)
-
-    def buy_bill_add_new(self):
-        importer_name = self.comboBox_9.currentText()
-        user_name = self.comboBox_11.currentText()
-        buy_date = self.dateEdit_11.date().toString(Qt.ISODate)        
-        buy_time = self.timeEdit_9.time().toString(Qt.ISODate)
-
-        #if self.lineEdit_52.text() == '':
-        #    QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم الفاتورة ', QMessageBox.Ok)
-        #    return        
-        self.cur.execute("SELECT id, buy_total_price FROM buybill WHERE id=(SELECT max(id) FROM buybill)")        
-        data = self.cur.fetchone()        
-        if data != None and data[1] == 0:
-            id = data[0]
-        else:
-            if data == None:
-                id = 1
-            elif data[1] != 0:
-                id = data[0] + 1
-            # Combine the SELECT queries into the INSERT statement
-            insert_sql = '''
-                INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
-                SELECT %s,%s,%s,
-                    (SELECT id FROM importer WHERE importer_name = %s),
-                    (SELECT id FROM user WHERE user_fullname = %s)                
-            '''        
-            # Execute the combined query
-            try:
-                self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
-                
-                # Commit the transaction
-                self.db.commit()
-
-            except Exception as e:
-                # Rollback the transaction if an error occurs
-                self.db.rollback()
-                print(f"Error: {e}")        
-
-        self.lineEdit_73.setText('')
-        self.lineEdit_68.setText('')
-        self.lineEdit_69.setText('0')
-        self.lineEdit_66.setText('')
-        self.lineEdit_70.setText('0')
-        self.lineEdit_71.setText('0')
-        self.lineEdit_65.setText('0')    
-        self.lineEdit_52.setText(str(id))        
-        self.lineEdit_72.setText(self.lineEdit_52.text())
-        self.pushButton_33.setEnabled(True)
-        self.pushButton_34.setEnabled(False)
-        self.pushButton_36.setEnabled(True)
-        self.pushButton_37.setEnabled(False)
-        self.pushButton_39.setEnabled(False)
-        self.pushButton_43.setEnabled(False)        
-        self.tabWidget_4.setCurrentIndex(1)
-    
-    def buybill_table_fill(self):
-        bill_id = self.lineEdit_52.text()
-        self.tableWidget_10.setRowCount(0)
-        self.tableWidget_10.insertRow(0)
-        sql = f''' SELECT b.id, b.buy_date, b.buy_time, i.importer_name,
-        u.user_fullname, b.buy_total_price, b.buy_discount, b.buy_item_count
-        FROM buybill b 
-        LEFT JOIN importer i ON i.id = b.buy_importer_id
-        LEFT JOIN user u ON u.id = b.buy_user_id
-        WHERE b.id = {bill_id}
-        '''        
-        self.cur.execute(sql)
-        data = self.cur.fetchall()        
-       
-        for row, form in enumerate(data):
-            for col, item in enumerate(form):
-                self.tableWidget_10.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_10.rowCount()
-            self.tableWidget_10.insertRow(row_pos)
-
-    def buy_bill_return_to(self):
-        self.pushButton_33.setEnabled(True)
-        self.pushButton_34.setEnabled(False)
-        self.pushButton_36.setEnabled(True)
-        self.pushButton_37.setEnabled(False)
-        self.pushButton_39.setEnabled(False)
-        self.pushButton_41.setEnabled(False)
-        self.tableWidget_11.setRowCount(0)
-        self.tableWidget_11.insertRow(0)        
-        self.lineEdit_54.setText('0')
-        self.lineEdit_55.setText('0')        
-        self.lineEdit_66.setText('1')
-        self.lineEdit_67.setText('0')
-        self.lineEdit_68.setText('')
-        self.lineEdit_69.setText('1')
-        self.lineEdit_70.setText('0')
-        self.lineEdit_71.setText('')
-        self.lineEdit_72.setText('')
-        self.lineEdit_73.setText('')
-        self.lineEdit_74.setText('0')
-        self.lineEdit_53.setText('0')
-        self.pushButton_33.setEnabled(False)
-        self.tabWidget_4.setCurrentIndex(0)
-
-    def buy_bill_save(self):
-        buybill_date = self.dateEdit_11.date().toString(QtCore.Qt.ISODate)        
-        buybill__time = self.timeEdit_9.time().toString(QtCore.Qt.ISODate)        
-        buybill_id = self.lineEdit_52.text()
-        importer = self.comboBox_9.currentText()
-        user = self.comboBox_11.currentText()
-        total = Decimal(self.lineEdit_57.text())
-        diccount = Decimal(self.lineEdit_56.text())
-        count = Decimal(self.lineEdit_58.text())
-    
-        self.cur.execute('''
-            UPDATE buybill SET buy_total_price=%s, buy_discount=%s, buy_item_count=%s
-            WHERE id=%s ''',(total, diccount, count, buybill_id))
-                
-        self.db.commit()
-
-        self.buybill_table_fill()
-        
-        self.lineEdit_51.setText('')
-        self.lineEdit_52.setText('')
-        self.lineEdit_72.setText('')
-        self.lineEdit_73.setText('')
-        self.pushButton_31.setEnabled(False)
-        self.pushButton_32.setEnabled(True)
-        self.pushButton_34.setEnabled(False)
-        self.pushButton_36.setEnabled(True)
-        self.pushButton_38.setEnabled(True)
-        self.pushButton_43.setEnabled(True)       
-
-    def buybill_table_select(self):
-        row = self.tableWidget_10.currentItem().row()
-        buybill_id = self.tableWidget_10.item(row, 0).text()
-        importer_id = int(self.tableWidget_10.item(row, 3).text())        
-        user_id = int(self.tableWidget_10.item(row, 4).text())        
-        
-        # Combined SQL query with JOINs to get user_fullname and grp_name in one query
-        sql = f'''
-        SELECT b.*, i.importer_name, i.importer_phone, u.user_fullname
-        FROM buybill b
-        LEFT JOIN importer i ON i.id = '{importer_id}'
-        LEFT JOIN user u ON u.id = '{user_id}'
-        WHERE b.id = {buybill_id}
-        '''        
-        self.cur.execute(sql)
-        data = self.cur.fetchone()       
-       
-        h, m, s = map(int, (str(data[2])).split(":"))
-        x = QTime(h, m)
-        self.lineEdit_52.setText(str(data[0]))
-        self.dateEdit_11.setDate(data[1])
-        self.timeEdit_9.setTime(x)
-        self.lineEdit_52.setText(str(data[0]))
-        self.lineEdit_72.setText(str(data[0]))
-        self.lineEdit_57.setText(str(data[5]))
-        self.lineEdit_56.setText(str(data[6]))
-        self.lineEdit_58.setText(str(data[7]))
-        self.comboBox_9.setCurrentText(data[8])
-        self.lineEdit_49.setText(str(data[9]))
-        self.comboBox_11.setCurrentText(data[10])
-        self.pushButton_32.setEnabled(False)
-        self.pushButton_35.setEnabled(True)
-        self.pushButton_40.setEnabled(True)
-        self.buy_item_table_fill()    
-           
-
-    def buybill_details_add_new(self):
+    def buy_item_add_new(self):
         code = self.lineEdit_73.text()
         name = self.lineEdit_68.text()
         qty = self.lineEdit_69.text()
@@ -1579,174 +1377,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_31.setEnabled(True)
         self.buy_item_table_fill()
 
-
-    def total_buy_unit(self):
-        qty = Decimal(self.lineEdit_69.text())
-        unit_price = Decimal(self.lineEdit_71.text())        
-        x = qty * unit_price
-        self.lineEdit_67.setText(str(x))
-        
-         
-    def buy_item_price(self):
-        ''' 
-        qty = self.lineEdit_69.text()
-        item_count_peruint = self.lineEdit_66.text()
-        x = int(qty) * int(item_count_peruint)
-        total_buy = self.lineEdit_67.text()        
-        y = float(total_buy) / x
-        y = float("{:.2f}".format(y))
-        item_buy_price = self.lineEdit_74.setText(str(y))
-        item_buy_price = self.lineEdit_74.text()
-        self.total_sale_price
-        '''
-    def total_sale_price(self):
-        buy_unit_count = self.lineEdit_69.text()
-        item_count_peruint = self.lineEdit_66.text()
-        total_buy = self.lineEdit_67.text()
-        x = float(total_buy)        
-        y = int(buy_unit_count) * int(item_count_peruint) * float(buy_item_sale)
-        total_sale = self.lineEdit_54.setText(str(y))
-        total_sale = self.lineEdit_54.text()
-        #self.lineEdit_57.setText(self.lineEdit_54.text())
-        buy_minus = self.lineEdit_55.text()
-        z = x + float(buy_minus)
-        buy_earn = self.lineEdit_53.setText(str(y-z))
-        buy_earn = self.lineEdit_53.text()
-
-    def total_earn(self):
-        x = self.lineEdit_67.text()
-        y = self.lineEdit_54.text()
-        z = self.lineEdit_55.text()
-        i = float(y) - float(x) - float(z)
-        buy_earn = self.lineEdit_53.setText(str(i))
-        buy_earn = self.lineEdit_53.text()
-    
-    def item_pill_save_but(self):
-        if self.pushButton_37.isEnabled():
-            self.pushButton_34.setEnabled(False)
-        else:
-            self.pushButton_34.setEnabled(True)
-
-    def buy_bill_update(self):
-        bb_id = self.lineEdit_52.text()
-        date = self.dateEdit_11.date().toString(QtCore.Qt.ISODate)        
-        time = self.timeEdit_9.time().toString(QtCore.Qt.ISODate)        
-        importer = self.comboBox_9.currentText()
-        user = self.comboBox_11.currentText()        
-
-        self.cur.execute('''
-            UPDATE buybill SET buy_date=%s, buy_time=%s, 
-            buy_importer_id=(SELECT id FROM importer WHERE importer_name=%s), 
-            buy_user_id=(SELECT id FROM user WHERE user_fullname=%s)  WHERE id=%s
-              ''',(date, time, importer, user, bb_id))
-        
-        self.db.commit()
-        self.buybill_table_fill()        
-        QMessageBox.warning(self, 'تعديل بيانات', 'لقد تم تعديل البيانات بنجاح', QMessageBox.Ok )
-        self.buy_bill_return()
-        self.lineEdit_56.setText('0')
-        self.lineEdit_57.setText('0')
-        self.lineEdit_58.setText('0')
-
-    def buy_bill_search(self):
-        self.groupBox_14.show()
-        self.tableWidget_10.setRowCount(0)
-        self.tableWidget_10.insertRow(0)        
-        sql = "SELECT * FROM buybill"
-        self.cur.execute(sql)
-        data = self.cur.fetchall()
-        for row, form in enumerate(data):
-            for col, item in enumerate(form):
-                self.tableWidget_10.setItem(row, col, QTableWidgetItem(str(item)))
-                col += 1
-            row_pos = self.tableWidget_10.rowCount()
-            self.tableWidget_10.insertRow(row_pos)
-        self.pushButton_32.setEnabled(False)
-        self.pushButton_43.setEnabled(True)
-        self.pushButton_38.setEnabled(False)        
-
-    def row_go(self):        
-        rows=[]
-        '''
-        if self.lineEdit_33.text() == '' and self.lineEdit_32.text() == '':
-            QMessageBox.warning(self, 'بيانات مفقودة', 'من فضلك أدخل البيانات المطلوبة', QMessageBox.Ok)
-            return
-        if self.lineEdit_33.text() == '':
-            row = self.lineEdit_32.text()            
-        else:
-            invoice_no = self.lineEdit_33.text()            
-            self.cur.execute(f"SELECT id FROM buybill WHERE buy_invoice_no={invoice_no}")
-            row = self.cur.fetchone() 
-                   
-            if row == None:
-                QMessageBox.warning(self, 'بيانات مفقودة', 'البيانات التي ادخلتها غير موجودة في قاعدة البيانات', QMessageBox.Ok)
-                return
-            else:
-                row = row[0]
-        '''
-        if self.lineEdit_32.text() == '':
-            QMessageBox.warning(self, 'بيانات مفقودة', 'من فضلك أدخل البيانات المطلوبة', QMessageBox.Ok)
-            return
-        row = int(self.lineEdit_32.text())
-        self.cur.execute("SELECT id FROM buybill ORDER BY id")
-        id_s = self.cur.fetchall()        
-        for i in range(len(id_s)):
-            rows.append(id_s[i][0])            
-        if row in rows:
-            row_no = rows.index(row) + 1        
-            self.tableWidget_10.setCurrentCell(int(row_no)-1, 1)
-        else:
-            QMessageBox.warning(self, 'بيانات مفقودة', 'البيانات التي ادخلتها غير موجودة في قاعدة البيانات', QMessageBox.Ok)
-            return
-        # elif invoice_no != '':
-        #     self.tableWidget_10.setCurrentCell(int(invoice_no)-1, 4)
-        self.lineEdit_32.setText('')
-        self.lineEdit_33.setText('')
-        self.pushButton_43.setEnabled(True)        
-        self.groupBox_14.hide()
-    
-    def buy_bill_delete(self):
-        del_item = QMessageBox.warning(self, 'حذف بيانات' , 'هل انت متأكد من حذف هذه البيانات', QMessageBox.Yes | QMessageBox.No)
-        if del_item == QMessageBox.No :
-            return
-
-        id = int(self.lineEdit_52.text())
-        self.cur.execute(f"DELETE FROM buybill WHERE id={id}")
-        self.db.commit()
-        self.buybill_table_fill()
-        self.lineEdit_32.setText('')
-        self.lineEdit_33.setText('')
-        self.lineEdit_51.setText('')
-        self.lineEdit_52.setText('')
-        self.lineEdit_56.setText('0')
-        self.lineEdit_57.setText('0')
-        self.lineEdit_58.setText('0')
-        self.pushButton_35.setEnabled(False)
-        self.pushButton_40.setEnabled(False)
-        self.pushButton_43.setEnabled(True)
-        self.timeEdit_9.setTime(QTime.currentTime())
-        self.dateEdit_11.setDate(QDate.currentDate())
-        QMessageBox.warning(self, 'حذف بيانات', 'تم حذف البيانات بنجاح', QMessageBox.Ok)
-        self.buy_bill_return()
-
-    def buy_bill_return(self):
-        self.tableWidget_10.setRowCount(0)
-        self.tableWidget_10.insertRow(0)
-        self.lineEdit_51.setText('')
-        self.lineEdit_52.setText('')
-        self.lineEdit_56.setText('0')
-        self.lineEdit_57.setText('0')
-        self.lineEdit_58.setText('0')
-        self.pushButton_32.setEnabled(True)
-        self.pushButton_35.setEnabled(False)
-        self.pushButton_40.setEnabled(False)
-        self.pushButton_43.setEnabled(False)
-        self.pushButton_38.setEnabled(True)
-        self.timeEdit_9.setTime(QTime.currentTime())
-        self.dateEdit_11.setDate(QDate.currentDate())
-        self.groupBox_14.hide()
-
-    def buy_bill_item_search(self):
+    def buy_item_search(self):
 
         self.lineEdit_72.setEnabled(True)
         bb_id = self.lineEdit_72.text()
@@ -1790,34 +1421,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_39.setEnabled(True)
         self.pushButton_41.setEnabled(True)
 
-    def buybill_details_table_select(self, selected):
-        bb_id = int(self.lineEdit_72.text())
-        row = self.tableWidget_11.currentItem().row()
-        item_name = self.tableWidget_11.item(row, 0).text()
-        item_code = self.tableWidget_11.item(row, 1).text()       
-
-        query = '''SELECT b.*, i.item_unit, i.item_public_price
-            FROM buybill_details b
-            LEFT JOIN item i 
-            ON i.item_barcode = %s
-            WHERE b.buybill_id = %s
-            '''
-        self.cur.execute(query, (item_code, bb_id))        
-        data = self.cur.fetchone()        
-        
-        self.lineEdit_68.setText(item_name)
-        self.lineEdit_69.setText(str(data[4]))
-        self.lineEdit_70.setText(str(data[5]))
-        self.lineEdit_71.setText(str(data[3]))
-        self.lineEdit_67.setText(str(data[6]))
-        self.lineEdit_65.setText(str(data[8]))          
-        self.lineEdit_66.setText(str(data[7]))  
-        self.lineEdit_73.setText(item_code)
-        self.pushButton_34.setEnabled(False)
-        self.pushButton_37.setEnabled(True)
-        self.pushButton_39.setEnabled(True)
-
-    def buy_bill_item_update(self):
+    def buy_item_update(self):
 
         code = self.lineEdit_73.text()
         bb_id = self.lineEdit_72.text()
@@ -1884,7 +1488,70 @@ class Main(QMainWindow, MainUI):
         self.pushButton_37.setEnabled(False)
         self.pushButton_39.setEnabled(False)
 
-    def buy_bill_item_delete(self):
+    def buy_item_table_select(self, selected):
+        bb_id = int(self.lineEdit_72.text())
+        row = self.tableWidget_11.currentItem().row()
+        item_name = self.tableWidget_11.item(row, 0).text()
+        item_code = self.tableWidget_11.item(row, 1).text()       
+
+        query = '''SELECT b.*, i.item_unit, i.item_public_price
+            FROM buybill_details b
+            LEFT JOIN item i 
+            ON i.item_barcode = %s
+            WHERE b.buybill_id = %s
+            '''
+        self.cur.execute(query, (item_code, bb_id))        
+        data = self.cur.fetchone()        
+        
+        self.lineEdit_68.setText(item_name)
+        self.lineEdit_69.setText(str(data[4]))
+        self.lineEdit_70.setText(str(data[5]))
+        self.lineEdit_71.setText(str(data[3]))
+        self.lineEdit_67.setText(str(data[6]))
+        self.lineEdit_65.setText(str(data[8]))          
+        self.lineEdit_66.setText(str(data[7]))  
+        self.lineEdit_73.setText(item_code)
+        self.pushButton_34.setEnabled(False)
+        self.pushButton_37.setEnabled(True)
+        self.pushButton_39.setEnabled(True)
+
+    def buybill_add_new(self):
+        self.lineEdit_68.setText('')
+        self.lineEdit_71.setText('')
+        self.lineEdit_67.setText('0')
+        self.lineEdit_69.setText('1')
+        self.lineEdit_70.setText('0')
+        self.lineEdit_66.setText('1')        
+        self.lineEdit_55.setText('0')
+        self.lineEdit_74.setText('0')
+        self.lineEdit_54.setText('0')
+        self.lineEdit_53.setText('0')
+        self.pushButton_37.setEnabled(False)
+        self.pushButton_39.setEnabled(False)
+        self.pushButton_33.setEnabled(True)
+        self.pushButton_41.setEnabled(True)        
+        
+    def buy_item_table_fill(self):        
+               
+        bill_id = self.lineEdit_72.text()
+        self.tableWidget_11.setRowCount(0)
+        self.tableWidget_11.insertRow(0)
+        sql = f''' SELECT i.item_name, i.item_barcode, i.item_unit,
+        b.item_price, b.item_qty, b.item_discount, b.item_total
+        FROM buybill_details b 
+        LEFT JOIN item i ON b.item_id = i.id
+        WHERE b.buybill_id = {bill_id}
+        '''
+        self.cur.execute(sql)
+        data = self.cur.fetchall()        
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                self.tableWidget_11.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = self.tableWidget_11.rowCount()
+            self.tableWidget_11.insertRow(row_pos)
+
+    def buy_item_delete(self):
 
         row = self.tableWidget_11.currentItem().row()
         id = self.tableWidget_11.item(row, 0).text()
@@ -1907,10 +1574,337 @@ class Main(QMainWindow, MainUI):
 
             self.db.commit()
             self.buy_item_table_fill()
+    
+    def buy_item_price(self):
+        ''' 
+        qty = self.lineEdit_69.text()
+        item_count_peruint = self.lineEdit_66.text()
+        x = int(qty) * int(item_count_peruint)
+        total_buy = self.lineEdit_67.text()        
+        y = float(total_buy) / x
+        y = float("{:.2f}".format(y))
+        item_buy_price = self.lineEdit_74.setText(str(y))
+        item_buy_price = self.lineEdit_74.text()
+        self.total_sale_price
+        '''
+
+    def buybill_add_new(self):
+        importer_name = self.comboBox_9.currentText()
+        user_name = self.comboBox_11.currentText()
+        buy_date = self.dateEdit_11.date().toString(Qt.ISODate)        
+        buy_time = self.timeEdit_9.time().toString(Qt.ISODate)
+
+        #if self.lineEdit_52.text() == '':
+        #    QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم الفاتورة ', QMessageBox.Ok)
+        #    return        
+        self.cur.execute("SELECT id, buy_total_price FROM buybill WHERE id=(SELECT max(id) FROM buybill)")        
+        data = self.cur.fetchone()        
+        if data != None and data[1] == 0:
+            id = data[0]
+        else:
+            if data == None:
+                id = 1
+            elif data[1] != 0:
+                id = data[0] + 1
+            # Combine the SELECT queries into the INSERT statement
+            insert_sql = '''
+                INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
+                SELECT %s,%s,%s,
+                    (SELECT id FROM importer WHERE importer_name = %s),
+                    (SELECT id FROM user WHERE user_fullname = %s)                
+            '''        
+            # Execute the combined query
+            try:
+                self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
+                
+                # Commit the transaction
+                self.db.commit()
+
+            except Exception as e:
+                # Rollback the transaction if an error occurs
+                self.db.rollback()
+                print(f"Error: {e}")        
+
+        self.lineEdit_73.setText('')
+        self.lineEdit_68.setText('')
+        self.lineEdit_69.setText('1')
+        self.lineEdit_66.setText('')
+        self.lineEdit_70.setText('0')
+        self.lineEdit_71.setText('0')
+        self.lineEdit_65.setText('0')    
+        self.lineEdit_52.setText(str(id))        
+        self.lineEdit_72.setText(self.lineEdit_52.text())
+        self.pushButton_33.setEnabled(True)
+        self.pushButton_34.setEnabled(False)
+        self.pushButton_36.setEnabled(True)
+        self.pushButton_37.setEnabled(False)
+        self.pushButton_39.setEnabled(False)
+        self.pushButton_43.setEnabled(False)        
+        self.tabWidget_4.setCurrentIndex(1)
+    
+    def buybill_table_fill(self):
+        bill_id = self.lineEdit_52.text()
+        self.tableWidget_10.setRowCount(0)
+        self.tableWidget_10.insertRow(0)
+        sql = f''' SELECT b.id, b.buy_date, b.buy_time, i.importer_name,
+        u.user_fullname, b.buy_total_price, b.buy_discount, b.buy_item_count
+        FROM buybill b 
+        LEFT JOIN importer i ON i.id = b.buy_importer_id
+        LEFT JOIN user u ON u.id = b.buy_user_id
+        WHERE b.id = {bill_id}
+        '''        
+        self.cur.execute(sql)
+        data = self.cur.fetchall()        
+       
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                self.tableWidget_10.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = self.tableWidget_10.rowCount()
+            self.tableWidget_10.insertRow(row_pos)
+
+    def buybill_return_to(self):
+        self.pushButton_33.setEnabled(True)
+        self.pushButton_34.setEnabled(False)
+        self.pushButton_36.setEnabled(True)
+        self.pushButton_37.setEnabled(False)
+        self.pushButton_39.setEnabled(False)
+        self.pushButton_41.setEnabled(False)
+        self.tableWidget_11.setRowCount(0)
+        self.tableWidget_11.insertRow(0)        
+        self.lineEdit_54.setText('0')
+        self.lineEdit_55.setText('0')        
+        self.lineEdit_66.setText('1')
+        self.lineEdit_67.setText('0')
+        self.lineEdit_68.setText('')
+        self.lineEdit_69.setText('1')
+        self.lineEdit_70.setText('0')
+        self.lineEdit_71.setText('')
+        self.lineEdit_72.setText('')
+        self.lineEdit_73.setText('')
+        self.lineEdit_74.setText('0')
+        self.lineEdit_53.setText('0')
+        self.pushButton_33.setEnabled(False)
+        self.tabWidget_4.setCurrentIndex(0)
+
+    def buybill_save(self):
+        buybill_date = self.dateEdit_11.date().toString(QtCore.Qt.ISODate)        
+        buybill__time = self.timeEdit_9.time().toString(QtCore.Qt.ISODate)        
+        buybill_id = self.lineEdit_52.text()
+        importer = self.comboBox_9.currentText()
+        user = self.comboBox_11.currentText()
+        total = Decimal(self.lineEdit_57.text())
+        diccount = Decimal(self.lineEdit_56.text())
+        count = Decimal(self.lineEdit_58.text())
+    
+        self.cur.execute('''
+            UPDATE buybill SET buy_total_price=%s, buy_discount=%s, buy_item_count=%s
+            WHERE id=%s ''',(total, diccount, count, buybill_id))
+                
+        self.db.commit()
+
+        self.buybill_table_fill()
+        
+        self.lineEdit_51.setText('')
+        self.lineEdit_52.setText('')
+        self.lineEdit_72.setText('')
+        self.lineEdit_73.setText('')
+        self.pushButton_31.setEnabled(False)
+        self.pushButton_32.setEnabled(True)
+        self.pushButton_34.setEnabled(False)
+        self.pushButton_36.setEnabled(True)
+        self.pushButton_38.setEnabled(True)
+        self.pushButton_43.setEnabled(True)       
+
+    def buybill_table_select(self):
+        row = self.tableWidget_10.currentItem().row()
+        buybill_id = self.tableWidget_10.item(row, 0).text()
+        importer_id = int(self.tableWidget_10.item(row, 3).text())        
+        user_id = int(self.tableWidget_10.item(row, 4).text())        
+        
+        # Combined SQL query with JOINs to get user_fullname and grp_name in one query
+        sql = f'''
+        SELECT b.*, i.importer_name, i.importer_phone, u.user_fullname
+        FROM buybill b
+        LEFT JOIN importer i ON i.id = '{importer_id}'
+        LEFT JOIN user u ON u.id = '{user_id}'
+        WHERE b.id = {buybill_id}
+        '''        
+        self.cur.execute(sql)
+        data = self.cur.fetchone()       
+       
+        h, m, s = map(int, (str(data[2])).split(":"))
+        x = QTime(h, m)
+        self.lineEdit_52.setText(str(data[0]))
+        self.dateEdit_11.setDate(data[1])
+        self.timeEdit_9.setTime(x)
+        self.lineEdit_52.setText(str(data[0]))
+        self.lineEdit_72.setText(str(data[0]))
+        self.lineEdit_57.setText(str(data[5]))
+        self.lineEdit_56.setText(str(data[6]))
+        self.lineEdit_58.setText(str(data[7]))
+        self.comboBox_9.setCurrentText(data[8])
+        self.lineEdit_49.setText(str(data[9]))
+        self.comboBox_11.setCurrentText(data[10])
+        self.pushButton_32.setEnabled(False)
+        self.pushButton_35.setEnabled(True)
+        self.pushButton_40.setEnabled(True)
+        self.buy_item_table_fill()    
+
+ 
+    def buybill_update(self):
+        bb_id = self.lineEdit_52.text()
+        date = self.dateEdit_11.date().toString(QtCore.Qt.ISODate)        
+        time = self.timeEdit_9.time().toString(QtCore.Qt.ISODate)        
+        importer = self.comboBox_9.currentText()
+        user = self.comboBox_11.currentText()        
+
+        self.cur.execute('''
+            UPDATE buybill SET buy_date=%s, buy_time=%s, 
+            buy_importer_id=(SELECT id FROM importer WHERE importer_name=%s), 
+            buy_user_id=(SELECT id FROM user WHERE user_fullname=%s)  WHERE id=%s
+              ''',(date, time, importer, user, bb_id))
+        
+        self.db.commit()
+        self.buybill_table_fill()        
+        QMessageBox.warning(self, 'تعديل بيانات', 'لقد تم تعديل البيانات بنجاح', QMessageBox.Ok )
+        self.buybill_return()
+        self.lineEdit_56.setText('0')
+        self.lineEdit_57.setText('0')
+        self.lineEdit_58.setText('0')
+
+    def buybill_search(self):
+        self.groupBox_14.show()
+        self.tableWidget_10.setRowCount(0)
+        self.tableWidget_10.insertRow(0)        
+        sql = "SELECT * FROM buybill"
+        self.cur.execute(sql)
+        data = self.cur.fetchall()
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                self.tableWidget_10.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = self.tableWidget_10.rowCount()
+            self.tableWidget_10.insertRow(row_pos)
+        self.pushButton_32.setEnabled(False)
+        self.pushButton_43.setEnabled(True)
+        self.pushButton_38.setEnabled(False)
+
+    
+    
+    def buybill_delete(self):
+        del_item = QMessageBox.warning(self, 'حذف بيانات' , 'هل انت متأكد من حذف هذه البيانات', QMessageBox.Yes | QMessageBox.No)
+        if del_item == QMessageBox.No :
+            return
+
+        id = int(self.lineEdit_52.text())
+        self.cur.execute(f"DELETE FROM buybill WHERE id={id}")
+        self.db.commit()
+        self.buybill_table_fill()
+        self.lineEdit_32.setText('')
+        self.lineEdit_33.setText('')
+        self.lineEdit_51.setText('')
+        self.lineEdit_52.setText('')
+        self.lineEdit_56.setText('0')
+        self.lineEdit_57.setText('0')
+        self.lineEdit_58.setText('0')
+        self.pushButton_35.setEnabled(False)
+        self.pushButton_40.setEnabled(False)
+        self.pushButton_43.setEnabled(True)
+        self.timeEdit_9.setTime(QTime.currentTime())
+        self.dateEdit_11.setDate(QDate.currentDate())
+        QMessageBox.warning(self, 'حذف بيانات', 'تم حذف البيانات بنجاح', QMessageBox.Ok)
+        self.buybill_return()
+
+    def buybill_return(self):
+        self.tableWidget_10.setRowCount(0)
+        self.tableWidget_10.insertRow(0)
+        self.lineEdit_51.setText('')
+        self.lineEdit_52.setText('')
+        self.lineEdit_56.setText('0')
+        self.lineEdit_57.setText('0')
+        self.lineEdit_58.setText('0')
+        self.pushButton_32.setEnabled(True)
+        self.pushButton_35.setEnabled(False)
+        self.pushButton_40.setEnabled(False)
+        self.pushButton_43.setEnabled(False)
+        self.pushButton_38.setEnabled(True)
+        self.timeEdit_9.setTime(QTime.currentTime())
+        self.dateEdit_11.setDate(QDate.currentDate())
+        self.groupBox_14.hide()
+
+    def buy_unit_total(self):
+        qty = Decimal(self.lineEdit_69.text())
+        unit_price = Decimal(self.lineEdit_71.text())        
+        x = qty * unit_price
+        self.lineEdit_67.setText(str(x))
+
+    def row_go(self):        
+        rows=[]
+        '''
+        if self.lineEdit_33.text() == '' and self.lineEdit_32.text() == '':
+            QMessageBox.warning(self, 'بيانات مفقودة', 'من فضلك أدخل البيانات المطلوبة', QMessageBox.Ok)
+            return
+        if self.lineEdit_33.text() == '':
+            row = self.lineEdit_32.text()            
+        else:
+            invoice_no = self.lineEdit_33.text()            
+            self.cur.execute(f"SELECT id FROM buybill WHERE buy_invoice_no={invoice_no}")
+            row = self.cur.fetchone() 
+                   
+            if row == None:
+                QMessageBox.warning(self, 'بيانات مفقودة', 'البيانات التي ادخلتها غير موجودة في قاعدة البيانات', QMessageBox.Ok)
+                return
+            else:
+                row = row[0]
+        '''
+        if self.lineEdit_32.text() == '':
+            QMessageBox.warning(self, 'بيانات مفقودة', 'من فضلك أدخل البيانات المطلوبة', QMessageBox.Ok)
+            return
+        row = int(self.lineEdit_32.text())
+        self.cur.execute("SELECT id FROM buybill ORDER BY id")
+        id_s = self.cur.fetchall()        
+        for i in range(len(id_s)):
+            rows.append(id_s[i][0])            
+        if row in rows:
+            row_no = rows.index(row) + 1        
+            self.tableWidget_10.setCurrentCell(int(row_no)-1, 1)
+        else:
+            QMessageBox.warning(self, 'بيانات مفقودة', 'البيانات التي ادخلتها غير موجودة في قاعدة البيانات', QMessageBox.Ok)
+            return
+        # elif invoice_no != '':
+        #     self.tableWidget_10.setCurrentCell(int(invoice_no)-1, 4)
+        self.lineEdit_32.setText('')
+        self.lineEdit_33.setText('')
+        self.pushButton_43.setEnabled(True)        
+        self.groupBox_14.hide()
+
+    def total_earn(self):
+        x = self.lineEdit_67.text()
+        y = self.lineEdit_54.text()
+        z = self.lineEdit_55.text()
+        i = float(y) - float(x) - float(z)
+        buy_earn = self.lineEdit_53.setText(str(i))
+        buy_earn = self.lineEdit_53.text()
+
+
+    def total_sale_price(self):
+        buy_unit_count = self.lineEdit_69.text()
+        item_count_peruint = self.lineEdit_66.text()
+        total_buy = self.lineEdit_67.text()
+        x = float(total_buy)        
+        y = int(buy_unit_count) * int(item_count_peruint) * float(buy_item_sale)
+        total_sale = self.lineEdit_54.setText(str(y))
+        total_sale = self.lineEdit_54.text()
+        #self.lineEdit_57.setText(self.lineEdit_54.text())
+        buy_minus = self.lineEdit_55.text()
+        z = x + float(buy_minus)
+        buy_earn = self.lineEdit_53.setText(str(y-z))
+        buy_earn = self.lineEdit_53.text()
 
     #  -------------------- فواتير المرتجعات -------------
     
-    def rebuy_bill_add(self):
+    def rebuybill_add(self):
         self.cur.execute("SELECT MAX( id ) FROM rebuypill")
         id = self.cur.fetchone()
         self.lineEdit_75.setText('1')
@@ -1925,7 +1919,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_48.setEnabled(False)
         
 
-    def rebuy_bill_save(self):
+    def rebuybill_save(self):
         rebuy_date = self.dateEdit_12.date()
         rebuy_date = rebuy_date.toString(QtCore.Qt.ISODate)
         rebuy_time = self.timeEdit_10.time()
@@ -1970,7 +1964,7 @@ class Main(QMainWindow, MainUI):
         return
 
         
-    def rebuy_bill_search(self):
+    def rebuybill_search(self):
         self.tableWidget_12.setRowCount(0)
         self.tableWidget_12.insertRow(0)
         sql = "SELECT * FROM rebuypill"
@@ -2086,7 +2080,7 @@ class Main(QMainWindow, MainUI):
         self.cur.execute(sql, [(id)])
 
         self.db.commit()
-        self.rebuy_bill_search()
+        self.rebuybill_search()
 
     def rebuypill_save_but(self):
 
@@ -2523,6 +2517,24 @@ class Main(QMainWindow, MainUI):
         page.save()
         os.startfile("my_pdf.pdf")
 
+    # لوحة الأرقام
+        self.keypad = QFrame(self)
+        self.keypad.setGeometry(50, 90, 240, 250)
+        self.keypad.setStyleSheet("background-color: lightgray; border: 1px solid black;")
+        self.keypad.setVisible(False)  # مخفية في البداية
+        layout = QGridLayout(self.keypad)
+        self.keypad_buttons = []
+        for i in range(10):
+            btn = QPushButton(str(i), self.keypad)
+            btn.setFixedSize(50, 50)
+            btn.clicked.connect(lambda checked, num=i: self.on_number_clicked(num))
+            row = (i - 1) // 3 + 1 if i != 0 else 4  # الأرقام 1-9 في الشبكة            
+            col = (i - 1) % 3 if i != 0 else 1      # زر 0 في المنتصف
+            layout.addWidget(btn, row, col)
+            self.keypad_buttons.append(btn)
+    def toggle_keypad(self):
+        # إظهار أو إخفاء لوحة الأرقام
+        self.keypad.setVisible(not self.keypad.isVisible())
 
 def main():
     #app = QApplication(sys.argv)  
