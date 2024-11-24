@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>3</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -1934,7 +1934,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <property name="documentMode">
        <bool>false</bool>
@@ -2544,32 +2544,27 @@
         </column>
         <column>
          <property name="text">
-          <string>البار كود</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>إسم الصنف</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>المجموعة</string>
+          <string>البار كود</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>الشركة</string>
+          <string>الوحدة</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>رقم الرف</string>
+          <string>الفاتورة</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>السعر</string>
+          <string>سعر الشراء</string>
          </property>
         </column>
         <column>
@@ -2584,12 +2579,22 @@
         </column>
         <column>
          <property name="text">
-          <string>الحد الأدنى</string>
+          <string>سعر الجمهور</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>الوحدة</string>
+          <string>إجمالي الشراء</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>إجمالي البيع</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>الربح</string>
          </property>
         </column>
        </widget>
@@ -4517,7 +4522,7 @@
         </column>
         <column>
          <property name="text">
-          <string>إجمالي سعر الجمهور</string>
+          <string>إجمالي سعر الشراء</string>
          </property>
         </column>
         <column>
@@ -5878,7 +5883,7 @@
        <widget class="QWidget" name="gridLayoutWidget">
         <property name="geometry">
          <rect>
-          <x>450</x>
+          <x>440</x>
           <y>130</y>
           <width>191</width>
           <height>221</height>

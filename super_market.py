@@ -77,6 +77,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_25.textEdited.connect(self.item_save_enabled)    
         self.lineEdit_36.textEdited.connect(self.grp_save_enabled)
         self.lineEdit_38.textEdited.connect(self.company_save_enabled)
+        self.lineEdit_69.textChanged.connect(self.buy_unit_total)
         self.lineEdit_71.textChanged.connect(self.buy_unit_total)
         
         
@@ -211,6 +212,61 @@ class Main(QMainWindow, MainUI):
         self.pushButton_64.clicked.connect(self.Items_inventory)
         self.pushButton_65.clicked.connect(self.salebill_print)
         self.pushButton_66.clicked.connect(self.toggle_keypad)
+
+    # ===================== keybad =======================
+        self.keypad = QFrame(self)
+        self.keypad.setGeometry(430, 205, 240, 250)
+        self.keypad.setStyleSheet("background-color: lightgray; border: 1px solid black;")
+        self.keypad.setVisible(False)  # مخفية في البداية
+
+        # تصميم الأزرار داخل اللوحة
+        layout = QGridLayout(self.keypad)
+        self.keypad_buttons = []
+        for i in range(10):
+            btn = QPushButton(str(i), self.keypad)
+            btn.setFixedSize(50, 50)
+            btn.clicked.connect(lambda checked, num=i: self.on_number_clicked(num))
+            row = (i - 1) // 3 + 1 if i != 0 else 4  # الأرقام 1-9 في الشبكة            
+            col = (i - 1) % 3 if i != 0 else 1      # زر 0 في المنتصف
+            layout.addWidget(btn, row, col)
+            self.keypad_buttons.append(btn)
+        
+        # زر "حذف"
+        del_btn = QPushButton("Del", self.keypad)
+        del_btn.setFixedSize(50, 50)
+        del_btn.clicked.connect(self.delete_last_character)
+        layout.addWidget(del_btn, 4, 0)
+        
+        # زر "إغلاق اللوحة"
+        close_btn = QPushButton("Close", self.keypad)
+        close_btn.setFixedSize(50, 50)
+        close_btn.clicked.connect(self.hide_keypad)
+        layout.addWidget(close_btn, 4, 2)
+          
+    def toggle_keypad(self):
+        # إظهار أو إخفاء لوحة الأرقام
+        self.keypad.setVisible(not self.keypad.isVisible())
+        if self.lineEdit_69.text() == '1':
+            self.lineEdit_69.setText('0')
+        else:
+            self.lineEdit_69.setText('1')
+    
+    def hide_keypad(self):
+        # إخفاء اللوحة فقط
+        self.keypad.setVisible(False)
+    
+    def on_number_clicked(self, num):
+        # إضافة الرقم إلى مربع الإدخال
+        current_text = self.lineEdit_69.text()
+        self.lineEdit_69.setText(current_text + str(num))
+        
+    
+    def delete_last_character(self):
+        # حذف آخر حرف في مربع الإدخال
+        current_text = self.lineEdit_69.text()
+        self.lineEdit_69.setText(current_text[:-1])
+
+
 
 # =========== Usuers ===========
     def user_save_enabled(self):
@@ -722,9 +778,11 @@ class Main(QMainWindow, MainUI):
     def item_table_fill(self):        
         self.tableWidget_4.setRowCount(0)
         self.tableWidget_4.insertRow(0)
-        self.cur.execute('''
-        SELECT * FROM item
-        ''')
+        self.cur.execute(''' SELECT *, 
+        ROUND(item_qty * item_price, 2) AS total_price, 
+        ROUND(item_qty * item_public_price, 2) AS public_price, 
+        ROUND(item_qty * item_public_price - item_qty * item_price, 2)
+        AS profit_margin FROM item ''')
         data = self.cur.fetchall()
 
         for row, form in enumerate(data):
@@ -1646,8 +1704,8 @@ class Main(QMainWindow, MainUI):
         bill_id = self.lineEdit_52.text()
         self.tableWidget_10.setRowCount(0)
         self.tableWidget_10.insertRow(0)
-        sql = f''' SELECT b.id, b.buy_date, b.buy_time, i.importer_name,
-        u.user_fullname, b.buy_total_price, b.buy_discount, b.buy_item_count
+        sql = f''' SELECT b.id, b.buy_date, b.buy_time, i.id,
+        u.id, b.buy_total_price, b.buy_discount, b.buy_item_count
         FROM buybill b 
         LEFT JOIN importer i ON i.id = b.buy_importer_id
         LEFT JOIN user u ON u.id = b.buy_user_id
@@ -2517,24 +2575,7 @@ class Main(QMainWindow, MainUI):
         page.save()
         os.startfile("my_pdf.pdf")
 
-    # لوحة الأرقام
-        self.keypad = QFrame(self)
-        self.keypad.setGeometry(50, 90, 240, 250)
-        self.keypad.setStyleSheet("background-color: lightgray; border: 1px solid black;")
-        self.keypad.setVisible(False)  # مخفية في البداية
-        layout = QGridLayout(self.keypad)
-        self.keypad_buttons = []
-        for i in range(10):
-            btn = QPushButton(str(i), self.keypad)
-            btn.setFixedSize(50, 50)
-            btn.clicked.connect(lambda checked, num=i: self.on_number_clicked(num))
-            row = (i - 1) // 3 + 1 if i != 0 else 4  # الأرقام 1-9 في الشبكة            
-            col = (i - 1) % 3 if i != 0 else 1      # زر 0 في المنتصف
-            layout.addWidget(btn, row, col)
-            self.keypad_buttons.append(btn)
-    def toggle_keypad(self):
-        # إظهار أو إخفاء لوحة الأرقام
-        self.keypad.setVisible(not self.keypad.isVisible())
+
 
 def main():
     #app = QApplication(sys.argv)  
