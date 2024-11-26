@@ -215,7 +215,7 @@ class Main(QMainWindow, MainUI):
 
     # ===================== keybad =======================
         self.keypad = QFrame(self)
-        self.keypad.setGeometry(430, 205, 240, 250)
+        self.keypad.setGeometry(87, 164, 180, 230)
         self.keypad.setStyleSheet("background-color: lightgray; border: 1px solid black;")
         self.keypad.setVisible(False)  # مخفية في البداية
 
@@ -224,7 +224,7 @@ class Main(QMainWindow, MainUI):
         self.keypad_buttons = []
         for i in range(10):
             btn = QPushButton(str(i), self.keypad)
-            btn.setFixedSize(50, 50)
+            btn.setFixedSize(40, 40)
             btn.clicked.connect(lambda checked, num=i: self.on_number_clicked(num))
             row = (i - 1) // 3 + 1 if i != 0 else 4  # الأرقام 1-9 في الشبكة            
             col = (i - 1) % 3 if i != 0 else 1      # زر 0 في المنتصف
@@ -233,23 +233,23 @@ class Main(QMainWindow, MainUI):
         
         # زر "حذف"
         del_btn = QPushButton("Del", self.keypad)
-        del_btn.setFixedSize(50, 50)
+        del_btn.setFixedSize(40, 40)
         del_btn.clicked.connect(self.delete_last_character)
         layout.addWidget(del_btn, 4, 0)
         
         # زر "إغلاق اللوحة"
         close_btn = QPushButton("Close", self.keypad)
-        close_btn.setFixedSize(50, 50)
+        close_btn.setFixedSize(40, 40)
         close_btn.clicked.connect(self.hide_keypad)
         layout.addWidget(close_btn, 4, 2)
           
     def toggle_keypad(self):
         # إظهار أو إخفاء لوحة الأرقام
         self.keypad.setVisible(not self.keypad.isVisible())
-        if self.lineEdit_69.text() == '1':
-            self.lineEdit_69.setText('0')
+        if self.lineEdit_83.text() == '1':
+            self.lineEdit_83.setText('')
         else:
-            self.lineEdit_69.setText('1')
+            self.lineEdit_83.setText('1')
     
     def hide_keypad(self):
         # إخفاء اللوحة فقط
@@ -257,14 +257,14 @@ class Main(QMainWindow, MainUI):
     
     def on_number_clicked(self, num):
         # إضافة الرقم إلى مربع الإدخال
-        current_text = self.lineEdit_69.text()
-        self.lineEdit_69.setText(current_text + str(num))
+        current_text = self.lineEdit_83.text()
+        self.lineEdit_83.setText(current_text + str(num))
         
     
     def delete_last_character(self):
         # حذف آخر حرف في مربع الإدخال
-        current_text = self.lineEdit_69.text()
-        self.lineEdit_69.setText(current_text[:-1])
+        current_text = self.lineEdit_83.text()
+        self.lineEdit_83.setText(current_text[:-1])
 
 
 
@@ -745,11 +745,17 @@ class Main(QMainWindow, MainUI):
 
     def importer_info(self):
         imp_name = self.comboBox_9.currentText()
-        sql = '''SELECT importer_phone, importer_balance FROM importer WHERE importer_name=%s'''
+        sql = '''SELECT i.importer_phone, i.importer_balance, g.grp_name, c.company_name 
+        FROM importer i
+        JOIN grp g ON g.id = i.importer_grp_id
+        JOIN company c ON c.id = i.importer_company_id
+         WHERE importer_name=%s'''
         self.cur.execute(sql, [(imp_name)])
-        data = self.cur.fetchone()
+        data = self.cur.fetchone()        
         self.lineEdit_49.setText(str(data[0]))
         self.lineEdit_50.setText(str(data[1]))
+        self.lineEdit_53.setText(str(data[2]))
+        self.lineEdit_54.setText(str(data[3]))
 
     def importer_combo_fill(self):        
         self.comboBox_9.clear()        
@@ -1549,17 +1555,19 @@ class Main(QMainWindow, MainUI):
     def buy_item_table_select(self, selected):
         bb_id = int(self.lineEdit_72.text())
         row = self.tableWidget_11.currentItem().row()
-        item_name = self.tableWidget_11.item(row, 0).text()
-        item_code = self.tableWidget_11.item(row, 1).text()       
+        band_id = self.tableWidget_11.item(row, 0).text()
+        item_name = self.tableWidget_11.item(row, 1).text()
+        item_code = self.tableWidget_11.item(row, 2).text()       
 
         query = '''SELECT b.*, i.item_unit, i.item_public_price
             FROM buybill_details b
             LEFT JOIN item i 
             ON i.item_barcode = %s
-            WHERE b.buybill_id = %s
+            WHERE b.buybill_id = %s AND b.id = %s
             '''
-        self.cur.execute(query, (item_code, bb_id))        
-        data = self.cur.fetchone()        
+        self.cur.execute(query, (item_code, bb_id, band_id))
+        data = self.cur.fetchone()
+       
         
         self.lineEdit_68.setText(item_name)
         self.lineEdit_69.setText(str(data[4]))
@@ -1594,7 +1602,7 @@ class Main(QMainWindow, MainUI):
         bill_id = self.lineEdit_72.text()
         self.tableWidget_11.setRowCount(0)
         self.tableWidget_11.insertRow(0)
-        sql = f''' SELECT i.item_name, i.item_barcode, i.item_unit,
+        sql = f''' SELECT b.id, i.item_name, i.item_barcode, i.item_unit,
         b.item_price, b.item_qty, b.item_discount, b.item_total
         FROM buybill_details b 
         LEFT JOIN item i ON b.item_id = i.id
@@ -1951,7 +1959,7 @@ class Main(QMainWindow, MainUI):
         item_count_peruint = self.lineEdit_66.text()
         total_buy = self.lineEdit_67.text()
         x = float(total_buy)        
-        y = int(buy_unit_count) * int(item_count_peruint) * float(buy_item_sale)
+        y = int(buy_unit_count) * int(item_count_peruint) * float(total_buy)
         total_sale = self.lineEdit_54.setText(str(y))
         total_sale = self.lineEdit_54.text()
         #self.lineEdit_57.setText(self.lineEdit_54.text())
@@ -2202,15 +2210,16 @@ class Main(QMainWindow, MainUI):
         #self.lineEdit_60.setText(str(-1*x))
 
     def item_qty_x_sale_price(self):
-        item_price = self.lineEdit_85.text()
-        item_qty = self.lineEdit_83.text()
-        x = float(item_qty) * float(item_price)
+        item_price = Decimal(self.lineEdit_85.text())
+        
+        item_qty = Decimal(self.lineEdit_83.text())
+        x = item_qty * item_price
         self.lineEdit_84.setText(str(x))
         self.sale_item_add()
 
     def get_sale_item_info(self):
         bar_code = self.lineEdit_86.text()
-        sql = f"SELECT item_name, item_price, item_unit FROM items WHERE item_barcode={bar_code}"
+        sql = f"SELECT item_name, item_price, item_unit FROM item WHERE item_barcode={bar_code}"
         self.cur.execute(sql)
         data = self.cur.fetchone()        
         self.comboBox_16.setCurrentText(data[0])
@@ -2222,7 +2231,7 @@ class Main(QMainWindow, MainUI):
         invo_no = int(self.lineEdit_59.text())
         row = self.tableWidget_13.currentItem().row()
         it_code = self.tableWidget_13.item(row, 0).text()              
-        sql = f"SELECT * FROM salepill_details WHERE item_code={it_code} AND salepill_id={invo_no}"
+        sql = f"SELECT * FROM salebill_details WHERE item_code={it_code} AND salebill_id={invo_no}"
         self.cur.execute(sql)
         data = self.cur.fetchone()        
         
@@ -2239,7 +2248,7 @@ class Main(QMainWindow, MainUI):
     def sale_item_delete(self):
         invo_no = int(self.lineEdit_59.text())
         it_code = int(self.lineEdit_86.text())        
-        sql = ('''DELETE FROM salepill_details WHERE item_code=%s AND salepill_id=%s''')
+        sql = ('''DELETE FROM salebill_details WHERE item_code=%s AND salebill_id=%s''')
         self.cur.execute(sql, [(it_code), (invo_no)])
         self.db.commit()        
         self.pushButton_49.setEnabled(False)
@@ -2260,33 +2269,32 @@ class Main(QMainWindow, MainUI):
         code = self.lineEdit_86.text()
         name = self.comboBox_16.currentText()
         price = self.lineEdit_85.text()
-        count = float(self.lineEdit_83.text())
+        qty = float(self.lineEdit_83.text())
         item_total_price = self.lineEdit_84.text()
         unit = self.lineEdit_88.text()
         x = float(item_total_price)
         y = x + float(self.lineEdit_61.text())
         self.lineEdit_61.setText(str(y))
         self.lineEdit_62.setText(str(float(self.lineEdit_61.text())-(float(self.lineEdit_63.text()))))
-        self.cur.execute("INSERT INTO salepill_details \
-            (salepill_id, item_code, item_name,\
-            item_price, item_total_price, item_count, item_unit) \
-            VALUES(%s, %s, %s, %s, %s, %s, %s)",\
-            (id, code, name, price, item_total_price,\
-            count, unit))
+        self.cur.execute("INSERT INTO salebill_details \
+            (bill_id, item_barcode, item_name,\
+            item_price, total_price, item_qty) \
+            VALUES(%s, %s, %s, %s, %s, %s)",\
+            (id, code, name, price, item_total_price, qty))
         
-        self.cur.execute(f"UPDATE items SET item_qty=item_qty-{count} WHERE item_barcode={it_code}")
+        self.cur.execute(f"UPDATE item SET item_qty=item_qty-{qty} WHERE item_barcode={it_code}")
         self.db.commit()
         self.salebill_details_table_fill()
 
     def salebill_add_new(self):
-        self.cur.execute("SELECT MAX( id ) FROM salepill")
+        self.cur.execute("SELECT MAX( id ) FROM salebill")
         id = self.cur.fetchone()
         id = list(id)        
         if id[0] == None:
             id[0] = 0
         # هذه الخطوة للتغلب فيما إذا تم حذف السجل الأخير من قاعدة البيانات
-        self.cur.execute(f"ALTER TABLE salepill AUTO_INCREMENT = {id[0]}")
-        self.cur.execute("SELECT MAX( id ) FROM salepill")
+        self.cur.execute(f"ALTER TABLE salebill AUTO_INCREMENT = {id[0]}")
+        self.cur.execute("SELECT MAX( id ) FROM salebill")
         id = self.cur.fetchone()
         id = list(id)        
         if id[0] == None:
@@ -2342,7 +2350,7 @@ class Main(QMainWindow, MainUI):
         visa = self.lineEdit_87.text()
         rest_cash = self.lineEdit_60.text()
         user = self.comboBox_15.currentText()
-        self.cur.execute("INSERT INTO salepill(date,\
+        self.cur.execute("INSERT INTO salebill(date,\
             time, customer, invoice_total,\
             discount, wanted, cash, cash_return,\
             visa, rest_cash, user) VALUES(%s, %s,\
@@ -2365,13 +2373,13 @@ class Main(QMainWindow, MainUI):
         invo_no = int(self.lineEdit_59.text())
         row = self.tableWidget_13.currentItem().row()
         it_code = self.tableWidget_13.item(row, 0).text()              
-        sql = f"SELECT * FROM salepill_details WHERE item_code={it_code} AND salepill_id={invo_no}"
+        sql = f"SELECT * FROM salebill_details WHERE item_code={it_code} AND salebill_id={invo_no}"
         self.cur.execute(sql)
         data = self.cur.fetchone()
         old_qty = float(data[6])
         new_qty = float(self.lineEdit_83.text())
         dif_qty = old_qty - new_qty
-        sql = f"UPDATE salepill_details SET item_count={new_qty}, item_total_price=item_price*{new_qty} WHERE salepill_id={invo_no} AND item_code={it_code}"
+        sql = f"UPDATE salebill_details SET item_count={new_qty}, item_total_price=item_price*{new_qty} WHERE salebill_id={invo_no} AND item_code={it_code}"
         self.cur.execute(sql)
 
         sql = f"UPDATE items SET item_qty=item_qty+{dif_qty} WHERE item_barcode={it_code}"
@@ -2387,7 +2395,7 @@ class Main(QMainWindow, MainUI):
         s_bill_id = int(self.lineEdit_59.text())
         self.tableWidget_13.setRowCount(0)
         self.tableWidget_13.insertRow(0)
-        self.cur.execute(f"SELECT item_code, item_name, item_unit, item_price, item_count, item_total_price FROM salepill_details WHERE salepill_id={s_bill_id}")
+        self.cur.execute(f"SELECT item_code, item_name, item_unit, item_price, item_count, item_total_price FROM salebill_details WHERE salebill_id={s_bill_id}")
         data = self.cur.fetchall()
         if data == []:
             self.lineEdit_61.setText('0')
@@ -2445,7 +2453,7 @@ class Main(QMainWindow, MainUI):
     def most_selling_item(self):
 
         query = ''' SELECT s.item_name,s.item_code, SUM(s.item_total_price) as total_sales
-                FROM salepill_details s
+                FROM salebill_details s
                 JOIN items i ON s.item_code = i.item_barcode
                 GROUP BY s.item_code
                 ORDER BY total_sales DESC '''
@@ -2542,13 +2550,13 @@ class Main(QMainWindow, MainUI):
         page.line(120*mm,250*mm,120*mm,80*mm)# third vertical line
         page.line(20*mm,80*mm,270*mm,80*mm)# horizontal line total
 
-        salepill_id = self.lineEdit_59.text()
+        salebill_id = self.lineEdit_59.text()
         query = '''SELECT item_name, 
            item_count, item_price, 
            item_total_price 
-           FROM salepill_details 
-           WHERE salepill_id = %s'''
-        self.cur.execute(query, [(salepill_id)])
+           FROM salebill_details 
+           WHERE salebill_id = %s'''
+        self.cur.execute(query, [(salebill_id)])
         data = self.cur.fetchall()
         total = 0
         y_gap = 10

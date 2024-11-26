@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1075</width>
-    <height>577</height>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>20</x>
       <y>0</y>
       <width>991</width>
-      <height>541</height>
+      <height>571</height>
      </rect>
     </property>
     <property name="font">
@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>6</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -4475,7 +4475,7 @@
         <property name="geometry">
          <rect>
           <x>12</x>
-          <y>160</y>
+          <y>220</y>
           <width>941</width>
           <height>181</height>
          </rect>
@@ -4540,7 +4540,7 @@
         <property name="geometry">
          <rect>
           <x>700</x>
-          <y>92</y>
+          <y>30</y>
           <width>171</width>
           <height>26</height>
          </rect>
@@ -4555,7 +4555,7 @@
         <property name="geometry">
          <rect>
           <x>895</x>
-          <y>96</y>
+          <y>34</y>
           <width>48</width>
           <height>19</height>
          </rect>
@@ -4673,7 +4673,7 @@
         <property name="geometry">
          <rect>
           <x>880</x>
-          <y>34</y>
+          <y>64</y>
           <width>62</width>
           <height>19</height>
          </rect>
@@ -4697,7 +4697,7 @@
         <property name="geometry">
          <rect>
           <x>700</x>
-          <y>30</y>
+          <y>60</y>
           <width>171</width>
           <height>26</height>
          </rect>
@@ -4718,7 +4718,7 @@
         <property name="geometry">
          <rect>
           <x>700</x>
-          <y>61</y>
+          <y>90</y>
           <width>171</width>
           <height>26</height>
          </rect>
@@ -4736,7 +4736,7 @@
         <property name="geometry">
          <rect>
           <x>880</x>
-          <y>65</y>
+          <y>94</y>
           <width>65</width>
           <height>19</height>
          </rect>
@@ -4796,7 +4796,7 @@
         <property name="geometry">
          <rect>
           <x>906</x>
-          <y>125</y>
+          <y>182</y>
           <width>38</width>
           <height>20</height>
          </rect>
@@ -4856,7 +4856,7 @@
         <property name="geometry">
          <rect>
           <x>600</x>
-          <y>400</y>
+          <y>450</y>
           <width>105</width>
           <height>38</height>
          </rect>
@@ -4874,7 +4874,7 @@
         <property name="geometry">
          <rect>
           <x>710</x>
-          <y>400</y>
+          <y>450</y>
           <width>121</width>
           <height>38</height>
          </rect>
@@ -4892,7 +4892,7 @@
         <property name="geometry">
          <rect>
           <x>700</x>
-          <y>123</y>
+          <y>180</y>
           <width>171</width>
           <height>26</height>
          </rect>
@@ -4952,7 +4952,7 @@
         <property name="geometry">
          <rect>
           <x>370</x>
-          <y>360</y>
+          <y>410</y>
           <width>141</width>
           <height>25</height>
          </rect>
@@ -4973,7 +4973,7 @@
         <property name="geometry">
          <rect>
           <x>530</x>
-          <y>362</y>
+          <y>412</y>
           <width>81</width>
           <height>25</height>
          </rect>
@@ -4994,7 +4994,7 @@
         <property name="geometry">
          <rect>
           <x>690</x>
-          <y>360</y>
+          <y>410</y>
           <width>141</width>
           <height>25</height>
          </rect>
@@ -5015,7 +5015,7 @@
         <property name="geometry">
          <rect>
           <x>850</x>
-          <y>362</y>
+          <y>412</y>
           <width>81</width>
           <height>25</height>
          </rect>
@@ -5036,7 +5036,7 @@
         <property name="geometry">
          <rect>
           <x>40</x>
-          <y>360</y>
+          <y>410</y>
           <width>141</width>
           <height>25</height>
          </rect>
@@ -5057,7 +5057,7 @@
         <property name="geometry">
          <rect>
           <x>200</x>
-          <y>362</y>
+          <y>412</y>
           <width>81</width>
           <height>25</height>
          </rect>
@@ -5075,7 +5075,7 @@
         <property name="geometry">
          <rect>
           <x>395</x>
-          <y>400</y>
+          <y>450</y>
           <width>111</width>
           <height>38</height>
          </rect>
@@ -5093,7 +5093,7 @@
         <property name="geometry">
          <rect>
           <x>511</x>
-          <y>400</y>
+          <y>450</y>
           <width>84</width>
           <height>38</height>
          </rect>
@@ -5111,7 +5111,7 @@
         <property name="geometry">
          <rect>
           <x>269</x>
-          <y>400</y>
+          <y>450</y>
           <width>121</width>
           <height>38</height>
          </rect>
@@ -5270,7 +5270,7 @@
         <property name="geometry">
          <rect>
           <x>142</x>
-          <y>400</y>
+          <y>450</y>
           <width>121</width>
           <height>38</height>
          </rect>
@@ -5282,6 +5282,90 @@
         </property>
         <property name="text">
          <string>رجــــــوع</string>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_53">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>700</x>
+          <y>120</y>
+          <width>171</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_78">
+        <property name="geometry">
+         <rect>
+          <x>880</x>
+          <y>124</y>
+          <width>65</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>المجموعة</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLineEdit" name="lineEdit_54">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>700</x>
+          <y>150</y>
+          <width>171</width>
+          <height>26</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>14</pointsize>
+         </font>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_79">
+        <property name="geometry">
+         <rect>
+          <x>880</x>
+          <y>154</y>
+          <width>65</width>
+          <height>19</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>الشركة</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </widget>
@@ -5315,12 +5399,12 @@
         </property>
         <column>
          <property name="text">
-          <string>اسم الصنف</string>
+          <string>رقم البند</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>كود الصنف</string>
+          <string>اسم الصنف</string>
          </property>
         </column>
         <column>
@@ -5445,9 +5529,9 @@
         </property>
         <property name="geometry">
          <rect>
-          <x>640</x>
+          <x>600</x>
           <y>110</y>
-          <width>181</width>
+          <width>221</width>
           <height>24</height>
          </rect>
         </property>
@@ -5859,38 +5943,31 @@
          <string>رجــــوع</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton_66">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="geometry">
-         <rect>
-          <x>608</x>
-          <y>110</y>
-          <width>31</width>
-          <height>24</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>16</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>▼</string>
-        </property>
-       </widget>
-       <widget class="QWidget" name="gridLayoutWidget">
-        <property name="geometry">
-         <rect>
-          <x>440</x>
-          <y>130</y>
-          <width>191</width>
-          <height>221</height>
-         </rect>
-        </property>
-        <layout class="QGridLayout" name="gridLayout"/>
-       </widget>
+       <zorder>pushButton_33</zorder>
+       <zorder>lineEdit_71</zorder>
+       <zorder>label_98</zorder>
+       <zorder>lineEdit_70</zorder>
+       <zorder>lineEdit_69</zorder>
+       <zorder>lineEdit_67</zorder>
+       <zorder>label_97</zorder>
+       <zorder>label_99</zorder>
+       <zorder>label_94</zorder>
+       <zorder>label_100</zorder>
+       <zorder>lineEdit_66</zorder>
+       <zorder>label_95</zorder>
+       <zorder>lineEdit_68</zorder>
+       <zorder>lineEdit_65</zorder>
+       <zorder>label_93</zorder>
+       <zorder>lineEdit_72</zorder>
+       <zorder>label_101</zorder>
+       <zorder>lineEdit_73</zorder>
+       <zorder>label_102</zorder>
+       <zorder>pushButton_34</zorder>
+       <zorder>pushButton_36</zorder>
+       <zorder>pushButton_37</zorder>
+       <zorder>pushButton_39</zorder>
+       <zorder>pushButton_41</zorder>
+       <zorder>tableWidget_11</zorder>
       </widget>
       <widget class="QWidget" name="tab_14">
        <attribute name="title">
@@ -7052,7 +7129,7 @@
      <widget class="QLabel" name="label_120">
       <property name="geometry">
        <rect>
-        <x>586</x>
+        <x>612</x>
         <y>102</y>
         <width>51</width>
         <height>20</height>
@@ -7073,7 +7150,7 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>225</x>
+        <x>245</x>
         <y>100</y>
         <width>51</width>
         <height>24</height>
@@ -7095,7 +7172,7 @@
      <widget class="QLabel" name="label_121">
       <property name="geometry">
        <rect>
-        <x>280</x>
+        <x>300</x>
         <y>102</y>
         <width>31</width>
         <height>20</height>
@@ -7173,9 +7250,9 @@
      <widget class="QComboBox" name="comboBox_16">
       <property name="geometry">
        <rect>
-        <x>660</x>
+        <x>680</x>
         <y>100</y>
-        <width>251</width>
+        <width>231</width>
         <height>26</height>
        </rect>
       </property>
@@ -7191,7 +7268,7 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>474</x>
+        <x>500</x>
         <y>100</y>
         <width>101</width>
         <height>24</height>
@@ -7377,7 +7454,7 @@
      <widget class="QLabel" name="label_127">
       <property name="geometry">
        <rect>
-        <x>420</x>
+        <x>450</x>
         <y>103</y>
         <width>31</width>
         <height>20</height>
@@ -7398,7 +7475,7 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>340</x>
+        <x>370</x>
         <y>100</y>
         <width>71</width>
         <height>24</height>
@@ -7558,6 +7635,84 @@
        <string>طباعة الفاتورة</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="pushButton_66">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>215</x>
+        <y>100</y>
+        <width>31</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>16</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>▼</string>
+      </property>
+     </widget>
+     <widget class="QWidget" name="gridLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>170</y>
+        <width>191</width>
+        <height>221</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout"/>
+     </widget>
+     <zorder>label_90</zorder>
+     <zorder>timeEdit_11</zorder>
+     <zorder>label_112</zorder>
+     <zorder>comboBox_15</zorder>
+     <zorder>label_113</zorder>
+     <zorder>label_114</zorder>
+     <zorder>lineEdit_59</zorder>
+     <zorder>lineEdit_60</zorder>
+     <zorder>label_115</zorder>
+     <zorder>lineEdit_61</zorder>
+     <zorder>label_116</zorder>
+     <zorder>lineEdit_62</zorder>
+     <zorder>label_117</zorder>
+     <zorder>label_118</zorder>
+     <zorder>lineEdit_63</zorder>
+     <zorder>pushButton_49</zorder>
+     <zorder>pushButton_50</zorder>
+     <zorder>pushButton_52</zorder>
+     <zorder>label_119</zorder>
+     <zorder>label_120</zorder>
+     <zorder>lineEdit_83</zorder>
+     <zorder>label_121</zorder>
+     <zorder>lineEdit_84</zorder>
+     <zorder>label_122</zorder>
+     <zorder>pushButton_53</zorder>
+     <zorder>comboBox_16</zorder>
+     <zorder>lineEdit_85</zorder>
+     <zorder>lineEdit_86</zorder>
+     <zorder>label_123</zorder>
+     <zorder>lineEdit_64</zorder>
+     <zorder>label_124</zorder>
+     <zorder>lineEdit_82</zorder>
+     <zorder>label_125</zorder>
+     <zorder>lineEdit_87</zorder>
+     <zorder>label_126</zorder>
+     <zorder>label_127</zorder>
+     <zorder>lineEdit_88</zorder>
+     <zorder>lineEdit_89</zorder>
+     <zorder>label_128</zorder>
+     <zorder>dateEdit_13</zorder>
+     <zorder>lineEdit_90</zorder>
+     <zorder>label_129</zorder>
+     <zorder>pushButton_65</zorder>
+     <zorder>pushButton_66</zorder>
+     <zorder>gridLayoutWidget</zorder>
+     <zorder>tableWidget_13</zorder>
     </widget>
     <widget class="QWidget" name="tab_16">
      <attribute name="title">
