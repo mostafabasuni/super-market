@@ -70,6 +70,7 @@ class Main(QMainWindow, MainUI):
 
         self.checkBox.stateChanged.connect(self.user_enabled)        
         self.comboBox_9.currentTextChanged.connect(self.importer_info)
+        self.comboBox_24.currentTextChanged.connect(self.customer_info)
         self.comboBox_15.activated.connect(self.shift_change)
         self.lineEdit_3.textEdited.connect(self.user_save_enabled)
         self.lineEdit_10.textEdited.connect(self.customer_save_enabled)
@@ -129,6 +130,7 @@ class Main(QMainWindow, MainUI):
         self.user_combo_fill()
         self.importer_combo_fill()
         self.item_combo_fill()
+        self.customer_combo_fill()
         
 
     def db_connect(self):
@@ -215,7 +217,7 @@ class Main(QMainWindow, MainUI):
 
     # ===================== keybad =======================
         self.keypad = QFrame(self)
-        self.keypad.setGeometry(87, 164, 180, 230)
+        self.keypad.setGeometry(87, 225, 180, 230)
         self.keypad.setStyleSheet("background-color: lightgray; border: 1px solid black;")
         self.keypad.setVisible(False)  # مخفية في البداية
 
@@ -599,6 +601,19 @@ class Main(QMainWindow, MainUI):
         self.customer_table_fill()
         self.customer_clear()
 
+    def customer_combo_fill(self):
+        self.comboBox_24.clear()
+        self.cur.execute('''SELECT customer_name FROM customer ORDER BY id ''')
+        customers = self.cur.fetchall()        
+        for customer in customers:
+            self.comboBox_24.addItem(customer[0])
+
+    def customer_info(self):
+        cus_name = self.comboBox_24.currentText()
+        self.cur.execute("SELECT * FROM customer WHERE customer_name=%s", ([cus_name]) )
+        data = self.cur.fetchone()        
+        cus_phone = self.lineEdit_97.setText(data[2])
+        cus_address = self.lineEdit_98.setText(data[3])
 # =========== Importers ===========
 
     def importer_save_enabled(self):
@@ -2287,21 +2302,31 @@ class Main(QMainWindow, MainUI):
         self.salebill_details_table_fill()
 
     def salebill_add_new(self):
-        self.cur.execute("SELECT MAX( id ) FROM salebill")
-        id = self.cur.fetchone()
-        id = list(id)        
-        if id[0] == None:
-            id[0] = 0
-        # هذه الخطوة للتغلب فيما إذا تم حذف السجل الأخير من قاعدة البيانات
-        self.cur.execute(f"ALTER TABLE salebill AUTO_INCREMENT = {id[0]}")
-        self.cur.execute("SELECT MAX( id ) FROM salebill")
-        id = self.cur.fetchone()
-        id = list(id)        
-        if id[0] == None:
-            id[0] = 0
+        date = self.dateEdit_13.date().toString(Qt.ISODate)
+        time = self.timeEdit_11.time().toString(Qt.ISODate)
+        cus_name = self.comboBox_24.currentText()
+        user_name = self.comboBox_15.currentText()    
         
-        self.timeEdit_11.setTime(QTime.currentTime())
-        self.lineEdit_59.setText(str(id[0]+1))        
+        self.cur.execute("SELECT id, cash FROM salebill WHERE id=(SELECT max(id) FROM salebill)")
+        data = self.cur.fetchone()        
+        if data and data[1] == 0:
+            id = data[0]
+        else:
+            if not data:
+                id = 1
+            else:
+                if data[1] != 0:
+                    id = data[0] + 1
+        
+            insert_sql = ''' INSERT INTO salebill (id, date, time, customer_id, user_id)
+                SELECT %s, %s, %s, 
+                (SELECT id FROM customer WHERE customer_name=%s),
+                (SELECT id FROM user WHERE user_fullname=%s) '''
+            self.cur.execute(insert_sql, (id, date, time, cus_name, user_name))
+            self.db.commit()
+        
+        #self.timeEdit_11.setTime(QTime.currentTime())
+        self.lineEdit_59.setText(str(id))        
         self.lineEdit_60.setText('0')
         self.lineEdit_61.setText('0')
         self.lineEdit_62.setText('0')
