@@ -1680,13 +1680,14 @@ class Main(QMainWindow, MainUI):
         #    return        
         self.cur.execute("SELECT id, buy_total_price FROM buybill WHERE id=(SELECT max(id) FROM buybill)")        
         data = self.cur.fetchone()        
-        if data != None and data[1] == 0:
+        if data and data[1] == 0:
             id = data[0]
         else:
-            if data == None:
+            if not data:
                 id = 1
-            elif data[1] != 0:
-                id = data[0] + 1
+            else:
+                if data[1] != 0:
+                    id = data[0] + 1
             # Combine the SELECT queries into the INSERT statement
             insert_sql = '''
                 INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
@@ -2225,16 +2226,15 @@ class Main(QMainWindow, MainUI):
         #self.lineEdit_60.setText(str(-1*x))
 
     def item_qty_x_sale_price(self):
-        item_price = Decimal(self.lineEdit_85.text())
-        
+        item_price = Decimal(self.lineEdit_85.text())        
         item_qty = Decimal(self.lineEdit_83.text())
         x = item_qty * item_price
-        self.lineEdit_84.setText(str(x))
+        self.lineEdit_84.setText(str(x))        
         self.sale_item_add()
 
     def get_sale_item_info(self):
         bar_code = self.lineEdit_86.text()
-        sql = f"SELECT item_name, item_price, item_unit FROM item WHERE item_barcode={bar_code}"
+        sql = f"SELECT item_name, item_public_price, item_unit FROM item WHERE item_barcode={bar_code}"
         self.cur.execute(sql)
         data = self.cur.fetchone()        
         self.comboBox_16.setCurrentText(data[0])
@@ -2284,21 +2284,22 @@ class Main(QMainWindow, MainUI):
         code = self.lineEdit_86.text()
         name = self.comboBox_16.currentText()
         price = self.lineEdit_85.text()
-        qty = float(self.lineEdit_83.text())
-        item_total_price = self.lineEdit_84.text()
+        qty = Decimal(self.lineEdit_83.text())
+        total = Decimal(self.lineEdit_84.text())
         unit = self.lineEdit_88.text()
-        x = float(item_total_price)
-        y = x + float(self.lineEdit_61.text())
-        self.lineEdit_61.setText(str(y))
-        self.lineEdit_62.setText(str(float(self.lineEdit_61.text())-(float(self.lineEdit_63.text()))))
+        discount = Decimal(self.lineEdit_99.text())
+        
+        self.lineEdit_62.setText(str(Decimal(self.lineEdit_61.text())-(Decimal(self.lineEdit_63.text()))))
         self.cur.execute("INSERT INTO salebill_details \
             (bill_id, item_barcode, item_name,\
-            item_price, total_price, item_qty) \
-            VALUES(%s, %s, %s, %s, %s, %s)",\
-            (id, code, name, price, item_total_price, qty))
+            item_price, item_qty, item_discount, total_price) \
+            VALUES(%s, %s, %s, %s, %s, %s, %s)",\
+            (id, code, name, price, qty, discount, total))
         
         self.cur.execute(f"UPDATE item SET item_qty=item_qty-{qty} WHERE item_barcode={it_code}")
         self.db.commit()
+        self.hide_keypad()
+        self.lineEdit_83.setText('1')
         self.salebill_details_table_fill()
 
     def salebill_add_new(self):
@@ -2415,32 +2416,34 @@ class Main(QMainWindow, MainUI):
         self.pushButton_50.setEnabled(False)
 
     def salebill_details_table_fill(self):        
-        x = 0
-        y = 0
-        s_bill_id = int(self.lineEdit_59.text())
+        
+        sb_id = int(self.lineEdit_59.text())
         self.tableWidget_13.setRowCount(0)
         self.tableWidget_13.insertRow(0)
-        self.cur.execute(f"SELECT item_code, item_name, item_unit, item_price, item_count, item_total_price FROM salebill_details WHERE salebill_id={s_bill_id}")
-        data = self.cur.fetchall()
-        if data == []:
-            self.lineEdit_61.setText('0')
-            self.lineEdit_62.setText('0')
-            QMessageBox.warning(self,'تنبيه', 'انتبه تم حذف جميع أصناف الفاتورة', QMessageBox.Ok)            
-            return
+        
+        sql = f''' SELECT s.item_name, s.item_barcode, i.item_unit,
+        s.item_price, s.item_qty, s.item_discount, s.total_price
+        FROM salebill_details s 
+        LEFT JOIN item i ON s.item_barcode = i.item_barcode
+        WHERE s.bill_id = {sb_id}        '''
+        self.cur.execute(sql)
+        data = self.cur.fetchall()        
         for row, form in enumerate(data):
             for col, item in enumerate(form):
                 self.tableWidget_13.setItem(row, col, QTableWidgetItem(str(item)))
-                if col == 4 :
-                    y += float(item)
-                elif col == 5 :
-                    x += float(item)
                 col += 1
-            row_pos = self.tableWidget_13.rowCount()            
+            row_pos = self.tableWidget_13.rowCount()
             self.tableWidget_13.insertRow(row_pos)
-        self.tableWidget_13.setItem(row_pos, 4, QTableWidgetItem(str(y)))
-        self.tableWidget_13.setItem(row_pos, 5, QTableWidgetItem(str(x)))
-        self.lineEdit_61.setText(str(x))
-        self.lineEdit_62.setText(str(x))
+        
+        sql = f''' SELECT SUM(item_price), SUM(item_qty), SUM(item_discount), 
+        SUM(total_price) FROM salebill_details WHERE bill_id = {sb_id}
+        '''
+        self.cur.execute(sql)
+        data = self.cur.fetchone()        
+        self.lineEdit_61.setText(str(data[0]))
+        self.lineEdit_63.setText(str(data[2]))        
+        self.lineEdit_62.setText(str(data[3]))
+        self.lineEdit_74.setText(str(data[1]))
 
 # =============== تقارير ===============
     def cashier_daily_tally(self):
