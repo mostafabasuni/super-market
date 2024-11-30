@@ -7774,9 +7774,9 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>510</x>
+        <x>400</x>
         <y>97</y>
-        <width>191</width>
+        <width>301</width>
         <height>24</height>
        </rect>
       </property>
