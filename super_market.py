@@ -79,8 +79,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_36.textEdited.connect(self.grp_save_enabled)
         self.lineEdit_38.textEdited.connect(self.company_save_enabled)
         self.lineEdit_69.textChanged.connect(self.buy_unit_total)
-        self.lineEdit_71.textChanged.connect(self.buy_unit_total)
-        
+        self.lineEdit_71.textChanged.connect(self.buy_unit_total)        
         
         self.lineEdit_75.textEdited.connect(self.rebuypill_save_but)
         self.lineEdit_80.textEdited.connect(self.rebuypill_save_but)
@@ -2288,35 +2287,28 @@ class Main(QMainWindow, MainUI):
         total = Decimal(self.lineEdit_84.text())
         unit = self.lineEdit_88.text()
         discount = Decimal(self.lineEdit_99.text())
-        sql_max = "SELECT MAX(bill_id) FROM salebill_details"
-        self.cur.execute(sql_max)
-        max = self.cur.fetchone()        
-        if max[0] != id:
+
+        sql = "SELECT item_barcode FROM salebill_details WHERE bill_id=%s AND item_barcode=%s"
+        self.cur.execute(sql, (id, it_code))
+        data = self.cur.fetchone()
+        
+        if not data :            
             self.lineEdit_62.setText(str(Decimal(self.lineEdit_61.text())-(Decimal(self.lineEdit_63.text()))))
             self.cur.execute("INSERT INTO salebill_details \
                 (bill_id, item_barcode, item_name,\
                 item_price, item_qty, item_discount, total_price) \
                 VALUES(%s, %s, %s, %s, %s, %s, %s)",\
                 (id, code, name, price, qty, discount, total))
-        else:
-            sql = "SELECT item_barcode FROM salebill_details WHERE bill_id=%s ORDER BY id DESC LIMIT 1"
-            self.cur.execute(sql, [(id)])
-            data = self.cur.fetchone()            
-            if data[0] != it_code:               
-                self.lineEdit_62.setText(str(Decimal(self.lineEdit_61.text())-(Decimal(self.lineEdit_63.text()))))
-                self.cur.execute("INSERT INTO salebill_details \
-                    (bill_id, item_barcode, item_name,\
-                    item_price, item_qty, item_discount, total_price) \
-                    VALUES(%s, %s, %s, %s, %s, %s, %s)",\
-                    (id, code, name, price, qty, discount, total))
-            else:
-                self.cur.execute(f"UPDATE salebill_details SET item_qty=item_qty+{qty}, total_price=item_price * item_qty WHERE item_barcode={it_code}")
-
+        else:            
+            self.cur.execute(f"UPDATE salebill_details SET item_qty=item_qty+{qty}, total_price=item_price * item_qty WHERE item_barcode={it_code}")
+        
         self.cur.execute(f"UPDATE item SET item_qty=item_qty-{qty} WHERE item_barcode={it_code}")
         self.db.commit()
         self.hide_keypad()
         self.lineEdit_83.setText('1')
         self.salebill_details_table_fill()
+        self.salebill_save()
+        
 
     def salebill_add_new(self):
         date = self.dateEdit_13.date().toString(Qt.ISODate)
