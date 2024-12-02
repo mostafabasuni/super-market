@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>6</number>
+     <number>5</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -4465,7 +4465,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_12">
        <attribute name="title">
@@ -5405,6 +5405,11 @@
         <column>
          <property name="text">
           <string>اسم الصنف</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>الباركود</string>
          </property>
         </column>
         <column>

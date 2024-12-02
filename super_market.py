@@ -1559,10 +1559,8 @@ class Main(QMainWindow, MainUI):
             '''
         params = (bb_id,)
         self.cur.execute(query, params)
-
-        self.db.commit()
-        self.buy_item_table_fill()
-        
+        self.db.commit()        
+        self.buy_item_table_fill()        
         self.pushButton_37.setEnabled(False)
         self.pushButton_39.setEnabled(False)
 

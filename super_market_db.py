@@ -87,13 +87,15 @@ class Salebill(BaseModel):
     cash_return = DecimalField(max_digits=10, decimal_places=2, null=False)
     visa = DecimalField(max_digits=10, decimal_places=2)    
     user = ForeignKeyField(User, backref='salebills')
+    item_count = IntegerField() # عدد القطع في الفاتورة
 
 class Salebill_details(BaseModel):
     bill_id = ForeignKeyField(Salebill, on_delete='CASCADE', on_update='CASCADE')
     item_barcode = BigIntegerField(null=False)
     item_name = CharField(max_length= 100, null=False)
     item_price = DecimalField(max_digits=10, decimal_places=2)
-    item_qty = DecimalField(max_digits=6, decimal_places=2)
+    item_qty = DecimalField(max_digits=6, decimal_places=2) # كمية الصنف وخاصة إذا كان بالوزن
+    item_count = IntegerField() # عدد القطع من نفس الصنف
     item_discount = DecimalField(max_digits=4, decimal_places=2)
     total_price = DecimalField(max_digits=10, decimal_places=2)
 
