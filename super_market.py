@@ -2231,12 +2231,24 @@ class Main(QMainWindow, MainUI):
 
     def get_sale_item_info(self):
         bar_code = self.lineEdit_86.text()
-        sql = f"SELECT item_name, item_public_price, item_unit FROM item WHERE item_barcode={bar_code}"
+        sql = f"SELECT item_name, item_public_price, item_unit, item_discount FROM item WHERE item_barcode={bar_code}"
         self.cur.execute(sql)
-        data = self.cur.fetchone()        
+        data = self.cur.fetchone()
+        qty = Decimal(self.lineEdit_83.text())
+        discount = data[1] * data[3] * qty / 100
+        discount = f"{discount:.2f}"
         self.comboBox_16.setCurrentText(data[0])
         self.lineEdit_85.setText(str(data[1]))
         self.lineEdit_88.setText(data[2])
+        self.lineEdit_99.setText(str(discount))
+        unit = self.lineEdit_88.text()
+        wight_chk = bar_code[:2]        
+        if unit == 'كيلو جرام' and wight_chk == '20':
+            wight = int(bar_code[5:8])            
+            wight = Decimal(wight/1000)
+            wight = f"{wight:.3f}"            
+            self.lineEdit_83.setText(str(wight))
+
         self.item_qty_x_sale_price()
 
     def sale_item_select(self):
@@ -2283,24 +2295,31 @@ class Main(QMainWindow, MainUI):
         price = self.lineEdit_85.text()
         qty = Decimal(self.lineEdit_83.text())
         total = Decimal(self.lineEdit_84.text())
-        unit = self.lineEdit_88.text()
         discount = Decimal(self.lineEdit_99.text())
-
+        unit = self.lineEdit_88.text()
+        if unit == 'كيلو جرام':
+            count = 1
+        else: 
+            count = qty
+        
         sql = "SELECT item_barcode FROM salebill_details WHERE bill_id=%s AND item_barcode=%s"
         self.cur.execute(sql, (id, it_code))
         data = self.cur.fetchone()
         
-        if not data :            
+        if not data or unit=='كيلو جرام':            
             self.lineEdit_62.setText(str(Decimal(self.lineEdit_61.text())-(Decimal(self.lineEdit_63.text()))))
             self.cur.execute("INSERT INTO salebill_details \
-                (bill_id, item_barcode, item_name,\
-                item_price, item_qty, item_discount, total_price) \
-                VALUES(%s, %s, %s, %s, %s, %s, %s)",\
-                (id, code, name, price, qty, discount, total))
+                (bill_id, item_barcode, item_name, item_price,\
+                item_qty, item_count, item_discount, total_price) \
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s)",\
+                (id, code, name, price, qty, count, discount, total))
         else:            
-            self.cur.execute(f"UPDATE salebill_details SET item_qty=item_qty+{qty}, total_price=item_price * item_qty WHERE item_barcode={it_code}")
+            self.cur.execute(f"UPDATE salebill_details SET item_qty={qty}, \
+                item_count=item_count+{count}, total_price=item_price * item_qty \
+                WHERE item_barcode={it_code}")
         
-        self.cur.execute(f"UPDATE item SET item_qty=item_qty-{qty} WHERE item_barcode={it_code}")
+        self.cur.execute(f"UPDATE item SET item_qty=item_qty-{qty} \
+            WHERE item_barcode={it_code}")
         self.db.commit()
         self.hide_keypad()
         self.lineEdit_83.setText('1')
@@ -2312,7 +2331,8 @@ class Main(QMainWindow, MainUI):
         date = self.dateEdit_13.date().toString(Qt.ISODate)
         time = self.timeEdit_11.time().toString(Qt.ISODate)
         cus_name = self.comboBox_24.currentText()
-        user_name = self.comboBox_15.currentText()    
+        user_name = self.comboBox_15.currentText()
+        count = 0    
         
         self.cur.execute("SELECT id, cash FROM salebill WHERE id=(SELECT max(id) FROM salebill)")
         data = self.cur.fetchone()        
@@ -2325,11 +2345,11 @@ class Main(QMainWindow, MainUI):
                 if data[1] != 0:
                     id = data[0] + 1
         
-            insert_sql = ''' INSERT INTO salebill (id, date, time, customer_id, user_id)
-                SELECT %s, %s, %s, 
+            insert_sql = ''' INSERT INTO salebill (id, date, time, item_count, customer_id, user_id)
+                SELECT %s, %s, %s, %s,
                 (SELECT id FROM customer WHERE customer_name=%s),
                 (SELECT id FROM user WHERE user_fullname=%s) '''
-            self.cur.execute(insert_sql, (id, date, time, cus_name, user_name))
+            self.cur.execute(insert_sql, (id, date, time, count, cus_name, user_name))
             self.db.commit()
         
         #self.timeEdit_11.setTime(QTime.currentTime())
@@ -2339,6 +2359,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_62.setText('0')
         self.lineEdit_63.setText('0')        
         self.lineEdit_64.setText('0')
+        self.lineEdit_74.setText('0')
         self.lineEdit_82.setText('0')
         self.lineEdit_83.setText('1')
         self.lineEdit_84.setText('')
@@ -2381,13 +2402,14 @@ class Main(QMainWindow, MainUI):
         net_cash = Decimal(cash) - Decimal(cash_rtn)        
         visa = self.lineEdit_87.text()
         rest_cash = self.lineEdit_60.text()
+        count = int(self.lineEdit_74.text())
         
         self.cur.execute('''
         UPDATE salebill SET date=%s, time=%s, bill_total=%s, discount=%s, wanted=%s,
-        cash=%s, cash_return=%s, visa=%s,
+        cash=%s, cash_return=%s, visa=%s, item_count=%s,
         user_id=(SELECT id FROM user WHERE user_fullname=%s),
         customer_id=(SELECT id FROM customer WHERE customer_name=%s)
-        WHERE id=%s''', (sale_date, sale_time, total, dis, wanted, cash, cash_rtn, visa, user, customer, id))
+        WHERE id=%s''', (sale_date, sale_time, total, dis, wanted, cash, cash_rtn, visa, count, user, customer, id))
         
         
         self.db.commit()
@@ -2421,7 +2443,7 @@ class Main(QMainWindow, MainUI):
         self.tableWidget_13.insertRow(0)
         
         sql = f''' SELECT s.item_name, s.item_barcode, i.item_unit,
-        s.item_price, s.item_qty, s.item_discount, s.total_price
+        s.item_price, s.item_qty, item_count, s.item_discount, s.total_price
         FROM salebill_details s 
         LEFT JOIN item i ON s.item_barcode = i.item_barcode
         WHERE s.bill_id = {sb_id}        '''
@@ -2434,16 +2456,17 @@ class Main(QMainWindow, MainUI):
             row_pos = self.tableWidget_13.rowCount()
             self.tableWidget_13.insertRow(row_pos)
         
-        sql = f''' SELECT SUM(item_price), SUM(item_qty), SUM(item_discount), 
-        SUM(total_price) FROM salebill_details WHERE bill_id = {sb_id}
+        sql = f''' SELECT SUM(item_price), SUM(item_qty), SUM(item_count),
+        SUM(item_discount), SUM(total_price) FROM salebill_details 
+        WHERE bill_id = {sb_id}
         '''
         self.cur.execute(sql)
         data = self.cur.fetchone()        
-        self.lineEdit_61.setText(str(data[3]))
-        self.lineEdit_63.setText(str(data[2]))
+        self.lineEdit_61.setText(str(data[4]))
+        self.lineEdit_63.setText(str(data[3]))
         wanted = Decimal(self.lineEdit_61.text()) - Decimal(self.lineEdit_63.text())
         self.lineEdit_62.setText(str(wanted))
-        self.lineEdit_74.setText(str(data[1]))
+        self.lineEdit_74.setText(str(data[2]))
 
 # =============== تقارير ===============
     def cashier_daily_tally(self):

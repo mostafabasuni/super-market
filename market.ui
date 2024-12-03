@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>6</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -6877,6 +6877,11 @@
       <column>
        <property name="text">
         <string>الكمية</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>العدد</string>
        </property>
       </column>
       <column>
