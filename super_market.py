@@ -86,7 +86,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_64.textChanged.connect(self.cash_rset)
         self.lineEdit_64.returnPressed.connect(self.salebill_save)        
         self.lineEdit_86.returnPressed.connect(self.get_sale_item_info)
-        self.lineEdit_87.textChanged.connect(self.visa)
+        self.lineEdit_87.returnPressed.connect(self.visa)
         # self.lineEdit_84.textChanged.connect(self.sale_item_add)        
         # self.tableWidget_11.selectionModel().selectionChanged.connect(self.buy_item_table_select)
         self.tableWidget.itemClicked.connect(self.user_table_select)
@@ -2209,11 +2209,13 @@ class Main(QMainWindow, MainUI):
     
     def visa(self):
         self.lineEdit_82.setText('0')
-        x = float(self.lineEdit_62.text())
-        y = float(self.lineEdit_64.text())
-        z = float(self.lineEdit_87.text())
+        x = Decimal(self.lineEdit_62.text())
+        y = Decimal(self.lineEdit_64.text())
+        z = Decimal(self.lineEdit_87.text())
         m = x - (y+z)
         self.lineEdit_60.setText(str(m))
+        self.salebill_save()
+        self.salebill_add_new()
 
             
     def cash_rset(self):
@@ -2301,7 +2303,6 @@ class Main(QMainWindow, MainUI):
             count = 1
         else: 
             count = qty
-        
         sql = "SELECT item_barcode FROM salebill_details WHERE bill_id=%s AND item_barcode=%s"
         self.cur.execute(sql, (id, it_code))
         data = self.cur.fetchone()
@@ -2325,6 +2326,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_83.setText('1')
         self.salebill_details_table_fill()
         self.salebill_save()
+        self.clear_fields()
         
 
     def salebill_add_new(self):
@@ -2382,6 +2384,8 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_88.setText('')
         self.lineEdit_83.setText('1')
         self.lineEdit_84.setText('')
+        self.lineEdit_86.setFocus(QtCore.Qt.MouseFocusReason)        
+        self.lineEdit_86.setCursorPosition(0)
 
 
     def salebill_save(self):
@@ -2414,6 +2418,7 @@ class Main(QMainWindow, MainUI):
         
         self.db.commit()
         self.pushButton_52.setEnabled(True)
+        
 
 
     def sale_item_update(self):
