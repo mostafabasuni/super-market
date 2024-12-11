@@ -6881,11 +6881,6 @@
       </column>
       <column>
        <property name="text">
-        <string>العدد</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
         <string>الخصم</string>
        </property>
       </column>
