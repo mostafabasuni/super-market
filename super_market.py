@@ -799,13 +799,11 @@ class Main(QMainWindow, MainUI):
     def item_table_fill(self):        
         self.tableWidget_4.setRowCount(0)
         self.tableWidget_4.insertRow(0)
-        self.cur.execute(''' SELECT *, 
-        ROUND(item_qty * item_price, 2) AS total_price, 
-        ROUND(item_qty * item_public_price, 2) AS public_price, 
-        ROUND(item_qty * item_public_price - item_qty * item_price, 2)
-        AS profit_margin FROM item ''')
+        
+        self.cur.execute("SELECT item_name, item_barcode,item_unit, item_buybill_id, \
+            item_price, item_qty, item_discount, item_public_price FROM item")
         data = self.cur.fetchall()
-
+        
         for row, form in enumerate(data):
             for col, item in enumerate(form):
                 self.tableWidget_4.setItem(row, col, QTableWidgetItem(str(item)))
@@ -815,22 +813,22 @@ class Main(QMainWindow, MainUI):
 
     def item_table_select(self):
         row = self.tableWidget_4.currentItem().row()
-        id = self.tableWidget_4.item(row, 0).text()
-        sql = f"SELECT * FROM item WHERE id = {id}"
+        barcode = self.tableWidget_4.item(row, 1).text()
+        sql = f"SELECT * FROM item WHERE item_barcode = {barcode}"
         self.cur.execute(sql)
         data = self.cur.fetchone()
-        self.lineEdit_24.setText(str(data[0]))
-        self.lineEdit_25.setText(str(data[1]))
-        self.lineEdit_26.setText(str(data[2]))
-        self.comboBox_4.setCurrentText(str(data[3]))
-        self.comboBox_5.setCurrentText(str(data[4]))
-        self.comboBox_6.setCurrentText(str(data[5]))
-        self.lineEdit_27.setText(str(data[6]))        
-        self.lineEdit_28.setText(str(data[7]))
-        self.lineEdit_29.setText(str(data[9]))
-        self.lineEdit_30.setText(str(data[8]))
-        self.lineEdit_31.setText(str(data[10]))
-        self.dateEdit_4.setDate(data[11])
+        #self.lineEdit_24.setText(str(data[0]))
+        self.lineEdit_25.setText(str(data[2]))
+        self.lineEdit_26.setText(str(data[1]))
+        #self.comboBox_4.setCurrentText(str(data[3]))
+        #self.comboBox_5.setCurrentText(str(data[4]))
+        #self.comboBox_6.setCurrentText(str(data[5]))
+        self.lineEdit_27.setText(str(data[8]))        
+        self.lineEdit_28.setText(str(data[6]))
+        self.lineEdit_29.setText(str(data[5]))
+        self.lineEdit_30.setText(str(data[7]))
+        self.lineEdit_31.setText(str(data[3]))
+        #self.dateEdit_4.setDate(data[11])
 
         self.pushButton_18.setEnabled(True)
         self.pushButton_19.setEnabled(True)
@@ -2262,26 +2260,46 @@ class Main(QMainWindow, MainUI):
     def sale_item_select(self):
         invo_no = int(self.lineEdit_59.text())
         row = self.tableWidget_13.currentItem().row()
-        it_code = self.tableWidget_13.item(row, 0).text()              
-        sql = f"SELECT * FROM salebill_details WHERE item_code={it_code} AND salebill_id={invo_no}"
+        it_code = self.tableWidget_13.item(row, 1).text()              
+        sql = f"SELECT s.*, i.item_unit \
+            FROM salebill_details s \
+            JOIN item i ON i.item_barcode = {it_code} \
+            WHERE s.item_barcode={it_code} AND s.bill_id={invo_no}"
         self.cur.execute(sql)
         data = self.cur.fetchone()        
-        
         self.lineEdit_86.setText(str(data[2]))
         self.comboBox_16.setCurrentText(data[3])
-        self.lineEdit_85.setText(str(data[5]))
-        self.lineEdit_88.setText(data[4])
-        self.lineEdit_83.setText(str(data[6]))
-        self.lineEdit_84.setText(str(data[7]))
+        self.lineEdit_85.setText(str(data[4]))
+        self.lineEdit_99.setText(str(data[7]))
+        self.lineEdit_83.setText(str(data[5]))
+        self.lineEdit_84.setText(str(data[8]))
+        self.lineEdit_88.setText(data[9])
         self.pushButton_49.setEnabled(True)
         self.pushButton_50.setEnabled(True)
 
 
     def sale_item_delete(self):
         invo_no = int(self.lineEdit_59.text())
-        it_code = int(self.lineEdit_86.text())        
-        sql = ('''DELETE FROM salebill_details WHERE item_code=%s AND salebill_id=%s''')
+        it_code = int(self.lineEdit_86.text())
+        discount = Decimal(self.lineEdit_99.text())
+        qty = Decimal(self.lineEdit_83.text())
+        total = Decimal(self.lineEdit_84.text())
+        sale_update = ''' UPDATE salebill s
+            JOIN salebill_details sd ON sd.item_barcode=%s AND bill_id=%s
+            JOIN item i ON i.item_barcode=%s
+            SET
+            s.bill_total=s.bill_total - sd.item_price, 
+            s.discount=s.discount - sd.item_discount, 
+            s.wanted=s.wanted - sd.total_price,
+            s.item_count=s.item_count - sd.item_count,
+            i.item_qty=i.item_qty + %s
+             '''
+        params = (it_code, invo_no, it_code, qty)
+        self.cur.execute(sale_update, params)
+
+        sql = ('''DELETE FROM salebill_details WHERE item_barcode=%s AND bill_id=%s''')
         self.cur.execute(sql, [(it_code), (invo_no)])
+        
         self.db.commit()        
         self.pushButton_49.setEnabled(False)
         self.pushButton_50.setEnabled(False)
