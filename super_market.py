@@ -705,6 +705,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_12.setEnabled(True)
         self.pushButton_13.setEnabled(False)
         self.importer_table_fill()
+        self.importer_combo_fill()
 
     def importer_search(self):
         name = self.lineEdit_16.text()
@@ -814,14 +815,25 @@ class Main(QMainWindow, MainUI):
     def item_table_select(self):
         row = self.tableWidget_4.currentItem().row()
         barcode = self.tableWidget_4.item(row, 1).text()
-        sql = f"SELECT * FROM item WHERE item_barcode = {barcode}"
+        #sql = f"SELECT * FROM item WHERE item_barcode = {barcode}"
+        #self.cur.execute(sql)
+        #data = self.cur.fetchone()
+
+        sql = f'''SELECT i.*, g.grp_name, c.company_name
+                FROM item i
+                LEFT JOIN importer im ON im.id = i.item_importer_id
+                LEFT JOIN grp g ON g.id = im.importer_grp_id
+                LEFT JOIN company c ON c.id = im.importer_company_id
+                WHERE i.item_barcode = {barcode}'''
         self.cur.execute(sql)
         data = self.cur.fetchone()
+        print(data)
+
         #self.lineEdit_24.setText(str(data[0]))
         self.lineEdit_25.setText(str(data[2]))
         self.lineEdit_26.setText(str(data[1]))
-        #self.comboBox_4.setCurrentText(str(data[3]))
-        #self.comboBox_5.setCurrentText(str(data[4]))
+        self.comboBox_4.setCurrentText(str(data[10]))
+        self.comboBox_5.setCurrentText(str(data[11]))
         #self.comboBox_6.setCurrentText(str(data[5]))
         self.lineEdit_27.setText(str(data[8]))        
         self.lineEdit_28.setText(str(data[6]))
@@ -1405,9 +1417,13 @@ class Main(QMainWindow, MainUI):
         bill_id = int(self.lineEdit_72.text())        
         price = self.lineEdit_71.text()
         total = self.lineEdit_67.text()
-        public = self.lineEdit_65.text()       
-        query = "INSERT INTO item (item_name, item_barcode, item_unit, item_buybill_id, item_price, item_qty, item_discount, item_public_price) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        self.cur.execute(query, (name, code, unit, bill_id, price, qty, discount, public) )
+        public = self.lineEdit_65.text()
+        importer = self.comboBox_9.currentText()
+        query = "INSERT INTO item (item_name, item_barcode, item_unit, \
+        item_buybill_id, item_price, item_qty, item_discount, item_public_price, \
+        item_importer_id) SELECT %s, %s, %s, %s, %s, %s, %s, %s, \
+        (SELECT id FROM importer WHERE importer_name=%s)"
+        self.cur.execute(query, (name, code, unit, bill_id, price, qty, discount, public, importer) )
         self.db.commit()
         query = "INSERT INTO buybill_details (buybill_id, item_price, item_qty, item_discount, item_total, item_id) SELECT %s,%s,%s,%s,%s, (SELECT id FROM item WHERE item_barcode=%s) "
         self.cur.execute(query, (bill_id, price, qty, discount,total, code))
@@ -1614,7 +1630,7 @@ class Main(QMainWindow, MainUI):
         self.tableWidget_11.setRowCount(0)
         self.tableWidget_11.insertRow(0)
         sql = f''' SELECT b.id, i.item_name, i.item_barcode, i.item_unit,
-        b.item_price, b.item_qty, b.item_discount, b.item_total
+        i.item_public_price, b.item_discount, b.item_price, b.item_qty, b.item_total
         FROM buybill_details b 
         LEFT JOIN item i ON b.item_id = i.id
         WHERE b.buybill_id = {bill_id}

@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>5</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -4445,7 +4445,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_12">
        <attribute name="title">
@@ -5399,17 +5399,22 @@
         </column>
         <column>
          <property name="text">
-          <string>سعر الوحدة</string>
+          <string>سعر الجمهور</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>خصم الجمهور</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>سعر الشراء</string>
          </property>
         </column>
         <column>
          <property name="text">
           <string>الكمية</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
-          <string>الخصم</string>
          </property>
         </column>
         <column>
