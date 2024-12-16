@@ -1934,7 +1934,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <property name="documentMode">
        <bool>false</bool>
@@ -4507,7 +4507,7 @@
         </column>
         <column>
          <property name="text">
-          <string>الخصم</string>
+          <string>اجمالي خصم المستهلك</string>
          </property>
         </column>
         <column>
@@ -5681,7 +5681,7 @@
          </font>
         </property>
         <property name="text">
-         <string>سعر بيع الوحدة للجمهور</string>
+         <string>سعر الوحدة للمستهلك</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_68">
@@ -5744,7 +5744,7 @@
          </font>
         </property>
         <property name="text">
-         <string>الخصم %</string>
+         <string>خصم المستهلك</string>
         </property>
        </widget>
        <widget class="QLineEdit" name="lineEdit_72">
@@ -5933,6 +5933,51 @@
          <string>رجــــوع</string>
         </property>
        </widget>
+       <widget class="QLineEdit" name="lineEdit_100">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="geometry">
+         <rect>
+          <x>600</x>
+          <y>230</y>
+          <width>221</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="inputMethodHints">
+         <set>Qt::ImhDigitsOnly|Qt::ImhFormattedNumbersOnly</set>
+        </property>
+        <property name="text">
+         <string>0</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_103">
+        <property name="geometry">
+         <rect>
+          <x>810</x>
+          <y>234</y>
+          <width>141</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>10</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>اجمالي الخصم</string>
+        </property>
+       </widget>
        <zorder>pushButton_33</zorder>
        <zorder>lineEdit_71</zorder>
        <zorder>label_98</zorder>
@@ -5958,6 +6003,8 @@
        <zorder>pushButton_39</zorder>
        <zorder>pushButton_41</zorder>
        <zorder>tableWidget_11</zorder>
+       <zorder>lineEdit_100</zorder>
+       <zorder>label_103</zorder>
       </widget>
       <widget class="QWidget" name="tab_14">
        <attribute name="title">

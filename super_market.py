@@ -79,7 +79,8 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_36.textEdited.connect(self.grp_save_enabled)
         self.lineEdit_38.textEdited.connect(self.company_save_enabled)
         self.lineEdit_69.textChanged.connect(self.buy_unit_total)
-        self.lineEdit_71.textChanged.connect(self.buy_unit_total)        
+        self.lineEdit_71.textChanged.connect(self.buy_unit_total)
+        self.lineEdit_70.textChanged.connect(self.total_discount)
         
         self.lineEdit_75.textEdited.connect(self.rebuypill_save_but)
         self.lineEdit_80.textEdited.connect(self.rebuypill_save_but)
@@ -365,6 +366,14 @@ class Main(QMainWindow, MainUI):
         self.checkBox.setChecked(False)
         self.pushButton.setEnabled(True)
         self.pushButton_2.setEnabled(False)
+        self.lineEdit_2.setText('')
+        self.lineEdit_3.setText('')
+        self.lineEdit_4.setText('')
+        self.lineEdit_5.setText('')
+        self.lineEdit_6.setText('')
+        self.lineEdit_7.setText('')
+        self.lineEdit_8.setText('')
+    
 
     def user_search(self):
         name = self.lineEdit.text()
@@ -544,6 +553,9 @@ class Main(QMainWindow, MainUI):
         self.customer_table_fill()
         self.pushButton_6.setEnabled(True)
         self.pushButton_7.setEnabled(False)
+        self.lineEdit_10.setText('')
+        self.lineEdit_12.setText('')
+        self.lineEdit_13.setText('')
 
     def customer_search(self):
         name = self.lineEdit_15.text()
@@ -706,6 +718,10 @@ class Main(QMainWindow, MainUI):
         self.pushButton_13.setEnabled(False)
         self.importer_table_fill()
         self.importer_combo_fill()
+        self.lineEdit_17.setText('')
+        self.lineEdit_18.setText('')
+        self.lineEdit_20.setText('')
+        self.lineEdit_21.setText('')
 
     def importer_search(self):
         name = self.lineEdit_16.text()
@@ -740,14 +756,17 @@ class Main(QMainWindow, MainUI):
         importer_phone = self.lineEdit_20.text()
         importer_address = self.lineEdit_21.text()
         importer_balance = self.lineEdit_22.text()
-        importer_date = self.dateEdit_3.date()
-        importer_date = importer_date.toString(QtCore.Qt.ISODate)
-        importer_time = self.timeEdit_2.time()
-        importer_time = importer_time.toString(QtCore.Qt.ISODate)
+        grp_name = self.comboBox_22.currentText()
+        company_name = self.comboBox_23.currentText()
+        importer_date = self.dateEdit_3.date().toString(QtCore.Qt.ISODate)        
+        importer_time = self.timeEdit_2.time().toString(QtCore.Qt.ISODate)        
         
         self.cur.execute('''
-        UPDATE importer SET importer_name=%s, importer_phone=%s, importer_address=%s, importer_type=%s, importer_balance=%s, importer_date=%s, importer_time=%s
-        WHERE id=%s''', (importer_name, importer_phone, importer_address, importer_type, importer_balance, importer_date, importer_time, id))
+        UPDATE importer SET importer_name=%s, importer_phone=%s, 
+        importer_address=%s, importer_grp_id=(SELECT id FROM grp WHERE grp_name=%s), 
+        importer_company_id=(SELECT id FROM company WHERE company_name=%s),
+        importer_balance=%s, importer_date=%s, importer_time=%s
+        WHERE id=%s''', (importer_name, importer_phone, importer_address, grp_name, company_name, importer_balance, importer_date, importer_time, id))
         self.db.commit()       
         self.importer_table_fill()
 
@@ -760,18 +779,20 @@ class Main(QMainWindow, MainUI):
         self.importer_clear()
 
     def importer_info(self):
+        
         imp_name = self.comboBox_9.currentText()
-        sql = '''SELECT i.importer_phone, i.importer_balance, g.grp_name, c.company_name 
-        FROM importer i
-        JOIN grp g ON g.id = i.importer_grp_id
-        JOIN company c ON c.id = i.importer_company_id
-         WHERE importer_name=%s'''
-        self.cur.execute(sql, [(imp_name)])
-        data = self.cur.fetchone()        
-        self.lineEdit_49.setText(str(data[0]))
-        self.lineEdit_50.setText(str(data[1]))
-        self.lineEdit_53.setText(str(data[2]))
-        self.lineEdit_54.setText(str(data[3]))
+        if imp_name != '':
+            sql = '''SELECT i.importer_phone, i.importer_balance, g.grp_name, c.company_name 
+            FROM importer i
+            JOIN grp g ON g.id = i.importer_grp_id
+            JOIN company c ON c.id = i.importer_company_id
+            WHERE importer_name=%s'''
+            self.cur.execute(sql, [(imp_name)])
+            data = self.cur.fetchone()               
+            self.lineEdit_49.setText(str(data[0]))
+            self.lineEdit_50.setText(str(data[1]))
+            self.lineEdit_53.setText(str(data[2]))
+            self.lineEdit_54.setText(str(data[3]))
 
     def importer_combo_fill(self):        
         self.comboBox_9.clear()        
@@ -1008,6 +1029,8 @@ class Main(QMainWindow, MainUI):
         self.grp_combo_fill()
         self.pushButton_21.setEnabled(False)
         self.pushButton_51.setEnabled(True)
+        self.lineEdit_35.setText('')
+        self.lineEdit_36.setText('')
 
     def grp_update(self):
         grp_id = self.lineEdit_35.text()
@@ -1143,6 +1166,8 @@ class Main(QMainWindow, MainUI):
         self.company_combo_fill()
         self.pushButton_23.setEnabled(False)
         self.pushButton_55.setEnabled(True)
+        self.lineEdit_37.setText('')
+        self.lineEdit_38.setText('')
 
     def company_update(self):
         id = self.lineEdit_37.text()
@@ -1414,6 +1439,7 @@ class Main(QMainWindow, MainUI):
         qty = self.lineEdit_69.text()
         unit = self.lineEdit_66.text()
         discount = self.lineEdit_70.text()
+        tot_discount = self.lineEdit_100.text()
         bill_id = int(self.lineEdit_72.text())        
         price = self.lineEdit_71.text()
         total = self.lineEdit_67.text()
@@ -1426,7 +1452,7 @@ class Main(QMainWindow, MainUI):
         self.cur.execute(query, (name, code, unit, bill_id, price, qty, discount, public, importer) )
         self.db.commit()
         query = "INSERT INTO buybill_details (buybill_id, item_price, item_qty, item_discount, item_total, item_id) SELECT %s,%s,%s,%s,%s, (SELECT id FROM item WHERE item_barcode=%s) "
-        self.cur.execute(query, (bill_id, price, qty, discount,total, code))
+        self.cur.execute(query, (bill_id, price, qty, tot_discount,total, code))
         self.db.commit()
         query = '''
             UPDATE buybill b
@@ -1932,6 +1958,12 @@ class Main(QMainWindow, MainUI):
         unit_price = Decimal(self.lineEdit_71.text())        
         x = qty * unit_price
         self.lineEdit_67.setText(str(x))
+    
+    def total_discount(self):
+        qty = Decimal(self.lineEdit_69.text())
+        unit_dis = Decimal(self.lineEdit_70.text())
+        dis = qty * unit_dis
+        self.lineEdit_100.setText(str(dis))
 
     def row_go(self):        
         rows=[]
@@ -2257,7 +2289,7 @@ class Main(QMainWindow, MainUI):
         self.cur.execute(sql)
         data = self.cur.fetchone()
         qty = Decimal(self.lineEdit_83.text())
-        discount = data[1] * data[3] * qty / 100
+        discount = data[3] * qty
         discount = f"{discount:.2f}"
         self.comboBox_16.setCurrentText(data[0])
         self.lineEdit_85.setText(str(data[1]))

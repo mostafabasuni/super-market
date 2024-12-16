@@ -54,7 +54,7 @@ class Buybill(BaseModel):
     buy_importer = ForeignKeyField(Importer, backref='buybills', null=False) # اسم المورد    
     buy_user = ForeignKeyField(User, null=False)
     buy_total_price = DecimalField(max_digits=10, decimal_places=2, null=False)
-    buy_discount = DecimalField(max_digits=10, decimal_places=2, null=False)
+    buy_discount = DecimalField(max_digits=10, decimal_places=2, null=False) # خصم خاص بالمستهلك
     buy_item_count = IntegerField()  # عدد الفطع للفاتورة الواحدة
 
 class Item(BaseModel):
@@ -64,7 +64,7 @@ class Item(BaseModel):
     item_buybill_id = ForeignKeyField(Buybill, on_update='CASCADE', on_delete='CASCADE') # رقم الفاتورة    
     item_price = DecimalField(max_digits=10, decimal_places=2) # سعر شراء المنتج
     item_qty = DecimalField(max_digits=10, decimal_places=2, null=False)
-    item_discount = DecimalField(max_digits=6, decimal_places=2)
+    item_discount = DecimalField(max_digits=6, decimal_places=2) # خصم خاص بالمستهلك
     item_public_price = DecimalField(max_digits=10, decimal_places=2) # سعر البيع للجمهور
     item_importer = ForeignKeyField(Importer, backref='items')
 
@@ -73,7 +73,7 @@ class Buybill_details(BaseModel):
     item_id = ForeignKeyField(Item)
     item_price = DecimalField(max_digits=8, decimal_places=2)
     item_qty = DecimalField(max_digits=6, decimal_places=2)
-    item_discount = DecimalField(max_digits=8, decimal_places=2)
+    item_discount = DecimalField(max_digits=8, decimal_places=2) # خصم خاص بالمستهلك
     item_total = DecimalField(max_digits=10, decimal_places=2)
     
 
@@ -97,7 +97,7 @@ class Salebill_details(BaseModel):
     item_price = DecimalField(max_digits=10, decimal_places=2)
     item_qty = DecimalField(max_digits=6, decimal_places=2) # كمية الصنف وخاصة إذا كان بالوزن
     item_count = IntegerField() # عدد القطع من نفس الصنف
-    item_discount = DecimalField(max_digits=4, decimal_places=2)
+    item_discount = DecimalField(max_digits=6, decimal_places=2)
     total_price = DecimalField(max_digits=10, decimal_places=2)
 
  
