@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>5</number>
+     <number>3</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -1934,7 +1934,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <property name="documentMode">
        <bool>false</bool>
@@ -1967,6 +1967,9 @@
          <set>Qt::AlignCenter</set>
         </property>
         <widget class="QPushButton" name="pushButton_16">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="geometry">
           <rect>
            <x>12</x>
@@ -2085,15 +2088,15 @@
          </property>
          <property name="geometry">
           <rect>
-           <x>530</x>
+           <x>510</x>
            <y>30</y>
-           <width>191</width>
+           <width>211</width>
            <height>20</height>
           </rect>
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="alignment">
@@ -2121,15 +2124,15 @@
         <widget class="QLineEdit" name="lineEdit_25">
          <property name="geometry">
           <rect>
-           <x>530</x>
+           <x>510</x>
            <y>61</y>
-           <width>191</width>
+           <width>211</width>
            <height>20</height>
           </rect>
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="alignment">
@@ -2157,15 +2160,15 @@
         <widget class="QLineEdit" name="lineEdit_26">
          <property name="geometry">
           <rect>
-           <x>530</x>
-           <y>94</y>
-           <width>191</width>
+           <x>510</x>
+           <y>90</y>
+           <width>211</width>
            <height>20</height>
           </rect>
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
         </widget>
@@ -2234,7 +2237,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="alignment">
@@ -2288,7 +2291,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="alignment">
@@ -2306,7 +2309,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="alignment">
@@ -2400,7 +2403,7 @@
           </font>
          </property>
          <property name="text">
-          <string>الرف</string>
+          <string>المورد</string>
          </property>
         </widget>
         <widget class="QLineEdit" name="lineEdit_30">
@@ -2414,7 +2417,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="alignment">
@@ -2432,7 +2435,7 @@
          </property>
          <property name="font">
           <font>
-           <pointsize>14</pointsize>
+           <pointsize>12</pointsize>
           </font>
          </property>
          <property name="alignment">
@@ -2452,7 +2455,7 @@
           <enum>Qt::RightToLeft</enum>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="displayFormat">
           <string notr="true">dd/MM/yyyy</string>
@@ -2464,9 +2467,9 @@
         <widget class="QComboBox" name="comboBox_4">
          <property name="geometry">
           <rect>
-           <x>530</x>
+           <x>510</x>
            <y>130</y>
-           <width>191</width>
+           <width>211</width>
            <height>20</height>
           </rect>
          </property>
@@ -2479,9 +2482,9 @@
         <widget class="QComboBox" name="comboBox_5">
          <property name="geometry">
           <rect>
-           <x>530</x>
+           <x>510</x>
            <y>164</y>
-           <width>191</width>
+           <width>211</width>
            <height>20</height>
           </rect>
          </property>
@@ -2494,9 +2497,9 @@
         <widget class="QComboBox" name="comboBox_6">
          <property name="geometry">
           <rect>
-           <x>530</x>
+           <x>510</x>
            <y>197</y>
-           <width>191</width>
+           <width>211</width>
            <height>20</height>
           </rect>
          </property>

@@ -564,8 +564,7 @@ class Main(QMainWindow, MainUI):
             return        
         sql = f''' SELECT * FROM customer WHERE customer_name LIKE '%{name}%' '''                    
         self.cur.execute(sql)
-        data = self.cur.fetchall()
-        print(data)
+        data = self.cur.fetchall()      
         if data == []:
             QMessageBox.warning(self, 'لا توجد بيانات',  'لا توجد بيانات تخص المعلومات التي أدخلتها', QMessageBox.Ok)
             return        
@@ -794,12 +793,14 @@ class Main(QMainWindow, MainUI):
             self.lineEdit_53.setText(str(data[2]))
             self.lineEdit_54.setText(str(data[3]))
 
-    def importer_combo_fill(self):        
+    def importer_combo_fill(self):
+        self.comboBox_6.clear()
         self.comboBox_9.clear()        
         self.comboBox_10.clear()
         self.cur.execute('''SELECT importer_name FROM importer ORDER BY id ''')
         importers = self.cur.fetchall()
         for importer in importers:
+            self.comboBox_6.addItem(importer[0])
             self.comboBox_9.addItem(importer[0])           
             self.comboBox_10.addItem(importer[0])   
     
@@ -835,33 +836,31 @@ class Main(QMainWindow, MainUI):
 
     def item_table_select(self):
         row = self.tableWidget_4.currentItem().row()
-        barcode = self.tableWidget_4.item(row, 1).text()
-        #sql = f"SELECT * FROM item WHERE item_barcode = {barcode}"
-        #self.cur.execute(sql)
-        #data = self.cur.fetchone()
+        barcode = self.tableWidget_4.item(row, 1).text()              
 
-        sql = f'''SELECT i.*, g.grp_name, c.company_name
-                FROM item i
-                LEFT JOIN importer im ON im.id = i.item_importer_id
-                LEFT JOIN grp g ON g.id = im.importer_grp_id
-                LEFT JOIN company c ON c.id = im.importer_company_id
-                WHERE i.item_barcode = {barcode}'''
+        sql = f''' SELECT i.* , g.grp_name, c.company_name, im.importer_name, b.buy_date
+            FROM item i
+            LEFT JOIN buybill b ON b.id = i.item_buybill_id AND b.buy_importer_id = i.item_importer_id
+            LEFT JOIN importer im ON im.id = i.item_importer_id
+            LEFT JOIN grp g ON g.id = im.importer_grp_id
+            LEFT JOIN company c ON c.id = im.importer_company_id
+            WHERE i.item_barcode = {barcode} ''' 
+
         self.cur.execute(sql)
-        data = self.cur.fetchone()
-        print(data)
+        data = self.cur.fetchone()      
 
         #self.lineEdit_24.setText(str(data[0]))
         self.lineEdit_25.setText(str(data[2]))
         self.lineEdit_26.setText(str(data[1]))
         self.comboBox_4.setCurrentText(str(data[10]))
         self.comboBox_5.setCurrentText(str(data[11]))
-        #self.comboBox_6.setCurrentText(str(data[5]))
+        self.comboBox_6.setCurrentText(str(data[12]))
         self.lineEdit_27.setText(str(data[8]))        
         self.lineEdit_28.setText(str(data[6]))
         self.lineEdit_29.setText(str(data[5]))
         self.lineEdit_30.setText(str(data[7]))
         self.lineEdit_31.setText(str(data[3]))
-        #self.dateEdit_4.setDate(data[11])
+        self.dateEdit_4.setDate(data[13])
 
         self.pushButton_18.setEnabled(True)
         self.pushButton_19.setEnabled(True)
@@ -916,51 +915,59 @@ class Main(QMainWindow, MainUI):
         if name == '' :
             QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل البيانات المطلوب البحث عنها', QMessageBox.Ok)
             return        
-        sql = f''' SELECT * FROM item WHERE item_name LIKE '%{name}%' '''            
+        sql = f''' SELECT i.* , b.buy_date, g.grp_name, c.company_name, im.importer_name
+        FROM item i
+        LEFT JOIN buybill b ON b.id = i.item_buybill_id AND b.buy_importer_id = i.item_importer_id
+        LEFT JOIN importer im ON im.id = i.item_importer_id
+        LEFT JOIN grp g ON g.id = im.importer_grp_id
+        LEFT JOIN company c ON c.id = im.importer_company_id
+        WHERE i.item_name LIKE '%{name}%' '''            
         self.cur.execute(sql)
-        data = self.cur.fetchone()        
+        data = self.cur.fetchone()       
 
         self.lineEdit_24.setText(str(data[0]))
-        self.lineEdit_25.setText(str(data[1]))
-        self.lineEdit_26.setText(str(data[2]))
-        self.comboBox_4.setCurrentText(data[3])
-        self.comboBox_5.setCurrentText(data[4])
-        self.comboBox_6.setCurrentText(data[5])
-        self.lineEdit_27.setText(str(data[6]))
-        self.lineEdit_28.setText(str(data[7]))
-        self.lineEdit_29.setText(str(data[8]))
-        self.lineEdit_30.setText(str(data[9]))
-        self.lineEdit_31.setText(str(data[10]))
-        self.dateEdit_2.setDate(data[11])
+        self.lineEdit_25.setText(str(data[2]))
+        self.lineEdit_26.setText(str(data[1]))
+        self.comboBox_4.setCurrentText(data[11])
+        self.comboBox_5.setCurrentText(data[12])
+        self.comboBox_6.setCurrentText(data[13])
+        self.lineEdit_27.setText(str(data[8]))
+        self.lineEdit_28.setText(str(data[6]))
+        self.lineEdit_29.setText(str(data[5]))
+        self.lineEdit_30.setText(str(data[7]))
+        self.lineEdit_31.setText(str(data[3]))
+        self.dateEdit_4.setDate(data[10])
         item = self.tableWidget_4.findItems(name, Qt.MatchContains)        
         self.tableWidget_4.setCurrentItem(item[0])
         
 
     def item_update(self):
         id = self.lineEdit_24.text()
-        item_barcode = self.lineEdit_25.text()
-        item_name = self.lineEdit_26.text()        
-        item_price = self.lineEdit_27.text()
-        item_qty = self.lineEdit_28.text()
-        item_limit = self.lineEdit_29.text()
-        item_discount = self.lineEdit_30.text()
-        item_unit = self.lineEdit_31.text()
-        item_group = self.comboBox_4.currentText()
-        item_company = self.comboBox_5.currentText()
-        item_place = self.comboBox_6.currentText()
-        item_date = self.dateEdit_4.date()
-        item_date = item_date.toString(QtCore.Qt.ISODate)        
+        barcode = self.lineEdit_25.text()
+        name = self.lineEdit_26.text()        
+        pub_price = self.lineEdit_27.text()
+        qty = self.lineEdit_28.text()
+        buy_price = self.lineEdit_29.text()
+        discount = self.lineEdit_30.text()
+        unit = self.lineEdit_31.text()
+        group = self.comboBox_4.currentText()
+        company = self.comboBox_5.currentText()
+        importer = self.comboBox_6.currentText()
+        date = self.dateEdit_4.date().toString(QtCore.Qt.ISODate)
+            
         self.cur.execute('''
-        UPDATE item SET item_barcode=%s, item_name=%s, item_group=%s, item_company=%s, item_place=%s, item_price=%s, item_qty=%s, item_discount=%s, item_limit=%s, item_unit=%s, item_date=%s
-        WHERE id=%s''', (item_barcode, item_name, item_group, item_company, item_place, item_price, item_qty, item_limit, item_discount, item_unit, item_date, id))        
+        UPDATE item SET item_name=%s, item_unit=%s, 
+        item_price=%s, item_qty=%s, item_discount=%s, item_public_price=%s        
+        WHERE item_barcode=%s''', (name, unit, buy_price, qty, discount, 
+        pub_price, barcode))
         self.db.commit()
         self.item_table_fill()
         
 
     def item_delete(self):        
-        id = self.lineEdit_24.text()
-        sql = ('''DELETE FROM item WHERE id = %s ''')
-        self.cur.execute(sql, [(id)])
+        barcode = self.lineEdit_25.text()
+        sql = ('''DELETE FROM item WHERE item_barcode = %s ''')
+        self.cur.execute(sql, [(barcode)])
 
         self.db.commit()       
         self.item_table_fill()

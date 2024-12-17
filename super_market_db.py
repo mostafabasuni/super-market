@@ -66,7 +66,7 @@ class Item(BaseModel):
     item_qty = DecimalField(max_digits=10, decimal_places=2, null=False)
     item_discount = DecimalField(max_digits=6, decimal_places=2) # خصم خاص بالمستهلك
     item_public_price = DecimalField(max_digits=10, decimal_places=2) # سعر البيع للجمهور
-    item_importer = ForeignKeyField(Importer, backref='items')
+    item_importer = ForeignKeyField(Importer, backref='items', on_update='CASCADE')
 
 class Buybill_details(BaseModel):    
     buybill_id = ForeignKeyField(Buybill, on_update='CASCADE', on_delete='CASCADE')
