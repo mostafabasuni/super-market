@@ -273,9 +273,13 @@ class Main(QMainWindow, MainUI):
 
 # =========== Usuers ===========
     def user_save_enabled(self):
-        self.pushButton_2.setEnabled(True)
+        if self.lineEdit_2.text() != '':
+            self.pushButton_2.setEnabled(True)
 
     def user_table_select(self):
+
+        self.groupBox_3.setEnabled(True)
+        self.checkBox.setChecked(True)
         row = self.tableWidget.currentItem().row()
         id = self.tableWidget.item(row, 0).text()
         sql = f"SELECT * FROM user WHERE id={id}"
@@ -291,6 +295,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_7.setText(str(data[7]))
         self.lineEdit_8.setText(str(data[8]))
         self.dateEdit.setDate(data[9])
+        self.pushButton.setEnabled(True)
         self.pushButton_3.setEnabled(True)
         self.pushButton_4.setEnabled(True)
 
@@ -318,16 +323,19 @@ class Main(QMainWindow, MainUI):
         row = self.cur.fetchall()
         if row == [] :
             self.lineEdit_2.setText('1')
-        else:
+        else:            
             self.lineEdit_2.setText(str(row[-1][0] + 1))
+            id = int(self.lineEdit_2.text())
+            alter_query = f"ALTER TABLE user AUTO_INCREMENT = {id}"
+            self.cur.execute(alter_query)
         self.lineEdit_3.setText('')
         self.lineEdit_4.setText('')
         self.lineEdit_5.setText('')
         self.lineEdit_6.setText('')      
         self.lineEdit_7.setText('')
         self.lineEdit_8.setText('')
-        self.groupBox_3.setEnabled(False)
-        self.checkBox.setChecked(False)
+        self.groupBox_3.setEnabled(True)
+        self.checkBox.setChecked(True)
         self.pushButton.setEnabled(False)
         self.pushButton_2.setEnabled(False)
         self.pushButton_3.setEnabled(False)
@@ -340,8 +348,7 @@ class Main(QMainWindow, MainUI):
         user_phone = self.lineEdit_5.text()
         user_address = self.lineEdit_6.text()
         user_job = self.comboBox_2.currentText()
-        user_date = self.dateEdit.date()
-        user_date = user_date.toString(QtCore.Qt.ISODate)
+        user_date = self.dateEdit.date().toString(QtCore.Qt.ISODate)        
         user_name = self.lineEdit_7.text()
         user_password = self.lineEdit_8.text()
         if user_full_name == '' or user_nid == '' or user_phone == '' :
@@ -362,18 +369,7 @@ class Main(QMainWindow, MainUI):
         self.db.commit()        
         self.user_table_fill()
         self.user_combo_fill()
-        self.groupBox_3.setEnabled(False)
-        self.checkBox.setChecked(False)
-        self.pushButton.setEnabled(True)
-        self.pushButton_2.setEnabled(False)
-        self.lineEdit_2.setText('')
-        self.lineEdit_3.setText('')
-        self.lineEdit_4.setText('')
-        self.lineEdit_5.setText('')
-        self.lineEdit_6.setText('')
-        self.lineEdit_7.setText('')
-        self.lineEdit_8.setText('')
-    
+        self.user_field_clear()   
 
     def user_search(self):
         name = self.lineEdit.text()
@@ -402,8 +398,12 @@ class Main(QMainWindow, MainUI):
         self.lineEdit.setText('')
         matching_item = self.tableWidget.findItems(self.lineEdit_3.text(), Qt.MatchContains)        
         self.tableWidget.setCurrentItem(matching_item[0])
+        self.pushButton_1.setEnabled(True)
+        self.pushButton_3.setEnabled(True)
+        self.pushButton_4.setEnabled(True)
         
     def user_update(self):
+
         u_id = self.lineEdit_2.text()
         user_full_name = self.lineEdit_3.text()
         user_nid = self.lineEdit_4.text()
@@ -428,17 +428,23 @@ class Main(QMainWindow, MainUI):
 
         self.db.commit()       
         self.user_table_fill()
-        self.groupBox_3.setEnabled(False)
-        self.checkBox.setChecked(False)
+        self.user_field_clear()
 
     def user_delete(self):
-        
-        u_id = self.lineEdit_2.text()
-        sql = ('''DELETE FROM user WHERE id = %s ''')
-        self.cur.execute(sql, [(u_id)])
-
-        self.db.commit()       
+                
+        u_id = int(self.lineEdit_2.text())
+        try:        
+            sql = ('''DELETE FROM user WHERE id = %s ''')
+            self.cur.execute(sql, [(u_id)])
+            self.db.commit()
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            self.db.rollback()
+            # print(f"Error: {e}")  # Optionally log or show the error to the user 
+            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للإعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+            return
         self.user_table_fill()
+        self.user_field_clear()
 
     def user_combo_fill(self):
         self.comboBox_7.clear()
@@ -463,6 +469,22 @@ class Main(QMainWindow, MainUI):
             self.comboBox_17.addItem(user[0])
             self.comboBox_18.addItem(user[0])
             self.comboBox_19.addItem(user[0])
+
+    def user_field_clear(self):
+
+        self.groupBox_3.setEnabled(False)
+        self.checkBox.setChecked(False)
+        self.pushButton.setEnabled(True)
+        self.pushButton_2.setEnabled(False)
+        self.pushButton_3.setEnabled(False)
+        self.pushButton_4.setEnabled(False)
+        self.lineEdit_2.setText('')
+        self.lineEdit_3.setText('')
+        self.lineEdit_4.setText('')
+        self.lineEdit_5.setText('')
+        self.lineEdit_6.setText('')
+        self.lineEdit_7.setText('')
+        self.lineEdit_8.setText('')
 
 # =========== Customers ===========
     
