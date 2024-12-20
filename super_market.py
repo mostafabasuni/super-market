@@ -398,7 +398,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit.setText('')
         matching_item = self.tableWidget.findItems(self.lineEdit_3.text(), Qt.MatchContains)        
         self.tableWidget.setCurrentItem(matching_item[0])
-        self.pushButton_1.setEnabled(True)
+        self.pushButton.setEnabled(True)
         self.pushButton_3.setEnabled(True)
         self.pushButton_4.setEnabled(True)
         
@@ -441,7 +441,7 @@ class Main(QMainWindow, MainUI):
             # Rollback the transaction in case of an error
             self.db.rollback()
             # print(f"Error: {e}")  # Optionally log or show the error to the user 
-            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للإعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
             return
         self.user_table_fill()
         self.user_field_clear()
@@ -489,7 +489,8 @@ class Main(QMainWindow, MainUI):
 # =========== Customers ===========
     
     def customer_save_enabled(self):
-        self.pushButton_7.setEnabled(True)
+        if self.lineEdit_9.text() != '':
+            self.pushButton_7.setEnabled(True)        
 
     def customer_table_select(self):
         row = self.tableWidget_2.currentItem().row()
@@ -507,11 +508,16 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_13.setText(str(data[3]))       
         self.dateEdit_2.setDate(data[4])
         #self.timeEdit.setTime(x)
+        self.pushButton_6.setEnabled(True)
         self.pushButton_8.setEnabled(True)
         self.pushButton_9.setEnabled(True)
 
 
-    def customer_clear(self):
+    def customer_field_clear(self):
+        self.pushButton_6.setEnabled(True)
+        self.pushButton_7.setEnabled(False)
+        self.pushButton_8.setEnabled(False)
+        self.pushButton_9.setEnabled(False)
         self.lineEdit_9.setText('')
         self.lineEdit_10.setText('')
         self.lineEdit_11.setText('')
@@ -535,6 +541,7 @@ class Main(QMainWindow, MainUI):
             self.tableWidget_2.insertRow(row_pos)
 
     def customer_add_new(self):
+        
         self.cur.execute('''
         SELECT id FROM customer  ORDER BY id ''')
         row = self.cur.fetchall()
@@ -542,6 +549,9 @@ class Main(QMainWindow, MainUI):
             self.lineEdit_9.setText('1')
         else:
             self.lineEdit_9.setText(str(row[-1][0] + 1))
+            id = int(self.lineEdit_9.text())
+            alter_query = f"ALTER TABLE customer AUTO_INCREMENT = {id}"
+            self.cur.execute(alter_query)
         self.lineEdit_10.setText('')
         self.lineEdit_11.setText('')
         self.lineEdit_12.setText('')
@@ -573,11 +583,8 @@ class Main(QMainWindow, MainUI):
 
         self.db.commit()        
         self.customer_table_fill()
-        self.pushButton_6.setEnabled(True)
-        self.pushButton_7.setEnabled(False)
-        self.lineEdit_10.setText('')
-        self.lineEdit_12.setText('')
-        self.lineEdit_13.setText('')
+        self.customer_combo_fill()
+        self.customer_field_clear() 
 
     def customer_search(self):
         name = self.lineEdit_15.text()
@@ -604,6 +611,9 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_15.setText('')
         item = self.tableWidget_2.findItems(self.lineEdit_10.text(), Qt.MatchContains)        
         self.tableWidget_2.setCurrentItem(item[0])
+        self.pushButton_6.setEnabled(True)
+        self.pushButton_8.setEnabled(True)
+        self.pushButton_9.setEnabled(True)
 
     def customer_update(self):
         id = self.lineEdit_9.text()
@@ -623,16 +633,24 @@ class Main(QMainWindow, MainUI):
         WHERE id=%s''', (customer_name, customer_phone, customer_address, customer_date, id))
 
         self.db.commit()       
-        self.customer_table_fill()
+        self.customer_table_fill()        
+        self.customer_field_clear()
 
     def customer_delete(self):        
         id = self.lineEdit_9.text()
-        sql = ('''DELETE FROM customer WHERE id = %s ''')
-        self.cur.execute(sql, [(id)])
 
-        self.db.commit()       
+        try:        
+            sql = ('''DELETE FROM customer WHERE id = %s ''')
+            self.cur.execute(sql, [(id)])
+            self.db.commit()
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            self.db.rollback()
+            # print(f"Error: {e}")  # Optionally log or show the error to the user 
+            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+            return              
         self.customer_table_fill()
-        self.customer_clear()
+        self.customer_field_clear()
 
     def customer_combo_fill(self):
         self.comboBox_24.clear()
@@ -644,13 +662,16 @@ class Main(QMainWindow, MainUI):
     def customer_info(self):
         cus_name = self.comboBox_24.currentText()
         self.cur.execute("SELECT * FROM customer WHERE customer_name=%s", ([cus_name]) )
-        data = self.cur.fetchone()        
-        cus_phone = self.lineEdit_97.setText(data[2])
-        cus_address = self.lineEdit_98.setText(data[3])
+        data = self.cur.fetchone()
+        if data != None:
+            self.lineEdit_97.setText(data[2])
+            self.lineEdit_98.setText(data[3])               
+        
 # =========== Importers ===========
 
     def importer_save_enabled(self):
-        self.pushButton_13.setEnabled(True)
+        if self.lineEdit_17.text() != '':
+            self.pushButton_13.setEnabled(True)       
 
     def importer_table_select(self):
         row = self.tableWidget_3.currentItem().row()
@@ -679,7 +700,11 @@ class Main(QMainWindow, MainUI):
         self.pushButton_14.setEnabled(True)
         self.pushButton_15.setEnabled(True)
 
-    def importer_clear(self):
+    def importer_field_clear(self):
+        self.pushButton_12.setEnabled(True)
+        self.pushButton_13.setEnabled(False)
+        self.pushButton_14.setEnabled(False)
+        self.pushButton_15.setEnabled(False)
         self.lineEdit_17.setText('')
         self.lineEdit_18.setText('')
         self.lineEdit_19.setText('')
@@ -700,12 +725,17 @@ class Main(QMainWindow, MainUI):
             self.tableWidget_3.insertRow(row_pos)
 
     def importer_add_new(self):
-        self.cur.execute("SELECT id FROM importer ORDER BY id")
-        row = self.cur.fetchall()        
+        self.cur.execute('''
+        SELECT id FROM importer  ORDER BY id ''')
+        row = self.cur.fetchall()
         if row == [] :
             self.lineEdit_17.setText('1')
         else:
-            self.lineEdit_17.setText(str(row[-1][0] + 1))            
+            self.lineEdit_17.setText(str(row[-1][0] + 1))
+            id = int(self.lineEdit_17.text())
+            alter_query = f"ALTER TABLE importer AUTO_INCREMENT = {id}"
+            self.cur.execute(alter_query)
+                   
         self.lineEdit_18.setText('')
         self.lineEdit_19.setText('')
         self.lineEdit_20.setText('')
@@ -734,15 +764,10 @@ class Main(QMainWindow, MainUI):
                          (SELECT id FROM company WHERE company_name = %s)
               '''
         self.cur.execute(insert_sql,(importer_name, importer_phone, importer_address, importer_balance, importer_date, importer_time, importer_grp, importer_company))
-        self.db.commit()
-        self.pushButton_12.setEnabled(True)
-        self.pushButton_13.setEnabled(False)
+        self.db.commit()        
         self.importer_table_fill()
         self.importer_combo_fill()
-        self.lineEdit_17.setText('')
-        self.lineEdit_18.setText('')
-        self.lineEdit_20.setText('')
-        self.lineEdit_21.setText('')
+        self.importer_field_clear()
 
     def importer_search(self):
         name = self.lineEdit_16.text()
@@ -751,11 +776,11 @@ class Main(QMainWindow, MainUI):
             return        
         sql = f''' SELECT * FROM importer WHERE importer_name LIKE '%{name}%' '''            
         self.cur.execute(sql)
-        data = self.cur.fetchall()
+        data = self.cur.fetchall()        
         if data == []:
             QMessageBox.warning(self, 'لا توجد بيانات',  'لا توجد بيانات تخص المعلومات التي أدخلتها', QMessageBox.Ok)
             return
-        h, m, s = map(int, (str(data[0][7]).split(":")))
+        h, m, s = map(int, (str(data[0][8]).split(":")))
         x = QTime(h, m)
         self.lineEdit_17.setText(str(data[0][0]))
         self.lineEdit_18.setText(str(data[0][1]))
@@ -764,10 +789,13 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_21.setText(str(data[0][3]))
         self.lineEdit_22.setText(str(data[0][5]))
         self.timeEdit_2.setTime(x)
-        self.dateEdit_3.setDate(data[0][6])
+        self.dateEdit_3.setDate(data[0][7])
         self.lineEdit_16.setText('')
         item = self.tableWidget_3.findItems(self.lineEdit_18.text(), Qt.MatchContains)        
         self.tableWidget_3.setCurrentItem(item[0])
+        self.pushButton_12.setEnabled(True)
+        self.pushButton_14.setEnabled(True)
+        self.pushButton_15.setEnabled(True)
 
 
     def importer_update(self):
@@ -790,14 +818,23 @@ class Main(QMainWindow, MainUI):
         WHERE id=%s''', (importer_name, importer_phone, importer_address, grp_name, company_name, importer_balance, importer_date, importer_time, id))
         self.db.commit()       
         self.importer_table_fill()
+        self.importer_field_clear()
 
     def importer_delete(self):        
         id = self.lineEdit_17.text()
-        sql = ('''DELETE FROM importer WHERE id = %s ''')
-        self.cur.execute(sql, [(id)])
+        try:        
+            sql = ('''DELETE FROM importer WHERE id = %s ''')
+            self.cur.execute(sql, [(id)])
+            self.db.commit()
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            self.db.rollback()
+            # print(f"Error: {e}")  # Optionally log or show the error to the user 
+            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+            return
         self.db.commit()       
         self.importer_table_fill()
-        self.importer_clear()
+        self.importer_field_clear()
 
     def importer_info(self):
         
