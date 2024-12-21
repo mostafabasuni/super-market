@@ -36,7 +36,7 @@
      <enum>Qt::RightToLeft</enum>
     </property>
     <property name="currentIndex">
-     <number>3</number>
+     <number>0</number>
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
@@ -1934,7 +1934,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="documentMode">
        <bool>false</bool>
@@ -3667,7 +3667,7 @@
        <enum>Qt::ClickFocus</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_9">
        <attribute name="title">
@@ -4448,7 +4448,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_12">
        <attribute name="title">
@@ -8752,6 +8752,238 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit_2</tabstop>
+  <tabstop>lineEdit_3</tabstop>
+  <tabstop>lineEdit_4</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>lineEdit_5</tabstop>
+  <tabstop>lineEdit_6</tabstop>
+  <tabstop>comboBox_2</tabstop>
+  <tabstop>checkBox</tabstop>
+  <tabstop>lineEdit_7</tabstop>
+  <tabstop>lineEdit_8</tabstop>
+  <tabstop>pushButton_3</tabstop>
+  <tabstop>dateEdit</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>pushButton_5</tabstop>
+  <tabstop>pushButton_4</tabstop>
+  <tabstop>pushButton_2</tabstop>
+  <tabstop>pushButton_6</tabstop>
+  <tabstop>pushButton_7</tabstop>
+  <tabstop>pushButton_8</tabstop>
+  <tabstop>pushButton_9</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>lineEdit_9</tabstop>
+  <tabstop>lineEdit_10</tabstop>
+  <tabstop>lineEdit_11</tabstop>
+  <tabstop>comboBox_3</tabstop>
+  <tabstop>lineEdit_12</tabstop>
+  <tabstop>lineEdit_13</tabstop>
+  <tabstop>lineEdit_14</tabstop>
+  <tabstop>dateEdit_2</tabstop>
+  <tabstop>timeEdit</tabstop>
+  <tabstop>lineEdit_15</tabstop>
+  <tabstop>pushButton_10</tabstop>
+  <tabstop>lineEdit_16</tabstop>
+  <tabstop>lineEdit_17</tabstop>
+  <tabstop>lineEdit_18</tabstop>
+  <tabstop>lineEdit_19</tabstop>
+  <tabstop>comboBox_22</tabstop>
+  <tabstop>lineEdit_20</tabstop>
+  <tabstop>lineEdit_21</tabstop>
+  <tabstop>lineEdit_22</tabstop>
+  <tabstop>comboBox_23</tabstop>
+  <tabstop>dateEdit_3</tabstop>
+  <tabstop>timeEdit_2</tabstop>
+  <tabstop>pushButton_11</tabstop>
+  <tabstop>pushButton_12</tabstop>
+  <tabstop>pushButton_13</tabstop>
+  <tabstop>pushButton_14</tabstop>
+  <tabstop>pushButton_15</tabstop>
+  <tabstop>tabWidget_2</tabstop>
+  <tabstop>pushButton_16</tabstop>
+  <tabstop>pushButton_17</tabstop>
+  <tabstop>pushButton_18</tabstop>
+  <tabstop>pushButton_19</tabstop>
+  <tabstop>lineEdit_23</tabstop>
+  <tabstop>pushButton_20</tabstop>
+  <tabstop>lineEdit_24</tabstop>
+  <tabstop>lineEdit_25</tabstop>
+  <tabstop>lineEdit_26</tabstop>
+  <tabstop>comboBox_4</tabstop>
+  <tabstop>comboBox_5</tabstop>
+  <tabstop>comboBox_6</tabstop>
+  <tabstop>lineEdit_27</tabstop>
+  <tabstop>lineEdit_28</tabstop>
+  <tabstop>lineEdit_29</tabstop>
+  <tabstop>lineEdit_30</tabstop>
+  <tabstop>lineEdit_31</tabstop>
+  <tabstop>dateEdit_4</tabstop>
+  <tabstop>lineEdit_35</tabstop>
+  <tabstop>lineEdit_36</tabstop>
+  <tabstop>dateEdit_5</tabstop>
+  <tabstop>timeEdit_3</tabstop>
+  <tabstop>comboBox_17</tabstop>
+  <tabstop>tableWidget_5</tabstop>
+  <tabstop>pushButton_21</tabstop>
+  <tabstop>pushButton_22</tabstop>
+  <tabstop>pushButton_51</tabstop>
+  <tabstop>pushButton_54</tabstop>
+  <tabstop>lineEdit_37</tabstop>
+  <tabstop>lineEdit_38</tabstop>
+  <tabstop>comboBox_21</tabstop>
+  <tabstop>dateEdit_6</tabstop>
+  <tabstop>timeEdit_4</tabstop>
+  <tabstop>comboBox_18</tabstop>
+  <tabstop>tableWidget_6</tabstop>
+  <tabstop>pushButton_23</tabstop>
+  <tabstop>pushButton_24</tabstop>
+  <tabstop>pushButton_55</tabstop>
+  <tabstop>pushButton_56</tabstop>
+  <tabstop>lineEdit_41</tabstop>
+  <tabstop>lineEdit_42</tabstop>
+  <tabstop>dateEdit_7</tabstop>
+  <tabstop>timeEdit_5</tabstop>
+  <tabstop>tableWidget_7</tabstop>
+  <tabstop>pushButton_25</tabstop>
+  <tabstop>pushButton_26</tabstop>
+  <tabstop>pushButton_57</tabstop>
+  <tabstop>pushButton_58</tabstop>
+  <tabstop>comboBox_19</tabstop>
+  <tabstop>timeEdit_6</tabstop>
+  <tabstop>dateEdit_8</tabstop>
+  <tabstop>comboBox_7</tabstop>
+  <tabstop>timeEdit_7</tabstop>
+  <tabstop>timeEdit_8</tabstop>
+  <tabstop>lineEdit_44</tabstop>
+  <tabstop>lineEdit_45</tabstop>
+  <tabstop>lineEdit_46</tabstop>
+  <tabstop>tableWidget_8</tabstop>
+  <tabstop>pushButton_27</tabstop>
+  <tabstop>pushButton_28</tabstop>
+  <tabstop>pushButton_29</tabstop>
+  <tabstop>comboBox_8</tabstop>
+  <tabstop>dateEdit_9</tabstop>
+  <tabstop>dateEdit_10</tabstop>
+  <tabstop>pushButton_30</tabstop>
+  <tabstop>tableWidget_9</tabstop>
+  <tabstop>lineEdit_47</tabstop>
+  <tabstop>lineEdit_48</tabstop>
+  <tabstop>tabWidget_4</tabstop>
+  <tabstop>tableWidget_10</tabstop>
+  <tabstop>comboBox_9</tabstop>
+  <tabstop>dateEdit_11</tabstop>
+  <tabstop>timeEdit_9</tabstop>
+  <tabstop>lineEdit_49</tabstop>
+  <tabstop>lineEdit_50</tabstop>
+  <tabstop>lineEdit_51</tabstop>
+  <tabstop>checkBox_2</tabstop>
+  <tabstop>checkBox_3</tabstop>
+  <tabstop>pushButton_31</tabstop>
+  <tabstop>pushButton_32</tabstop>
+  <tabstop>comboBox_11</tabstop>
+  <tabstop>lineEdit_52</tabstop>
+  <tabstop>lineEdit_56</tabstop>
+  <tabstop>lineEdit_57</tabstop>
+  <tabstop>lineEdit_58</tabstop>
+  <tabstop>pushButton_35</tabstop>
+  <tabstop>pushButton_38</tabstop>
+  <tabstop>pushButton_40</tabstop>
+  <tabstop>lineEdit_33</tabstop>
+  <tabstop>lineEdit_32</tabstop>
+  <tabstop>pushButton_42</tabstop>
+  <tabstop>pushButton_43</tabstop>
+  <tabstop>lineEdit_53</tabstop>
+  <tabstop>lineEdit_54</tabstop>
+  <tabstop>tableWidget_11</tabstop>
+  <tabstop>pushButton_33</tabstop>
+  <tabstop>lineEdit_71</tabstop>
+  <tabstop>lineEdit_70</tabstop>
+  <tabstop>lineEdit_69</tabstop>
+  <tabstop>lineEdit_67</tabstop>
+  <tabstop>lineEdit_66</tabstop>
+  <tabstop>lineEdit_68</tabstop>
+  <tabstop>lineEdit_65</tabstop>
+  <tabstop>lineEdit_72</tabstop>
+  <tabstop>lineEdit_73</tabstop>
+  <tabstop>pushButton_34</tabstop>
+  <tabstop>pushButton_36</tabstop>
+  <tabstop>pushButton_37</tabstop>
+  <tabstop>pushButton_39</tabstop>
+  <tabstop>pushButton_41</tabstop>
+  <tabstop>lineEdit_100</tabstop>
+  <tabstop>tableWidget_12</tabstop>
+  <tabstop>comboBox_13</tabstop>
+  <tabstop>comboBox_10</tabstop>
+  <tabstop>comboBox_14</tabstop>
+  <tabstop>lineEdit_75</tabstop>
+  <tabstop>lineEdit_76</tabstop>
+  <tabstop>dateEdit_12</tabstop>
+  <tabstop>timeEdit_10</tabstop>
+  <tabstop>lineEdit_77</tabstop>
+  <tabstop>lineEdit_78</tabstop>
+  <tabstop>lineEdit_79</tabstop>
+  <tabstop>lineEdit_80</tabstop>
+  <tabstop>lineEdit_81</tabstop>
+  <tabstop>pushButton_44</tabstop>
+  <tabstop>pushButton_45</tabstop>
+  <tabstop>pushButton_46</tabstop>
+  <tabstop>pushButton_47</tabstop>
+  <tabstop>pushButton_48</tabstop>
+  <tabstop>timeEdit_11</tabstop>
+  <tabstop>comboBox_15</tabstop>
+  <tabstop>lineEdit_59</tabstop>
+  <tabstop>tableWidget_13</tabstop>
+  <tabstop>lineEdit_60</tabstop>
+  <tabstop>lineEdit_61</tabstop>
+  <tabstop>lineEdit_62</tabstop>
+  <tabstop>lineEdit_63</tabstop>
+  <tabstop>pushButton_49</tabstop>
+  <tabstop>pushButton_50</tabstop>
+  <tabstop>pushButton_52</tabstop>
+  <tabstop>lineEdit_83</tabstop>
+  <tabstop>lineEdit_84</tabstop>
+  <tabstop>pushButton_53</tabstop>
+  <tabstop>comboBox_16</tabstop>
+  <tabstop>lineEdit_85</tabstop>
+  <tabstop>lineEdit_86</tabstop>
+  <tabstop>lineEdit_64</tabstop>
+  <tabstop>lineEdit_82</tabstop>
+  <tabstop>lineEdit_87</tabstop>
+  <tabstop>lineEdit_88</tabstop>
+  <tabstop>lineEdit_89</tabstop>
+  <tabstop>dateEdit_13</tabstop>
+  <tabstop>lineEdit_90</tabstop>
+  <tabstop>pushButton_65</tabstop>
+  <tabstop>pushButton_66</tabstop>
+  <tabstop>comboBox_24</tabstop>
+  <tabstop>lineEdit_97</tabstop>
+  <tabstop>lineEdit_98</tabstop>
+  <tabstop>lineEdit_99</tabstop>
+  <tabstop>lineEdit_74</tabstop>
+  <tabstop>tabWidget_5</tabstop>
+  <tabstop>tableWidget_14</tabstop>
+  <tabstop>comboBox_20</tabstop>
+  <tabstop>pushButton_59</tabstop>
+  <tabstop>dateEdit_14</tabstop>
+  <tabstop>tableWidget_16</tabstop>
+  <tabstop>pushButton_64</tabstop>
+  <tabstop>tableWidget_15</tabstop>
+  <tabstop>pushButton_60</tabstop>
+  <tabstop>pushButton_61</tabstop>
+  <tabstop>dateEdit_15</tabstop>
+  <tabstop>pushButton_62</tabstop>
+  <tabstop>pushButton_63</tabstop>
+  <tabstop>dateEdit_16</tabstop>
+  <tabstop>lineEdit_91</tabstop>
+  <tabstop>lineEdit_92</tabstop>
+  <tabstop>lineEdit_93</tabstop>
+  <tabstop>lineEdit_94</tabstop>
+  <tabstop>lineEdit_95</tabstop>
+  <tabstop>lineEdit_96</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

@@ -1054,13 +1054,19 @@ class Main(QMainWindow, MainUI):
 # =========== Groups ===========
 
     def grp_add_new(self):
-        self.cur.execute('''SELECT id FROM grp ORDER BY id ''')
+
+        self.cur.execute('''
+        SELECT id FROM grp  ORDER BY id ''')
         row = self.cur.fetchall()
         if row == [] :
             self.lineEdit_35.setText('1')
-        else:        
-            self.lineEdit_35.setText(str(row[-1][0] + 1))        
+        else:
+            self.lineEdit_35.setText(str(row[-1][0] + 1))
+            id = int(self.lineEdit_35.text())
+            alter_query = f"ALTER TABLE grp AUTO_INCREMENT = {id}"
+            self.cur.execute(alter_query)                
         self.lineEdit_36.setText('')
+        self.pushButton_21.setEnabled(False)
         self.pushButton_22.setEnabled(False)
         self.pushButton_51.setEnabled(False)
         self.pushButton_54.setEnabled(False)
@@ -1092,11 +1098,8 @@ class Main(QMainWindow, MainUI):
             self.db.rollback()
             print(f"Error: {e}")  # Optionally log or show the error to the user        
         self.grp_table_fill()
-        self.grp_combo_fill()
-        self.pushButton_21.setEnabled(False)
-        self.pushButton_51.setEnabled(True)
-        self.lineEdit_35.setText('')
-        self.lineEdit_36.setText('')
+        self.grp_combo_fill()        
+        self.grp_field_clear()
 
     def grp_update(self):
         grp_id = self.lineEdit_35.text()
@@ -1115,19 +1118,30 @@ class Main(QMainWindow, MainUI):
         '''
         self.cur.execute(sql, (grp_name, grp_date, grp_time, grp_user, grp_id))
         self.db.commit()
-        self.grp_table_fill()    
+        self.grp_table_fill()
+        self.grp_field_clear()
 
     def grp_delete(self):
         id = self.lineEdit_35.text()
-        sql = ('''DELETE FROM grp WHERE id = %s ''')
-        self.cur.execute(sql, [(id)])
+        try:        
+            sql = ('''DELETE FROM grp WHERE id = %s ''')
+            self.cur.execute(sql, [(id)])
+            self.db.commit()
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            self.db.rollback()
+            # print(f"Error: {e}")  # Optionally log or show the error to the user 
+            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+            return
         self.db.commit()
         self.lineEdit_35.setText('')
         self.lineEdit_36.setText('')
         self.grp_table_fill()
         self.grp_combo_fill()
+        self.grp_field_clear()
         self.company_combo_fill
         self.company_table_fill
+        
 
     def grp_combo_fill(self):
         self.comboBox_4.clear()
@@ -1182,19 +1196,35 @@ class Main(QMainWindow, MainUI):
         user_name = data[5]
         self.comboBox_17.setCurrentText(user_name)               
         self.pushButton_21.setEnabled(False)
+        self.pushButton_51.setEnabled(True)
         self.pushButton_22.setEnabled(True)
         self.pushButton_54.setEnabled(True)
 
+    def grp_field_clear(self):
+
+        self.pushButton_51.setEnabled(True)
+        self.pushButton_21.setEnabled(False)
+        self.pushButton_22.setEnabled(False)
+        self.pushButton_54.setEnabled(False)
+        self.lineEdit_35.setText('')
+        self.lineEdit_36.setText('')
+        
 #=========== Companies ===========
 
     def company_add_new(self):
-        self.cur.execute('''SELECT id FROM company ORDER BY id ''')
+
+        self.cur.execute('''
+        SELECT id FROM company  ORDER BY id ''')
         row = self.cur.fetchall()
         if row == [] :
             self.lineEdit_37.setText('1')
-        else:        
-            self.lineEdit_37.setText(str(row[-1][0] + 1))        
+        else:
+            self.lineEdit_37.setText(str(row[-1][0] + 1))
+            id = int(self.lineEdit_37.text())
+            alter_query = f"ALTER TABLE company AUTO_INCREMENT = {id}"
+            self.cur.execute(alter_query)       
         self.lineEdit_38.setText('')
+        self.pushButton_23.setEnabled(False)
         self.pushButton_24.setEnabled(False)
         self.pushButton_55.setEnabled(False)
         self.pushButton_56.setEnabled(False)
@@ -1226,14 +1256,9 @@ class Main(QMainWindow, MainUI):
             self.db.rollback()
             print(f"Error: {e}")
             # Optionally, you could show an error message to the user
-
-
         self.company_table_fill()
         self.company_combo_fill()
-        self.pushButton_23.setEnabled(False)
-        self.pushButton_55.setEnabled(True)
-        self.lineEdit_37.setText('')
-        self.lineEdit_38.setText('')
+        self.company_field_clear()
 
     def company_update(self):
         id = self.lineEdit_37.text()
@@ -1249,17 +1274,25 @@ class Main(QMainWindow, MainUI):
         WHERE id=%s''', (company_name, company_date, company_time, company_user, company_grp, id))
         self.db.commit()       
         self.company_table_fill()
+        self.company_field_clear()
 
     def company_delete(self):
         id = self.lineEdit_37.text()
-        sql = ('''DELETE FROM company WHERE id = %s ''')
-        self.cur.execute(sql, [(id)])
-
-        self.db.commit()       
+        try:        
+            sql = ('''DELETE FROM company WHERE id = %s ''')
+            self.cur.execute(sql, [(id)])
+            self.db.commit()
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            self.db.rollback()
+            # print(f"Error: {e}")  # Optionally log or show the error to the user 
+            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+            return
+        self.db.commit() 
+     
         self.company_table_fill()
         self.company_combo_fill()
-        self.lineEdit_37.setText('')
-        self.lineEdit_38.setText('')
+        self.company_field_clear()       
 
     def company_combo_fill(self):
         self.comboBox_5.clear()
@@ -1329,7 +1362,17 @@ class Main(QMainWindow, MainUI):
         # Enable/Disable buttons
         self.pushButton_23.setEnabled(False)
         self.pushButton_24.setEnabled(True)
+        self.pushButton_55.setEnabled(True)
         self.pushButton_56.setEnabled(True)
+
+    def company_field_clear(self):
+
+        self.pushButton_55.setEnabled(True)
+        self.pushButton_23.setEnabled(False)
+        self.pushButton_56.setEnabled(False)
+        self.pushButton_24.setEnabled(False)
+        self.lineEdit_37.setText('')
+        self.lineEdit_38.setText('')
 
 #=========== حضور وانصراف ===========
     
