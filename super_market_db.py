@@ -52,6 +52,7 @@ class Buybill(BaseModel):
     buy_date = DateField()
     buy_time = TimeField()    
     buy_importer = ForeignKeyField(Importer, backref='buybills', null=False) # اسم المورد    
+    importer_bill_no = IntegerField() # رقم فاتورة المورد
     buy_user = ForeignKeyField(User, null=False)
     buy_total_price = DecimalField(max_digits=10, decimal_places=2, null=False)
     buy_discount = DecimalField(max_digits=10, decimal_places=2, null=False) # خصم خاص بالمستهلك

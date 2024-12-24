@@ -82,12 +82,11 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_71.textChanged.connect(self.buy_unit_total)
         self.lineEdit_70.textChanged.connect(self.total_discount)
         
-        self.lineEdit_75.textEdited.connect(self.rebuypill_save_but)
-        self.lineEdit_80.textEdited.connect(self.rebuypill_save_but)
+        self.lineEdit_75.textEdited.connect(self.rebuybill_save_but)
+        self.lineEdit_80.textEdited.connect(self.rebuybill_save_but)
         self.lineEdit_64.textChanged.connect(self.cash_rset)
         self.lineEdit_64.returnPressed.connect(self.cash)
-        self.lineEdit_86.returnPressed.connect(self.get_sale_item_info)
-        self.lineEdit_87.textChanged.connect(self.visa_rest)
+        self.lineEdit_86.returnPressed.connect(self.get_sale_item_info)       
         self.lineEdit_87.returnPressed.connect(self.visa)
         # self.lineEdit_84.textChanged.connect(self.sale_item_add)        
         # self.tableWidget_11.selectionModel().selectionChanged.connect(self.buy_item_table_select)
@@ -194,7 +193,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_45.clicked.connect(self.rebuybill_save)
 
         self.pushButton_46.clicked.connect(self.rebuybill_search)
-        self.pushButton_47.clicked.connect(self.rebuypill_update)
+        self.pushButton_47.clicked.connect(self.rebuybill_update)
         self.pushButton_48.clicked.connect(self.rebuy_delete)
         self.pushButton_49.clicked.connect(self.sale_item_update)        
         self.pushButton_50.clicked.connect(self.sale_item_delete)
@@ -218,7 +217,7 @@ class Main(QMainWindow, MainUI):
 
     # ===================== keybad =======================
         self.keypad = QFrame(self)
-        self.keypad.setGeometry(87, 225, 180, 230)
+        self.keypad.setGeometry(132, 142, 180, 230)
         self.keypad.setStyleSheet("background-color: lightgray; border: 1px solid black;")
         self.keypad.setVisible(False)  # مخفية في البداية
 
@@ -253,7 +252,8 @@ class Main(QMainWindow, MainUI):
             self.lineEdit_83.setText('')
         else:
             self.lineEdit_83.setText('1')
-    
+        
+
     def hide_keypad(self):
         # إخفاء اللوحة فقط
         self.keypad.setVisible(False)
@@ -262,15 +262,15 @@ class Main(QMainWindow, MainUI):
         # إضافة الرقم إلى مربع الإدخال
         current_text = self.lineEdit_83.text()
         self.lineEdit_83.setText(current_text + str(num))
+        self.lineEdit_86.setFocus(QtCore.Qt.MouseFocusReason)        
+        self.lineEdit_86.setCursorPosition(0)
         
     
     def delete_last_character(self):
         # حذف آخر حرف في مربع الإدخال
         current_text = self.lineEdit_83.text()
         self.lineEdit_83.setText(current_text[:-1])
-
-
-
+        
 # =========== Usuers ===========
     def user_save_enabled(self):
         if self.lineEdit_2.text() != '':
@@ -906,8 +906,8 @@ class Main(QMainWindow, MainUI):
             WHERE i.item_barcode = {barcode} ''' 
 
         self.cur.execute(sql)
-        data = self.cur.fetchone()      
-
+        data = self.cur.fetchone()     
+       
         #self.lineEdit_24.setText(str(data[0]))
         self.lineEdit_25.setText(str(data[2]))
         self.lineEdit_26.setText(str(data[1]))
@@ -1045,7 +1045,7 @@ class Main(QMainWindow, MainUI):
             self.comboBox_16.addItem(item[0])
 
 
-    def item_pill_save_but(self):
+    def item_bill_save_but(self):
         if self.pushButton_37.isEnabled():
             self.pushButton_34.setEnabled(False)
         else:
@@ -1783,7 +1783,7 @@ class Main(QMainWindow, MainUI):
 
         row = self.tableWidget_11.currentItem().row()
         id = self.tableWidget_11.item(row, 0).text()
-        puypill_id = self.lineEdit_73.text()
+        buybill_id = self.lineEdit_73.text()
         item_name = self.comboBox_12.currentText()
         buy_unit_count = self.lineEdit_69.text()
 
@@ -1791,7 +1791,7 @@ class Main(QMainWindow, MainUI):
         if del_item == QMessageBox.No :
             return
         else:
-            sql = f" DELETE FROM buypill_details WHERE buypill_id={puypill_id} AND id={id} "
+            sql = f" DELETE FROM buybill_details WHERE buybill_id={buybill_id} AND id={id} "
             self.cur.execute(sql)
             self.cur.execute(''' SELECT item_qty FROM items WHERE item_name=%s ''', [(item_name)])
             data = self.cur.fetchone()            
@@ -1821,6 +1821,7 @@ class Main(QMainWindow, MainUI):
         user_name = self.comboBox_11.currentText()
         buy_date = self.dateEdit_11.date().toString(Qt.ISODate)        
         buy_time = self.timeEdit_9.time().toString(Qt.ISODate)
+        imp_bil_no = self.lineEdit_50.text()
 
         #if self.lineEdit_52.text() == '':
         #    QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم الفاتورة ', QMessageBox.Ok)
@@ -1837,14 +1838,14 @@ class Main(QMainWindow, MainUI):
                     id = data[0] + 1
             # Combine the SELECT queries into the INSERT statement
             insert_sql = '''
-                INSERT INTO buybill (id, buy_date, buy_time, buy_importer_id, buy_user_id)
-                SELECT %s,%s,%s,
+                INSERT INTO buybill (id, buy_date, buy_time, importer_bill_no, buy_importer_id, buy_user_id)
+                SELECT %s,%s,%s,%s, 
                     (SELECT id FROM importer WHERE importer_name = %s),
                     (SELECT id FROM user WHERE user_fullname = %s)                
             '''        
             # Execute the combined query
             try:
-                self.cur.execute(insert_sql, (id, buy_date, buy_time,  importer_name, user_name))
+                self.cur.execute(insert_sql, (id, buy_date, buy_time, imp_bil_no, importer_name, user_name))
                 
                 # Commit the transaction
                 self.db.commit()
@@ -2047,8 +2048,7 @@ class Main(QMainWindow, MainUI):
 
     def buybill_return(self):
         self.tableWidget_10.setRowCount(0)
-        self.tableWidget_10.insertRow(0)
-        self.lineEdit_51.setText('')
+        self.tableWidget_10.insertRow(0)        
         self.lineEdit_52.setText('')
         self.lineEdit_56.setText('0')
         self.lineEdit_57.setText('0')
@@ -2109,8 +2109,7 @@ class Main(QMainWindow, MainUI):
             return
         # elif invoice_no != '':
         #     self.tableWidget_10.setCurrentCell(int(invoice_no)-1, 4)
-        self.lineEdit_32.setText('')
-        self.lineEdit_33.setText('')
+        self.lineEdit_32.setText('')        
         self.pushButton_43.setEnabled(True)        
         self.groupBox_14.hide()
 
@@ -2140,10 +2139,18 @@ class Main(QMainWindow, MainUI):
     #  -------------------- فواتير المرتجعات -------------
     
     def rebuybill_add(self):
-        self.cur.execute("SELECT MAX( id ) FROM rebuypill")
-        id = self.cur.fetchone()
-        self.lineEdit_75.setText('1')
-        self.lineEdit_76.setText(str(id[0]+1))
+
+        self.cur.execute('''
+        SELECT id FROM rebuybill  ORDER BY id ''')
+        row = self.cur.fetchall()
+        if row == [] :
+            self.lineEdit_76.setText('1')
+        else:
+            self.lineEdit_76.setText(str(row[-1][0] + 1))
+            id = int(self.lineEdit_76.text())
+            alter_query = f"ALTER TABLE rebuybill AUTO_INCREMENT = {id}"
+            self.cur.execute(alter_query)
+        self.lineEdit_75.setText('1')        
         self.lineEdit_77.setText('')
         self.lineEdit_78.setText('')
         self.lineEdit_79.setText('')
@@ -2151,42 +2158,47 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_81.setText('0')
         self.pushButton_45.setEnabled(False)
         self.pushButton_47.setEnabled(False)
-        self.pushButton_48.setEnabled(False)
-        
+        self.pushButton_48.setEnabled(False)        
 
     def rebuybill_save(self):
-        rebuy_date = self.dateEdit_12.date()
-        rebuy_date = rebuy_date.toString(QtCore.Qt.ISODate)
-        rebuy_time = self.timeEdit_10.time()
-        rebuy_time = rebuy_time.toString(QtCore.Qt.ISODate)
-        buypill_id = self.lineEdit_77.text()
-        detailpill_id = self.lineEdit_78.text()
-        import_pill_id = self.lineEdit_79.text()
-        rebuy_item_name = self.comboBox_13.currentText()
-        rebuy_item_count = self.lineEdit_75.text()
+        rebuybill_id = int(self.lineEdit_76.text()) # الرقم المرجعي لفاتورة الشراء
+        barcode = self.lineEdit_77.text()
+        date = self.dateEdit_12.date().toString(QtCore.Qt.ISODate)        
+        time = self.timeEdit_10.time().toString(QtCore.Qt.ISODate)        
+        import_bill_no = int(self.lineEdit_79.text()) # رقم فاتورة المورد
+        item_name = self.comboBox_13.currentText()
+        item_count = self.lineEdit_75.text()
         unit_price = self.lineEdit_80.text()
-        rebuy_totalG = self.lineEdit_81.text()
+        total_price = self.lineEdit_81.text()
         importer = self.comboBox_10.currentText()
-        rebuy_user = self.comboBox_14.currentText()        
+        user = self.comboBox_14.currentText()        
+        #----------------------------
+        # Combine the SELECT queries into the INSERT statement
+        insert_sql = '''
+            INSERT INTO rebuybill (id, rebuy_date, rebuy_time,  )
+            SELECT %s, %s, %s,
+                (SELECT id FROM user WHERE user_fullname = %s),
+                (SELECT id FROM grp WHERE grp_name = %s)
+        '''
         
-        sql = '''SELECT id FROM users WHERE user_fullname = %s''' 
-        self.cur.execute(sql, [(rebuy_user)])
-        data = self.cur.fetchone()
-        user_id = data[0]
+        # Execute the combined query
+        try:
+            self.cur.execute(insert_sql, ())
+            
+            # Commit the transaction
+            self.db.commit()
 
-        self.cur.execute('''
-            INSERT INTO rebuypill(rebuy_date, rebuy_time, buypill_id, detail_pill_id, import_pill_id, rebuy_item_name, rebuy_item_count, unit_price, rebuy_totalG, importer, rebuy_user_id)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-              ''',(rebuy_date, rebuy_time, buypill_id, detailpill_id, import_pill_id, rebuy_item_name, rebuy_item_count, unit_price, rebuy_totalG, importer, user_id))
-        self.db.commit()
+        except Exception as e:
+            # Rollback the transaction if an error occurs
+            self.db.rollback()
+            print(f"Error: {e}")
+            # Optionally, you could show an error message to the user
+        self.company_table_fill()
+        self.company_combo_fill()
+        self.company_field_clear()
 
-        sql = '''SELECT item_qty FROM items WHERE item_name = %s'''
-        self.cur.execute(sql, [(rebuy_item_name)])
-        data = self.cur.fetchone()
-        item_qty = data[0]        
-        item_qty -= int(rebuy_item_count)
-        self.cur.execute("UPDATE items SET item_qty=%s WHERE item_name = %s", (item_qty, rebuy_item_name))
-        self.db.commit()
+
+       
 
         self.lineEdit_75.setText('1')
         self.lineEdit_77.setText('')
@@ -2202,7 +2214,7 @@ class Main(QMainWindow, MainUI):
     def rebuybill_search(self):
         self.tableWidget_12.setRowCount(0)
         self.tableWidget_12.insertRow(0)
-        sql = "SELECT * FROM rebuypill"
+        sql = "SELECT * FROM rebuybill"
         self.cur.execute(sql)
         data = self.cur.fetchall()
         for row, form in enumerate(data):
@@ -2226,7 +2238,7 @@ class Main(QMainWindow, MainUI):
         row = self.tableWidget_12.currentItem().row()
         cell = self.tableWidget_12.item(row, 0).text()
         
-        sql = f"SELECT * FROM rebuypill WHERE id = {cell} "
+        sql = f"SELECT * FROM rebuybill WHERE id = {cell} "
         self.cur.execute(sql)
         data = self.cur.fetchone()
         h, m, s = map(int, (str(data[2])).split(":"))
@@ -2244,10 +2256,10 @@ class Main(QMainWindow, MainUI):
         self.comboBox_10.setCurrentText(str(data[10]))
         self.comboBox_14.setCurrentText(str(data[11]))
 
-    def rebuypill_update(self):
+    def rebuybill_update(self):
 
         id = self.lineEdit_76.text()
-        sql = "SELECT rebuy_item_count FROM rebuypill WHERE id=%s"        
+        sql = "SELECT rebuy_item_count FROM rebuybill WHERE id=%s"        
         self.cur.execute(sql, [(id)])
         data = self.cur.fetchone()
         item_count = data[0]        
@@ -2256,9 +2268,9 @@ class Main(QMainWindow, MainUI):
         rebuy_time = self.timeEdit_10.time()
         rebuy_time = rebuy_time.toString(QtCore.Qt.ISODate)
         rebuy_item_name = self.comboBox_13.currentText()
-        buypill_id = self.lineEdit_77.text()
-        detailpill_id = self.lineEdit_78.text()
-        import_pill_id = self.lineEdit_79.text()        
+        buybill_id = self.lineEdit_77.text()
+        detailbill_id = self.lineEdit_78.text()
+        import_bill_id = self.lineEdit_79.text()        
         rebuy_item_cnt = int(self.lineEdit_75.text())
         item_count -= rebuy_item_cnt        
         unit_price = self.lineEdit_80.text()
@@ -2277,15 +2289,15 @@ class Main(QMainWindow, MainUI):
         data = self.cur.fetchone()
         user_id = data[0]
 
-        self.cur.execute(''' UPDATE rebuypill SET \
+        self.cur.execute(''' UPDATE rebuybill SET \
          rebuy_date=%s, rebuy_time=%s, \
-         buypill_id=%s, detail_pill_id=%s, \
-         import_pill_id=%s, rebuy_item_name=%s,\
+         buybill_id=%s, detail_bill_id=%s, \
+         import_bill_id=%s, rebuy_item_name=%s,\
          rebuy_item_count=%s, unit_price=%s, \
          rebuy_totalG=%s, importer=%s, \
          rebuy_user_id=%s WHERE id=%s ''', (
-         rebuy_date, rebuy_time, buypill_id, \
-         detailpill_id, import_pill_id, rebuy_item_name,\
+         rebuy_date, rebuy_time, buybill_id, \
+         detailbill_id, import_bill_id, rebuy_item_name,\
          rebuy_item_cnt, unit_price,\
          rebuy_totalG, importer, user_id, id))
 
@@ -2298,7 +2310,7 @@ class Main(QMainWindow, MainUI):
             return
         id = self.lineEdit_76.text()
         item_name = self.comboBox_13.currentText()
-        sql = "SELECT rebuy_item_count FROM rebuypill WHERE id = %s"
+        sql = "SELECT rebuy_item_count FROM rebuybill WHERE id = %s"
         self.cur.execute(sql, [(id)])
         data = self.cur.fetchone()
         rebuy_item_qty = data[0]
@@ -2311,13 +2323,13 @@ class Main(QMainWindow, MainUI):
         
         self.cur.execute("UPDATE items SET item_qty=%s WHERE item_name=%s ", (item_qty, item_name))
 
-        sql = ('''DELETE FROM rebuypill WHERE id = %s ''')
+        sql = ('''DELETE FROM rebuybill WHERE id = %s ''')
         self.cur.execute(sql, [(id)])
 
         self.db.commit()
         self.rebuybill_search()
 
-    def rebuypill_save_but(self):
+    def rebuybill_save_but(self):
 
         x = float(self.lineEdit_75.text())
         y = float(self.lineEdit_80.text())
@@ -2363,13 +2375,6 @@ class Main(QMainWindow, MainUI):
             self.db.commit()
 
     
-    def visa_rest(self):
-        self.lineEdit_82.setText('0')
-        x = Decimal(self.lineEdit_62.text())
-        y = Decimal(self.lineEdit_64.text())
-        z = Decimal(self.lineEdit_87.text())
-        m = x - (y+z)
-        self.lineEdit_60.setText(str(m))
         
     def visa(self):
         self.salebill_save()
@@ -2379,7 +2384,7 @@ class Main(QMainWindow, MainUI):
     def cash_rset(self):
         self.lineEdit_82.setText((str(Decimal(self.lineEdit_64.text())-(Decimal(self.lineEdit_62.text())))))        
         x = Decimal(self.lineEdit_82.text())
-        self.lineEdit_60.setText(str(-1*x))
+        
 
     def cash(self):
         self.salebill_save()
@@ -2537,7 +2542,6 @@ class Main(QMainWindow, MainUI):
         
         #self.timeEdit_11.setTime(QTime.currentTime())
         self.lineEdit_59.setText(str(id))        
-        self.lineEdit_60.setText('0')
         self.lineEdit_61.setText('0')
         self.lineEdit_62.setText('0')
         self.lineEdit_63.setText('0')        
@@ -2556,7 +2560,6 @@ class Main(QMainWindow, MainUI):
         
         self.tableWidget_13.setRowCount(0)
         self.tableWidget_13.insertRow(0)
-
         self.pushButton_52.setEnabled(False)
 
     def clear_fields(self):
@@ -2567,7 +2570,6 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_84.setText('')
         self.lineEdit_86.setFocus(QtCore.Qt.MouseFocusReason)        
         self.lineEdit_86.setCursorPosition(0)
-
 
     def salebill_save(self):
         if self.lineEdit_59.text() == '' :
@@ -2585,8 +2587,7 @@ class Main(QMainWindow, MainUI):
         cash = self.lineEdit_64.text()
         cash_rtn = self.lineEdit_82.text()
         net_cash = Decimal(cash) - Decimal(cash_rtn)        
-        visa = self.lineEdit_87.text()
-        rest_cash = self.lineEdit_60.text()
+        visa = self.lineEdit_87.text()        
         count = int(self.lineEdit_74.text())
         
         self.cur.execute('''
