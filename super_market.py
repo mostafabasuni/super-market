@@ -2163,50 +2163,60 @@ class Main(QMainWindow, MainUI):
     def rebuybill_save(self):
         rebuybill_id = int(self.lineEdit_76.text()) # الرقم المرجعي لفاتورة الشراء
         barcode = self.lineEdit_77.text()
+        customer_bill_no = self.lineEdit_78.text()
         date = self.dateEdit_12.date().toString(QtCore.Qt.ISODate)        
         time = self.timeEdit_10.time().toString(QtCore.Qt.ISODate)        
-        import_bill_no = int(self.lineEdit_79.text()) # رقم فاتورة المورد
-        item_name = self.comboBox_13.currentText()
+        user = self.comboBox_14.currentText()
+        item_info = ''' SELECT  sd.item_discount,
+        sd.item_price, s.date, s.time, i.item_name,
+        i.item_importer_id, i.item_buybill_id, im.importer_name, 
+        im.importer_grp_id, im.importer_company_id, 
+        b.importer_bill_no, g.grp_name, c.company_name
+        FROM salebill_details sd
+        LEFT JOIN salebill s ON s.id = %s
+        LEFT JOIN item i ON i.item_barcode = %s
+        LEFT JOIN importer im ON im.id = i.item_importer_id
+        LEFT JOIN grp g ON g.id = im.importer_grp_id
+        LEFT JOIN buybill b ON b.id = i.item_buybill_id AND b.buy_importer_id = i.item_importer_id
+        LEFT JOIN company c ON c.id = im.importer_company_id
+        WHERE sd.bill_id = %s AND sd.item_barcode = %s
+        '''
+        self.cur.execute(item_info, (customer_bill_no, barcode, customer_bill_no, barcode))
+        data = self.cur.fetchone()
+        print(data)
+        print(data[10])
+        self.lineEdit_79.setText(str(data[10])) # رقم فاتورة المورد
+        self.comboBox_13.setCurrentText(data[4])
         item_count = self.lineEdit_75.text()
-        unit_price = self.lineEdit_80.text()
-        total_price = self.lineEdit_81.text()
-        importer = self.comboBox_10.currentText()
-        user = self.comboBox_14.currentText()        
+        self.lineEdit_80.setText(str(data[0]))
+        self.lineEdit_81.setText(str(data[1]))
+        self.comboBox_10.setCurrentText(data[7])
+               
         #----------------------------
         # Combine the SELECT queries into the INSERT statement
         insert_sql = '''
-            INSERT INTO rebuybill (id, rebuy_date, rebuy_time,  )
-            SELECT %s, %s, %s,
-                (SELECT id FROM user WHERE user_fullname = %s),
-                (SELECT id FROM grp WHERE grp_name = %s)
-        '''
-        
+            INSERT INTO rebuybill (id, rebuy_date, rebuy_time, importer_id, rebuy_user_id)
+            SELECT %s, %s, %s,                
+                (SELECT id FROM importer WHERE importer_name = %s),
+                (SELECT id FROM user WHERE user_fullname = %s)               
+        '''        
         # Execute the combined query
         try:
-            self.cur.execute(insert_sql, ())
-            
+            self.cur.execute(insert_sql, (rebuybill_id, date, time, importer, user))            
             # Commit the transaction
             self.db.commit()
-
         except Exception as e:
             # Rollback the transaction if an error occurs
             self.db.rollback()
             print(f"Error: {e}")
             # Optionally, you could show an error message to the user
-        self.company_table_fill()
-        self.company_combo_fill()
-        self.company_field_clear()
-
-
-       
-
-        self.lineEdit_75.setText('1')
-        self.lineEdit_77.setText('')
-        self.lineEdit_78.setText('')
-        self.lineEdit_79.setText('')
-        self.lineEdit_80.setText('0')
-        self.lineEdit_81.setText('0')
-        self.pushButton_45.setEnabled(False)
+        #self.lineEdit_75.setText('1')
+        #self.lineEdit_77.setText('')
+        #self.lineEdit_78.setText('')
+        #self.lineEdit_79.setText('')
+        #self.lineEdit_80.setText('0')
+        #self.lineEdit_81.setText('0')
+        #self.pushButton_45.setEnabled(False)
         QMessageBox.warning(self, 'إفــادة', 'تم حفظ البيانات بنجاح', QMessageBox.Ok)
         return
 
