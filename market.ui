@@ -7,11 +7,14 @@
     <x>0</x>
     <y>0</y>
     <width>1075</width>
-    <height>636</height>
+    <height>629</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
+  </property>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -30,7 +33,7 @@
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>5</number>
+       <number>7</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -6264,9 +6267,9 @@
          <widget class="QGroupBox" name="groupBox_20">
           <property name="geometry">
            <rect>
-            <x>20</x>
+            <x>10</x>
             <y>10</y>
-            <width>381</width>
+            <width>401</width>
             <height>221</height>
            </rect>
           </property>
@@ -6279,9 +6282,9 @@
            </property>
            <property name="geometry">
             <rect>
-             <x>10</x>
+             <x>12</x>
              <y>30</y>
-             <width>231</width>
+             <width>251</width>
              <height>28</height>
             </rect>
            </property>
@@ -6297,8 +6300,8 @@
           <widget class="QLabel" name="label_107">
            <property name="geometry">
             <rect>
-             <x>261</x>
-             <y>31</y>
+             <x>285</x>
+             <y>30</y>
              <width>103</width>
              <height>19</height>
             </rect>
@@ -6318,8 +6321,8 @@
           <widget class="QLabel" name="label_108">
            <property name="geometry">
             <rect>
-             <x>280</x>
-             <y>59</y>
+             <x>304</x>
+             <y>67</y>
              <width>83</width>
              <height>19</height>
             </rect>
@@ -6342,8 +6345,8 @@
            </property>
            <property name="geometry">
             <rect>
-             <x>180</x>
-             <y>60</y>
+             <x>192</x>
+             <y>64</y>
              <width>91</width>
              <height>28</height>
             </rect>
@@ -6360,9 +6363,9 @@
           <widget class="QComboBox" name="comboBox_13">
            <property name="geometry">
             <rect>
-             <x>10</x>
-             <y>90</y>
-             <width>271</width>
+             <x>12</x>
+             <y>100</y>
+             <width>281</width>
              <height>27</height>
             </rect>
            </property>
@@ -6375,8 +6378,8 @@
           <widget class="QLabel" name="label_88">
            <property name="geometry">
             <rect>
-             <x>300</x>
-             <y>90</y>
+             <x>317</x>
+             <y>104</y>
              <width>68</width>
              <height>19</height>
             </rect>
@@ -6399,9 +6402,9 @@
            </property>
            <property name="geometry">
             <rect>
-             <x>10</x>
-             <y>60</y>
-             <width>71</width>
+             <x>12</x>
+             <y>64</y>
+             <width>81</width>
              <height>28</height>
             </rect>
            </property>
@@ -6421,7 +6424,7 @@
            <property name="geometry">
             <rect>
              <x>100</x>
-             <y>60</y>
+             <y>67</y>
              <width>26</width>
              <height>19</height>
             </rect>
@@ -6441,8 +6444,8 @@
           <widget class="QLabel" name="label_110">
            <property name="geometry">
             <rect>
-             <x>310</x>
-             <y>130</y>
+             <x>333</x>
+             <y>144</y>
              <width>52</width>
              <height>19</height>
             </rect>
@@ -6465,8 +6468,8 @@
            </property>
            <property name="geometry">
             <rect>
-             <x>190</x>
-             <y>130</y>
+             <x>202</x>
+             <y>140</y>
              <width>111</width>
              <height>27</height>
             </rect>
@@ -6486,8 +6489,8 @@
           <widget class="QLabel" name="label_111">
            <property name="geometry">
             <rect>
-             <x>120</x>
-             <y>140</y>
+             <x>132</x>
+             <y>144</y>
              <width>69</width>
              <height>19</height>
             </rect>
@@ -6510,7 +6513,7 @@
            </property>
            <property name="geometry">
             <rect>
-             <x>10</x>
+             <x>12</x>
              <y>140</y>
              <width>101</width>
              <height>27</height>
@@ -6531,9 +6534,9 @@
           <widget class="QDateEdit" name="dateEdit_17">
            <property name="geometry">
             <rect>
-             <x>170</x>
-             <y>170</y>
-             <width>109</width>
+             <x>162</x>
+             <y>180</y>
+             <width>121</width>
              <height>28</height>
             </rect>
            </property>
@@ -6571,9 +6574,9 @@
           <widget class="QLabel" name="label_129">
            <property name="geometry">
             <rect>
-             <x>299</x>
-             <y>173</y>
-             <width>74</width>
+             <x>300</x>
+             <y>185</y>
+             <width>87</width>
              <height>19</height>
             </rect>
            </property>
@@ -6592,9 +6595,9 @@
           <widget class="QTimeEdit" name="timeEdit_12">
            <property name="geometry">
             <rect>
-             <x>18</x>
+             <x>10</x>
              <y>180</y>
-             <width>91</width>
+             <width>101</width>
              <height>28</height>
             </rect>
            </property>
@@ -6617,7 +6620,7 @@
            <property name="geometry">
             <rect>
              <x>120</x>
-             <y>181</y>
+             <y>185</y>
              <width>26</width>
              <height>19</height>
             </rect>
@@ -7937,6 +7940,710 @@
        <zorder>tableWidget_13</zorder>
        <zorder>groupBox_17</zorder>
        <zorder>groupBox_18</zorder>
+      </widget>
+      <widget class="QWidget" name="tab_21">
+       <attribute name="title">
+        <string>مرتجع المبيعات</string>
+       </attribute>
+       <widget class="QTableWidget" name="tableWidget_17">
+        <property name="geometry">
+         <rect>
+          <x>70</x>
+          <y>330</y>
+          <width>801</width>
+          <height>192</height>
+         </rect>
+        </property>
+        <column>
+         <property name="text">
+          <string>اسم الصنف</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>الباركود</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>السعر</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>الكمية</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>الإجمالي</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>سبب الاسترجاع</string>
+         </property>
+        </column>
+       </widget>
+       <widget class="QPushButton" name="pushButton_67">
+        <property name="geometry">
+         <rect>
+          <x>640</x>
+          <y>300</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>إضافة</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_22">
+        <property name="geometry">
+         <rect>
+          <x>90</x>
+          <y>20</y>
+          <width>401</width>
+          <height>261</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>بيانات الصنف المرتجع</string>
+        </property>
+        <widget class="QLineEdit" name="lineEdit_101">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>12</x>
+           <y>30</y>
+           <width>251</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_149">
+         <property name="geometry">
+          <rect>
+           <x>285</x>
+           <y>30</y>
+           <width>103</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>باركود الصنف المرتجع</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_150">
+         <property name="geometry">
+          <rect>
+           <x>304</x>
+           <y>67</y>
+           <width>83</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>رقم فاتورة العميل</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_102">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>192</x>
+           <y>64</y>
+           <width>91</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="comboBox_25">
+         <property name="geometry">
+          <rect>
+           <x>12</x>
+           <y>100</y>
+           <width>281</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_151">
+         <property name="geometry">
+          <rect>
+           <x>317</x>
+           <y>104</y>
+           <width>68</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>الصنف المرتجع</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_103">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>12</x>
+           <y>64</y>
+           <width>81</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>1</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_152">
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>67</y>
+           <width>26</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>الكمية</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_153">
+         <property name="geometry">
+          <rect>
+           <x>333</x>
+           <y>144</y>
+           <width>52</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>سعر الوحدة</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_104">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>202</x>
+           <y>140</y>
+           <width>111</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_154">
+         <property name="geometry">
+          <rect>
+           <x>132</x>
+           <y>144</y>
+           <width>69</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>القيمة الإجمالية</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_105">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>12</x>
+           <y>140</y>
+           <width>101</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>0</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QDateEdit" name="dateEdit_18">
+         <property name="geometry">
+          <rect>
+           <x>162</x>
+           <y>180</y>
+           <width>121</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="maximumDateTime">
+          <datetime>
+           <hour>23</hour>
+           <minute>59</minute>
+           <second>59</second>
+           <year>9999</year>
+           <month>12</month>
+           <day>28</day>
+          </datetime>
+         </property>
+         <property name="currentSection">
+          <enum>QDateTimeEdit::YearSection</enum>
+         </property>
+         <property name="displayFormat">
+          <string>yyyy/MM/dd</string>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_155">
+         <property name="geometry">
+          <rect>
+           <x>300</x>
+           <y>185</y>
+           <width>87</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>تاريخ فاتورة البيع</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QTimeEdit" name="timeEdit_13">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>180</y>
+           <width>101</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_156">
+         <property name="geometry">
+          <rect>
+           <x>120</x>
+           <y>185</y>
+           <width>26</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>الوقت</string>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_106">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>220</y>
+           <width>251</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_157">
+         <property name="geometry">
+          <rect>
+           <x>283</x>
+           <y>224</y>
+           <width>103</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>سبب الاسترجاع</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </widget>
+       <widget class="QPushButton" name="pushButton_68">
+        <property name="geometry">
+         <rect>
+          <x>540</x>
+          <y>300</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>حفظ</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_69">
+        <property name="geometry">
+         <rect>
+          <x>420</x>
+          <y>300</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>تعديل</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_70">
+        <property name="geometry">
+         <rect>
+          <x>300</x>
+          <y>300</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>حذف</string>
+        </property>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_23">
+        <property name="geometry">
+         <rect>
+          <x>530</x>
+          <y>20</y>
+          <width>351</width>
+          <height>181</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>اليوم والتاريخ</string>
+        </property>
+        <widget class="QTimeEdit" name="timeEdit_14">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>80</y>
+           <width>101</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_158">
+         <property name="geometry">
+          <rect>
+           <x>130</x>
+           <y>85</y>
+           <width>26</width>
+           <height>19</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>الوقت</string>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_159">
+         <property name="geometry">
+          <rect>
+           <x>296</x>
+           <y>85</y>
+           <width>41</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>التاريخ</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QDateEdit" name="dateEdit_19">
+         <property name="geometry">
+          <rect>
+           <x>170</x>
+           <y>80</y>
+           <width>121</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <property name="maximumDateTime">
+          <datetime>
+           <hour>23</hour>
+           <minute>59</minute>
+           <second>59</second>
+           <year>9999</year>
+           <month>12</month>
+           <day>28</day>
+          </datetime>
+         </property>
+         <property name="currentSection">
+          <enum>QDateTimeEdit::YearSection</enum>
+         </property>
+         <property name="displayFormat">
+          <string>yyyy/MM/dd</string>
+         </property>
+         <property name="calendarPopup">
+          <bool>true</bool>
+         </property>
+        </widget>
+        <widget class="QComboBox" name="comboBox_26">
+         <property name="geometry">
+          <rect>
+           <x>20</x>
+           <y>130</y>
+           <width>261</width>
+           <height>27</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_160">
+         <property name="geometry">
+          <rect>
+           <x>290</x>
+           <y>134</y>
+           <width>51</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>المستخدم</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLineEdit" name="lineEdit_107">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="geometry">
+          <rect>
+           <x>100</x>
+           <y>40</y>
+           <width>91</width>
+           <height>28</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>14</pointsize>
+          </font>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+        <widget class="QLabel" name="label_161">
+         <property name="geometry">
+          <rect>
+           <x>214</x>
+           <y>43</y>
+           <width>91</width>
+           <height>20</height>
+          </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>رقم مستند الإرجاع</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </widget>
       </widget>
       <widget class="QWidget" name="tab_16">
        <attribute name="title">

@@ -51,6 +51,7 @@ class Main(QMainWindow, MainUI):
         self.dateEdit_14.setDate(QDate.currentDate())        
         self.dateEdit_15.setDate(QDate.currentDate())
         self.dateEdit_16.setDate(QDate.currentDate())
+        self.dateEdit_19.setDate(QDate.currentDate())
 
         self.timeEdit.setTime(QTime.currentTime())        
         self.timeEdit_2.setTime(QTime.currentTime())        
@@ -63,6 +64,7 @@ class Main(QMainWindow, MainUI):
         self.timeEdit_9.setTime(QTime.currentTime())
         self.timeEdit_10.setTime(QTime.currentTime())
         self.timeEdit_11.setTime(QTime.currentTime())
+        self.timeEdit_14.setTime(QTime.currentTime())
 
         self.groupBox_14.hide()
         #self.tab_13.setEnabled(False)
@@ -189,7 +191,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_41.clicked.connect(self.buybill_return_to)
         self.pushButton_42.clicked.connect(self.row_go)
         self.pushButton_43.clicked.connect(self.buybill_return)
-        self.pushButton_44.clicked.connect(self.rebuybill_add)
+        self.pushButton_44.clicked.connect(self.rebuybill_add_new)
         self.pushButton_45.clicked.connect(self.rebuybill_save)
 
         self.pushButton_46.clicked.connect(self.rebuybill_search)
@@ -214,6 +216,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_64.clicked.connect(self.Items_inventory)
         self.pushButton_65.clicked.connect(self.salebill_print)
         self.pushButton_66.clicked.connect(self.toggle_keypad)
+        self.pushButton_67.clicked.connect(self.resalebill_add_new())
 
     # ===================== keybad =======================
         self.keypad = QFrame(self)
@@ -456,6 +459,7 @@ class Main(QMainWindow, MainUI):
         self.comboBox_17.clear()
         self.comboBox_18.clear()
         self.comboBox_19.clear()
+        self.comboBox_26.clear()
         self.cur.execute('''SELECT user_fullname, user_job FROM user ORDER BY id ''')
         users = self.cur.fetchall()        
         for user in users:            
@@ -469,6 +473,7 @@ class Main(QMainWindow, MainUI):
             self.comboBox_17.addItem(user[0])
             self.comboBox_18.addItem(user[0])
             self.comboBox_19.addItem(user[0])
+            self.comboBox_26.addItem(user[0])
 
     def user_field_clear(self):
 
@@ -2138,7 +2143,7 @@ class Main(QMainWindow, MainUI):
 
     #  -------------------- فواتير المرتجعات -------------
     
-    def rebuybill_add(self):
+    def rebuybill_add_new(self):
 
         self.cur.execute('''
         SELECT id FROM rebuybill  ORDER BY id ''')
@@ -2665,6 +2670,52 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_62.setText(str(wanted))
         self.lineEdit_74.setText(str(data[2]))
 
+    def resalebill_add_new(self):
+        self.cur.execute('''
+        SELECT id FROM resalebill  ORDER BY id ''')
+        row = self.cur.fetchall()
+        if row == [] :
+            self.lineEdit_107.setText('1')
+        else:
+            self.lineEdit_107.setText(str(row[-1][0] + 1))
+            id = int(self.lineEdit_107.text())
+            alter_query = f"ALTER TABLE resalebill AUTO_INCREMENT = {id}"
+            self.cur.execute(alter_query)
+        
+        self.pushButton_68.setEnabled(False)
+        self.pushButton_70.setEnabled(False)
+        self.pushButton_71.setEnabled(False) 
+
+    def resalebill_save(self):        
+        resalebill_id = self.lineEdit_107.text()
+        resalebill_date = self.dateEdit_19.date().toString(Qt.ISODate)        
+        resalebill_time = self.timeEdit_14.time().toString(Qt.ISODate)        
+        resalebill_user = self.comboBox_26.currentText()
+        
+
+        # Combine the SELECT queries into the INSERT statement
+        insert_sql = '''
+            INSERT INTO resalebill (resalebill_date, resalebill_time, resalebill_id, resalebill_user_id)
+            SELECT %s, %s, %s,
+                (SELECT id FROM user WHERE user_fullname = %s),
+                (SELECT id FROM grp WHERE grp_name = %s)
+        '''
+        
+        # Execute the combined query
+        try:
+            self.cur.execute(insert_sql, (resalebill_id, resalebill_date, resalebill_time, resalebill_user))
+            
+            # Commit the transaction
+            self.db.commit()
+
+        except Exception as e:
+            # Rollback the transaction if an error occurs
+            self.db.rollback()
+            print(f"Error: {e}")
+            # Optionally, you could show an error message to the user
+        self.resalebill_table_fill()
+        self.resalebill_combo_fill()
+        self.resalebill_field_clear()
 # =============== تقارير ===============
     def cashier_daily_tally(self):
 

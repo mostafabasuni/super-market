@@ -130,6 +130,7 @@ class Resalebill_details(BaseModel):
     resale_item_name = CharField(max_length=100)
     resale_item_qty = DecimalField(max_digits=6, decimal_places=2)
     unit_price = DecimalField(max_digits=10, decimal_places=2)
+    resale_reason = CharField()  # سبب ارتجاع الصنف
 
 class Hodoor_Ensraf(BaseModel):    
     he_date = DateField()
