@@ -216,8 +216,8 @@ class Main(QMainWindow, MainUI):
         self.pushButton_64.clicked.connect(self.Items_inventory)
         self.pushButton_65.clicked.connect(self.salebill_print)
         self.pushButton_66.clicked.connect(self.toggle_keypad)
-        self.pushButton_67.clicked.connect(self.resalebill_add_new())
-
+        self.pushButton_67.clicked.connect(self.resalebill_add_new)
+        self.pushButton_68.clicked.connect(self.resalebill_save)
     # ===================== keybad =======================
         self.keypad = QFrame(self)
         self.keypad.setGeometry(132, 142, 180, 230)
@@ -365,9 +365,9 @@ class Main(QMainWindow, MainUI):
             user_password = ''
 
         self.cur.execute('''
-            INSERT INTO user(user_fullname, un_id, user_gender, user_phone, user_address, user_job, user_date, user_name, user_password, is_user)
-            VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-              ''',(user_full_name, user_nid, user_gender, user_phone, user_address, user_job, user_date, user_name, user_password, is_user))
+        INSERT INTO user(user_fullname, un_id, user_gender, user_phone, user_address, user_job, user_date, user_name, user_password, is_user)
+        VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        ''',(user_full_name, user_nid, user_gender, user_phone, user_address, user_job, user_date, user_name, user_password, is_user))
 
         self.db.commit()        
         self.user_table_fill()
@@ -1043,11 +1043,13 @@ class Main(QMainWindow, MainUI):
     def item_combo_fill(self):        
         self.comboBox_13.clear()
         self.comboBox_16.clear()
+        self.comboBox_25.clear()
         self.cur.execute('''SELECT item_name FROM item ORDER BY id ''')
         items = self.cur.fetchall()
         for item in items:            
             self.comboBox_13.addItem(item[0])
             self.comboBox_16.addItem(item[0])
+            self.comboBox_25.addItem(item[0])
 
 
     def item_bill_save_but(self):
@@ -2207,7 +2209,7 @@ class Main(QMainWindow, MainUI):
         '''        
         # Execute the combined query
         try:
-            self.cur.execute(insert_sql, (rebuybill_id, date, time, importer, user))            
+            self.cur.execute(insert_sql, (rebuybill_id, date, time, user))            
             # Commit the transaction
             self.db.commit()
         except Exception as e:
@@ -2682,40 +2684,88 @@ class Main(QMainWindow, MainUI):
             alter_query = f"ALTER TABLE resalebill AUTO_INCREMENT = {id}"
             self.cur.execute(alter_query)
         
-        self.pushButton_68.setEnabled(False)
+        self.pushButton_68.setEnabled(True)
         self.pushButton_70.setEnabled(False)
         self.pushButton_71.setEnabled(False) 
 
     def resalebill_save(self):        
         resalebill_id = self.lineEdit_107.text()
+        salebill_id = self.lineEdit_102.text()
         resalebill_date = self.dateEdit_19.date().toString(Qt.ISODate)        
         resalebill_time = self.timeEdit_14.time().toString(Qt.ISODate)        
         resalebill_user = self.comboBox_26.currentText()
-        
-
         # Combine the SELECT queries into the INSERT statement
         insert_sql = '''
-            INSERT INTO resalebill (resalebill_date, resalebill_time, resalebill_id, resalebill_user_id)
-            SELECT %s, %s, %s,
-                (SELECT id FROM user WHERE user_fullname = %s),
-                (SELECT id FROM grp WHERE grp_name = %s)
-        '''
-        
+            INSERT INTO resalebill (id, resale_date, resale_time, salebill_id, resale_user_id)
+            SELECT %s, %s, %s, %s,
+                (SELECT id FROM user WHERE user_fullname = %s)                
+        '''        
         # Execute the combined query
         try:
-            self.cur.execute(insert_sql, (resalebill_id, resalebill_date, resalebill_time, resalebill_user))
-            
+            self.cur.execute(insert_sql, (resalebill_id, resalebill_date, resalebill_time, salebill_id, resalebill_user))            
             # Commit the transaction
             self.db.commit()
-
         except Exception as e:
             # Rollback the transaction if an error occurs
             self.db.rollback()
             print(f"Error: {e}")
             # Optionally, you could show an error message to the user
-        self.resalebill_table_fill()
-        self.resalebill_combo_fill()
-        self.resalebill_field_clear()
+                
+        #self.resalebill_field_clear()
+        self.resalebill_details_save()
+
+    def resalebill_details_save(self):
+        item_barcode = self.lineEdit_101.text()
+        salebill_id = int(self.lineEdit_102.text())
+        resalebill_id = int(self.lineEdit_107.text())
+        qty = Decimal(self.lineEdit_103.text())
+        reason = self.lineEdit_106.text()
+        item_info = '''SELECT sd.item_name, 
+        (sd.item_price - sd.item_discount) AS price,
+        s.date, s.time
+        FROM salebill_details sd 
+        LEFT JOIN salebill s ON s.id=%s
+        WHERE sd.bill_id=%s AND sd.item_barcode=%s'''
+
+        self.cur.execute(item_info, (salebill_id, salebill_id, item_barcode))
+        it_info = self.cur.fetchone()
+        print(it_info)
+        self.comboBox_25.setCurrentText(it_info[0])
+        self.lineEdit_104.setText(str(it_info[1]))
+        total = qty * it_info[1]
+        self.lineEdit_105.setText(str(total))
+        self.dateEdit_18.setDate(it_info[2])
+        # Convert timedelta to hours, minutes, and seconds
+        hours, remainder = divmod(it_info[3].total_seconds(), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        # Set the time in QTimeEdit
+        self.timeEdit_13.setTime(QTime(int(hours), int(minutes), int(seconds))) 
+
+        sql = '''UPDATE resalebill SET resale_total_price=%s WHERE id=%s'''
+        self.cur.execute(sql, (total, salebill_id))
+
+        sql='''INSERT INTO resalebill_details (resalebill_id, 
+        resale_item_name, resale_item_qty,
+        unit_price, resale_reason, resale_item_id) 
+        SELECT %s, %s, %s, %s, %s, 
+        (SELECT id FROM item WHERE item_barcode = %s)
+        '''
+        self.cur.execute(sql,(resalebill_id, it_info[0], qty, total, reason, item_barcode))
+        self.db.commit()
+
+    def resalebill_table_fill(self):
+        id = int(self.lineEdit_107.text())
+        sql = '''SELECT * FROM resalebill WHERE id=%s'''
+        self.cur.execute(sql, [(id)])
+        data = self.cur.fetchall()
+        self.tableWidget_17.setRowCount(0)
+        self.tableWidget_17.insertRow(0)
+        for row, form in enumerate(data):
+            for col, item in enumerate(form):
+                self.tableWidget_17.setItem(row, col, QTableWidgetItem(str(item)))
+                col += 1
+            row_pos = self.tableWidget_17.rowCount()
+            self.tableWidget_17.insertRow(row_pos)
 # =============== تقارير ===============
     def cashier_daily_tally(self):
 

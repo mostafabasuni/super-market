@@ -1934,7 +1934,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>2</number>
         </property>
         <property name="documentMode">
          <bool>false</bool>
@@ -8434,7 +8434,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>تعديل</string>
+         <string>بحث</string>
         </property>
        </widget>
        <widget class="QPushButton" name="pushButton_70">
@@ -8447,7 +8447,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>حذف</string>
+         <string>تعديل</string>
         </property>
        </widget>
        <widget class="QGroupBox" name="groupBox_23">
@@ -8643,6 +8643,19 @@
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
          </property>
         </widget>
+       </widget>
+       <widget class="QPushButton" name="pushButton_71">
+        <property name="geometry">
+         <rect>
+          <x>200</x>
+          <y>300</y>
+          <width>75</width>
+          <height>23</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>حذف</string>
+        </property>
        </widget>
       </widget>
       <widget class="QWidget" name="tab_16">
