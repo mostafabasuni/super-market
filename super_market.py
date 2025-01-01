@@ -102,6 +102,7 @@ class Main(QMainWindow, MainUI):
         self.tableWidget_11.itemClicked.connect(self.buy_item_table_select)
         self.tableWidget_12.itemClicked.connect(self.rebuy_item_select)
         self.tableWidget_13.itemClicked.connect(self.sale_item_select)
+        self.tableWidget_17.itemClicked.connect(self.resalebill_table_select)
 
         validator = QRegExpValidator(QRegExp(r'[0-9]+')) 
         
@@ -133,6 +134,7 @@ class Main(QMainWindow, MainUI):
         self.importer_combo_fill()
         self.item_combo_fill()
         self.customer_combo_fill()
+        self.resalebill_table_fill()
         
 
     def db_connect(self):
@@ -2729,7 +2731,9 @@ class Main(QMainWindow, MainUI):
 
         self.cur.execute(item_info, (salebill_id, salebill_id, item_barcode))
         it_info = self.cur.fetchone()
-        print(it_info)
+        if it_info == None :
+            QMessageBox.warning(self, 'بيانات خاطئة', 'هناك خطأ إما الباركود أو رقم فاتورة البيع', QMessageBox.Ok)
+            return
         self.comboBox_25.setCurrentText(it_info[0])
         self.lineEdit_104.setText(str(it_info[1]))
         total = qty * it_info[1]
@@ -2752,11 +2756,17 @@ class Main(QMainWindow, MainUI):
         '''
         self.cur.execute(sql,(resalebill_id, it_info[0], qty, total, reason, item_barcode))
         self.db.commit()
+        self.resalebill_table_fill()
+        self.resalebill_clear()
 
-    def resalebill_table_fill(self):
-        id = int(self.lineEdit_107.text())
-        sql = '''SELECT * FROM resalebill WHERE id=%s'''
-        self.cur.execute(sql, [(id)])
+
+    def resalebill_table_fill(self):        
+        sql = '''SELECT resalebill_id, resale_item_id,
+        resale_item_name, unit_price, resale_item_qty, 
+        ROUND(unit_price * resale_item_qty, 2) AS total,
+        resale_reason
+        FROM resalebill_details '''
+        self.cur.execute(sql)
         data = self.cur.fetchall()
         self.tableWidget_17.setRowCount(0)
         self.tableWidget_17.insertRow(0)
@@ -2766,6 +2776,57 @@ class Main(QMainWindow, MainUI):
                 col += 1
             row_pos = self.tableWidget_17.rowCount()
             self.tableWidget_17.insertRow(row_pos)
+
+    def resalebill_clear(self):
+        self.lineEdit_107.setText('')
+        self.lineEdit_101.setText('')
+        self.lineEdit_102.setText('')
+        self.lineEdit_104.setText('')
+        self.lineEdit_105.setText('')
+        self.lineEdit_106.setText('')
+        self.pushButton_67.setEnabled(True)
+        self.pushButton_68.setEnabled(False)
+        self.pushButton_69.setEnabled(False)
+        self.pushButton_70.setEnabled(False)
+        self.pushButton_71.setEnabled(False)
+    
+    def resalebill_table_select(self):        
+        row = self.tableWidget_17.currentItem().row()
+        rs_id = self.tableWidget_17.item(row, 0).text()
+        item_id = self.tableWidget_17.item(row, 1).text()
+        query = '''SELECT rd.*, i.item_barcode, 
+            ROUND(rd.unit_price * rd.resale_item_qty, 2) AS total,
+            r.resale_date, r.resale_time
+            FROM resalebill_details rd
+            LEFT JOIN item i ON i.id = %s
+            LEFT JOIN resalebill r ON r.id = %s
+            WHERE rd.resalebill_id = %s AND rd.resale_item_id = %s
+            '''
+        self.cur.execute(query, (item_id, rs_id, rs_id, item_id))
+        data = self.cur.fetchone()        
+        self.lineEdit_101.setText(str(data[7]))
+        self.lineEdit_102.setText(str(data[1]))
+        self.lineEdit_103.setText(str(data[4]))
+        self.lineEdit_104.setText(str(data[5]))
+        self.lineEdit_105.setText(str(data[8]))          
+        self.lineEdit_106.setText(str(data[6]))
+        self.comboBox_25.setCurrentText(data[3])
+        self.dateEdit_18.setDate(data[9])
+        hours, remainder = divmod(data[10].total_seconds(), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        # Set the time in QTimeEdit
+        self.timeEdit_13.setTime(QTime(int(hours), int(minutes), int(seconds)))         
+        self.pushButton_67.setEnabled(False)
+        self.pushButton_68.setEnabled(False)
+        self.pushButton_69.setEnabled(False)
+        self.pushButton_70.setEnabled(True)
+        self.pushButton_71.setEnabled(True)
+
+    def resalebill_update(self):
+        pass
+    
+    def resalebill_delete(self):
+        pass
 # =============== تقارير ===============
     def cashier_daily_tally(self):
 
