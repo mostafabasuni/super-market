@@ -220,6 +220,8 @@ class Main(QMainWindow, MainUI):
         self.pushButton_66.clicked.connect(self.toggle_keypad)
         self.pushButton_67.clicked.connect(self.resalebill_add_new)
         self.pushButton_68.clicked.connect(self.resalebill_save)
+        self.pushButton_70.clicked.connect(self.resalebill_update)
+        self.pushButton_71.clicked.connect(self.resalebill_delete)
     # ===================== keybad =======================
         self.keypad = QFrame(self)
         self.keypad.setGeometry(132, 142, 180, 230)
@@ -2686,9 +2688,7 @@ class Main(QMainWindow, MainUI):
             alter_query = f"ALTER TABLE resalebill AUTO_INCREMENT = {id}"
             self.cur.execute(alter_query)
         
-        self.pushButton_68.setEnabled(True)
-        self.pushButton_70.setEnabled(False)
-        self.pushButton_71.setEnabled(False) 
+        self.resalebill_clear()
 
     def resalebill_save(self):        
         resalebill_id = self.lineEdit_107.text()
@@ -2745,8 +2745,9 @@ class Main(QMainWindow, MainUI):
         # Set the time in QTimeEdit
         self.timeEdit_13.setTime(QTime(int(hours), int(minutes), int(seconds))) 
 
-        sql = '''UPDATE resalebill SET resale_total_price=%s WHERE id=%s'''
-        self.cur.execute(sql, (total, salebill_id))
+        sql = '''UPDATE resalebill SET resale_total_price=%s 
+        WHERE id=%s AND salebill_id =%s'''
+        self.cur.execute(sql, (total,resalebill_id, salebill_id))
 
         sql='''INSERT INTO resalebill_details (resalebill_id, 
         resale_item_name, resale_item_qty,
@@ -2778,7 +2779,7 @@ class Main(QMainWindow, MainUI):
             self.tableWidget_17.insertRow(row_pos)
 
     def resalebill_clear(self):
-        self.lineEdit_107.setText('')
+        #self.lineEdit_107.setText('')
         self.lineEdit_101.setText('')
         self.lineEdit_102.setText('')
         self.lineEdit_104.setText('')
@@ -2796,7 +2797,7 @@ class Main(QMainWindow, MainUI):
         item_id = self.tableWidget_17.item(row, 1).text()
         query = '''SELECT rd.*, i.item_barcode, 
             ROUND(rd.unit_price * rd.resale_item_qty, 2) AS total,
-            r.resale_date, r.resale_time
+            r.resale_date, r.resale_time, r.id
             FROM resalebill_details rd
             LEFT JOIN item i ON i.id = %s
             LEFT JOIN resalebill r ON r.id = %s
@@ -2810,21 +2811,45 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_104.setText(str(data[5]))
         self.lineEdit_105.setText(str(data[8]))          
         self.lineEdit_106.setText(str(data[6]))
+        self.lineEdit_107.setText(str(data[11]))
         self.comboBox_25.setCurrentText(data[3])
         self.dateEdit_18.setDate(data[9])
         hours, remainder = divmod(data[10].total_seconds(), 3600)
         minutes, seconds = divmod(remainder, 60)
         # Set the time in QTimeEdit
         self.timeEdit_13.setTime(QTime(int(hours), int(minutes), int(seconds)))         
-        self.pushButton_67.setEnabled(False)
+        self.pushButton_67.setEnabled(True)
         self.pushButton_68.setEnabled(False)
         self.pushButton_69.setEnabled(False)
         self.pushButton_70.setEnabled(True)
         self.pushButton_71.setEnabled(True)
 
     def resalebill_update(self):
-        pass
-    
+        barcode = int(self.lineEdit_101.text())       
+        salebill_id = int(self.lineEdit_102.text())
+        order_no = int(self.lineEdit_107.text())
+        qty = Decimal(self.lineEdit_103.text())
+        it_name = self.comboBox_25.currentText()
+        price = Decimal(self.lineEdit_104.text())
+        reason = self.lineEdit_106.text()
+        user = self.comboBox_26.currentText()
+        resale_query = '''UPDATE resalebill_details rd
+        JOIN resalebill r ON r.id = %s
+        SET rd.resale_item_id = (SELECT i.id FROM item i WHERE i.item_barcode = %s),
+            rd.resale_item_name = %s,
+            rd.resale_item_qty = %s,
+            rd.unit_price = %s,
+            rd.resale_reason = %s,
+            r.resale_total_price = %s,
+            r.resale_user_id = (SELECT u.id FROM user u WHERE u.user_fullname = %s)
+        WHERE rd.resalebill_id = %s AND rd.resale_item_name = %s
+        '''
+        params = (order_no, barcode, it_name, qty, price, reason, price, user, order_no, it_name)
+        self.cur.execute(resale_query, params)
+        self.db.commit()        
+        self.resalebill_table_fill()
+        
+
     def resalebill_delete(self):
         pass
 # =============== تقارير ===============

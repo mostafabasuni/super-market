@@ -8060,10 +8060,10 @@
         <widget class="QLabel" name="label_150">
          <property name="geometry">
           <rect>
-           <x>304</x>
+           <x>296</x>
            <y>67</y>
-           <width>83</width>
-           <height>19</height>
+           <width>91</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="font">
@@ -8072,7 +8072,7 @@
           </font>
          </property>
          <property name="text">
-          <string>رقم طلب العميل</string>
+          <string>رقم فاتورة الشراء</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -8642,7 +8642,7 @@
           </font>
          </property>
          <property name="text">
-          <string>رقم مستند الإرجاع</string>
+          <string>رقم طلب العميل</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
