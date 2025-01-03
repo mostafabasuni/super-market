@@ -125,7 +125,7 @@ class Resalebill(BaseModel):
     resale_user= ForeignKeyField(User, backref='resalebills')
 
 class Resalebill_details(BaseModel):
-    resalebill_id = ForeignKeyField(Resalebill)
+    resalebill_id = ForeignKeyField(Resalebill, backref='resalebill_details', on_update='CASCADE', on_delete='CASCADE')
     resale_item_id = ForeignKeyField(Item, backref='resalebills')
     resale_item_name = CharField(max_length=100)
     resale_item_qty = DecimalField(max_digits=6, decimal_places=2)

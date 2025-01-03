@@ -2845,13 +2845,33 @@ class Main(QMainWindow, MainUI):
         WHERE rd.resalebill_id = %s AND rd.resale_item_name = %s
         '''
         params = (order_no, barcode, it_name, qty, price, reason, price, user, order_no, it_name)
-        self.cur.execute(resale_query, params)
+        try:        
+            
+            self.cur.execute(resale_query, params)
+            self.db.commit()
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            self.db.rollback()
+            # print(f"Error: {e}")  # Optionally log or show the error to the user 
+            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+            return
         self.db.commit()        
-        self.resalebill_table_fill()
-        
+        self.resalebill_table_fill()        
 
     def resalebill_delete(self):
-        pass
+        order_no = int(self.lineEdit_107.text())
+        try:        
+            sql = ('''DELETE FROM resalebill WHERE id = %s ''')
+            self.cur.execute(sql, [(order_no)])
+            self.db.commit()
+        except Exception as e:
+            # Rollback the transaction in case of an error
+            self.db.rollback()
+            # print(f"Error: {e}")  # Optionally log or show the error to the user 
+            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+            return
+        self.resalebill_table_fill()
+        self.resalebill_clear()
 # =============== تقارير ===============
     def cashier_daily_tally(self):
 
@@ -2904,8 +2924,7 @@ class Main(QMainWindow, MainUI):
             self.tableWidget_15.insertRow(row_pos)
 
     def daily_sales(self):
-        date = self.dateEdit_15.date()
-        date = date.toString(QtCore.Qt.ISODate)
+        date = self.dateEdit_15.date().toString(QtCore.Qt.ISODate)        
         query = ''' SELECT SUM(sale_cash), SUM(sale_visa) FROM operations WHERE oper_date=%s '''
         self.cur.execute(query, [(date)])
         data = self.cur.fetchone()        
@@ -2914,10 +2933,8 @@ class Main(QMainWindow, MainUI):
 
     def sales_range_report(self):
 
-        date1 = self.dateEdit_15.date()
-        date1 = date1.toString(QtCore.Qt.ISODate)
-        date2 = self.dateEdit_16.date()
-        date2 = date2.toString(QtCore.Qt.ISODate)
+        date1 = self.dateEdit_15.date().toString(QtCore.Qt.ISODate)        
+        date2 = self.dateEdit_16.date().toString(QtCore.Qt.ISODate)        
         query = ''' SELECT SUM(sale_cash), SUM(sale_visa) FROM operations WHERE oper_date BETWEEN %s AND %s '''
         self.cur.execute(query, [(date1), (date2)])
         data = self.cur.fetchone()        
@@ -2925,10 +2942,8 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_94.setText(str(data[1]))
     
     def buy_range_report(self):
-        date1 = self.dateEdit_15.date()
-        date1 = date1.toString(QtCore.Qt.ISODate)
-        date2 = self.dateEdit_16.date()
-        date2 = date2.toString(QtCore.Qt.ISODate)
+        date1 = self.dateEdit_15.date().toString(QtCore.Qt.ISODate)        
+        date2 = self.dateEdit_16.date().toString(QtCore.Qt.ISODate)       
         query = ''' SELECT SUM(buy_totalB), SUM(buy_extra_exp) FROM operations WHERE oper_date BETWEEN %s AND %s '''
         self.cur.execute(query, [(date1), (date2)])
         data = self.cur.fetchone()        
@@ -3017,8 +3032,6 @@ class Main(QMainWindow, MainUI):
         page.showPage()
         page.save()
         os.startfile("my_pdf.pdf")
-
-
 
 def main():
     #app = QApplication(sys.argv)  
