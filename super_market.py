@@ -84,8 +84,9 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_71.textChanged.connect(self.buy_unit_total)
         self.lineEdit_70.textChanged.connect(self.total_discount)
         
-        self.lineEdit_75.textEdited.connect(self.rebuybill_save_but)
-        self.lineEdit_80.textEdited.connect(self.rebuybill_save_but)
+        #self.lineEdit_75.textEdited.connect(self.rebuybill_save_but)
+        self.lineEdit_77.returnPressed.connect(self.rebuy_item_info)
+        #self.lineEdit_80.textEdited.connect(self.rebuybill_save_but)
         self.lineEdit_64.textChanged.connect(self.cash_rset)
         self.lineEdit_64.returnPressed.connect(self.cash)
         self.lineEdit_86.returnPressed.connect(self.get_sale_item_info)       
@@ -2162,8 +2163,7 @@ class Main(QMainWindow, MainUI):
             alter_query = f"ALTER TABLE rebuybill AUTO_INCREMENT = {id}"
             self.cur.execute(alter_query)
         self.lineEdit_75.setText('1')        
-        self.lineEdit_77.setText('')
-        self.lineEdit_78.setText('')
+        self.lineEdit_77.setText('')        
         self.lineEdit_79.setText('')
         self.lineEdit_80.setText('0')
         self.lineEdit_81.setText('0')
@@ -2349,6 +2349,26 @@ class Main(QMainWindow, MainUI):
 
         self.db.commit()
         self.rebuybill_search()
+
+    def rebuy_item_info(self):
+        resale_no = int(self.lineEdit_78.text()) # رقم طلب مرتجع العميل
+        barcode = int(self.lineEdit_77.text())
+        item_info = ''' SELECT  sd.resale_item_name,
+        sd.unit_price, sd.resale_item_qty, sd.resale_reason,
+        i.item_importer_id, i.item_buybill_id, im.importer_name, 
+        im.importer_grp_id, im.importer_company_id, 
+        b.importer_bill_no, g.grp_name, c.company_name
+        FROM resalebill_details sd        
+        LEFT JOIN item i ON i.item_barcode = %s
+        LEFT JOIN importer im ON im.id = i.item_importer_id
+        LEFT JOIN grp g ON g.id = im.importer_grp_id
+        LEFT JOIN buybill b ON b.id = i.item_buybill_id AND b.buy_importer_id = i.item_importer_id
+        LEFT JOIN company c ON c.id = im.importer_company_id
+        WHERE sd.resalebill_id = %s AND sd.resale_item_id = i.id
+        '''
+        self.cur.execute(item_info, (barcode, resale_no))
+        data = self.cur.fetchone()
+        print(data)
 
     def rebuybill_save_but(self):
 

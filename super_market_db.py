@@ -106,6 +106,7 @@ class Rebuybill(BaseModel):
     rebuy_date = DateField()
     rebuy_time = TimeField()    
     buybill_id = ForeignKeyField(Buybill, backref='rebuybills', on_update='CASCADE', on_delete='CASCADE')    
+    import_bill_no = IntegerField()
     rebuy_total_price = DecimalField(max_digits=10, decimal_places=2)
     importer = ForeignKeyField(Importer, backref='rebuybills')
     rebuy_user= ForeignKeyField(User, backref='rebuybills')
