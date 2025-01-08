@@ -8,7 +8,6 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import QTime
 from PyQt5.uic import loadUiType
 import sys
-
 from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
@@ -18,7 +17,6 @@ from reportlab.pdfbase.ttfonts import TTFont
 import arabic_reshaper
 from bidi.algorithm import get_display
 import os
-
 from datetime import datetime, timedelta
 from decimal import Decimal
 #import datetime
@@ -86,7 +84,7 @@ class Main(QMainWindow, MainUI):
         
         #self.lineEdit_75.textEdited.connect(self.rebuybill_save_but)
         self.lineEdit_77.returnPressed.connect(self.rebuy_item_info)
-        #self.lineEdit_80.textEdited.connect(self.rebuybill_save_but)
+        self.lineEdit_81.textChanged.connect(self.rebuybill_save_but)
         self.lineEdit_64.textChanged.connect(self.cash_rset)
         self.lineEdit_64.returnPressed.connect(self.cash)
         self.lineEdit_86.returnPressed.connect(self.get_sale_item_info)       
@@ -2172,65 +2170,34 @@ class Main(QMainWindow, MainUI):
         self.pushButton_48.setEnabled(False)        
 
     def rebuybill_save(self):
-        rebuybill_id = int(self.lineEdit_76.text()) # الرقم المرجعي لفاتورة الشراء
-        barcode = self.lineEdit_77.text()
-        customer_bill_no = self.lineEdit_78.text()
+        rebuybill_id = int(self.lineEdit_76.text()) # الرقم المرجعي لفاتورة الشراء        
+        buybill_no = int(self.lineEdit_79.text())
         date = self.dateEdit_12.date().toString(QtCore.Qt.ISODate)        
         time = self.timeEdit_10.time().toString(QtCore.Qt.ISODate)        
         user = self.comboBox_14.currentText()
-        item_info = ''' SELECT  sd.item_discount,
-        sd.item_price, s.date, s.time, i.item_name,
-        i.item_importer_id, i.item_buybill_id, im.importer_name, 
-        im.importer_grp_id, im.importer_company_id, 
-        b.importer_bill_no, g.grp_name, c.company_name
-        FROM salebill_details sd
-        LEFT JOIN salebill s ON s.id = %s
-        LEFT JOIN item i ON i.item_barcode = %s
-        LEFT JOIN importer im ON im.id = i.item_importer_id
-        LEFT JOIN grp g ON g.id = im.importer_grp_id
-        LEFT JOIN buybill b ON b.id = i.item_buybill_id AND b.buy_importer_id = i.item_importer_id
-        LEFT JOIN company c ON c.id = im.importer_company_id
-        WHERE sd.bill_id = %s AND sd.item_barcode = %s
-        '''
-        self.cur.execute(item_info, (customer_bill_no, barcode, customer_bill_no, barcode))
-        data = self.cur.fetchone()
-        print(data)
-        print(data[10])
-        self.lineEdit_79.setText(str(data[10])) # رقم فاتورة المورد
-        self.comboBox_13.setCurrentText(data[4])
-        item_count = self.lineEdit_75.text()
-        self.lineEdit_80.setText(str(data[0]))
-        self.lineEdit_81.setText(str(data[1]))
-        self.comboBox_10.setCurrentText(data[7])
+        importer = self.comboBox_10.currentText()       
                
-        #----------------------------
         # Combine the SELECT queries into the INSERT statement
         insert_sql = '''
-            INSERT INTO rebuybill (id, rebuy_date, rebuy_time, importer_id, rebuy_user_id)
-            SELECT %s, %s, %s,                
+            INSERT INTO rebuybill (id, rebuy_date, rebuy_time, 
+            buybill_id, importer_id, rebuy_user_id)
+            SELECT %s, %s, %s,
+                (SELECT id FROM buybill WHERE importer_bill_no = %s),                              
                 (SELECT id FROM importer WHERE importer_name = %s),
                 (SELECT id FROM user WHERE user_fullname = %s)               
         '''        
         # Execute the combined query
         try:
-            self.cur.execute(insert_sql, (rebuybill_id, date, time, user))            
+            self.cur.execute(insert_sql, (rebuybill_id, date, time, buybill_no, importer, user))
             # Commit the transaction
             self.db.commit()
+            self.rebuy_clear()
+            QMessageBox.warning(self, 'إفــادة', 'تم حفظ البيانات بنجاح', QMessageBox.Ok)
+            return
         except Exception as e:
             # Rollback the transaction if an error occurs
-            self.db.rollback()
-            print(f"Error: {e}")
-            # Optionally, you could show an error message to the user
-        #self.lineEdit_75.setText('1')
-        #self.lineEdit_77.setText('')
-        #self.lineEdit_78.setText('')
-        #self.lineEdit_79.setText('')
-        #self.lineEdit_80.setText('0')
-        #self.lineEdit_81.setText('0')
-        #self.pushButton_45.setEnabled(False)
-        QMessageBox.warning(self, 'إفــادة', 'تم حفظ البيانات بنجاح', QMessageBox.Ok)
-        return
-
+            self.db.rollback()            
+            print(f"Error: {e}")       
         
     def rebuybill_search(self):
         self.tableWidget_12.setRowCount(0)
@@ -2356,7 +2323,7 @@ class Main(QMainWindow, MainUI):
         item_info = ''' SELECT  sd.resale_item_name,
         sd.unit_price, sd.resale_item_qty, sd.resale_reason,
         i.item_importer_id, i.item_buybill_id, im.importer_name, 
-        im.importer_grp_id, im.importer_company_id, 
+        im.importer_grp_id, im.importer_company_id, b.buy_date,
         b.importer_bill_no, g.grp_name, c.company_name
         FROM resalebill_details sd        
         LEFT JOIN item i ON i.item_barcode = %s
@@ -2368,20 +2335,40 @@ class Main(QMainWindow, MainUI):
         '''
         self.cur.execute(item_info, (barcode, resale_no))
         data = self.cur.fetchone()
-        print(data)
+        
+        total = round(data[1] * data[2], 2)
+        self.lineEdit_79.setText(str(data[10]))
+        self.lineEdit_89.setText(str(data[11]))
+        self.lineEdit_90.setText(str(data[12]))
+        self.comboBox_10.setCurrentText(str(data[6]))
+        self.dateEdit_17.setDate(data[9])
+        self.comboBox_13.setCurrentText(str(data[0]))
+        self.lineEdit_75.setText(str(data[2]))
+        self.lineEdit_80.setText(str(data[1]))
+        self.lineEdit_108.setText(data[3])
+        self.lineEdit_81.setText(str(total))
+        
 
     def rebuybill_save_but(self):
-
-        x = float(self.lineEdit_75.text())
-        y = float(self.lineEdit_80.text())
-        z = x * y
-        z = float("{:.2f}".format(z))
-        self.lineEdit_81.setText(str(z))
         
-        if self.pushButton_47.isEnabled():            
-            self.pushButton_45.setEnabled(False)
-        else:
-            self.pushButton_45.setEnabled(True)
+        self.pushButton_45.setEnabled(True)
+
+    def rebuy_clear(self):
+        self.lineEdit_75.setText('1')
+        self.lineEdit_76.setText('')
+        self.lineEdit_77.setText('')
+        self.lineEdit_78.setText('')
+        self.lineEdit_79.setText('')
+        self.lineEdit_80.setText('0')
+        self.lineEdit_81.setText('0')
+        self.lineEdit_89.setText('')
+        self.lineEdit_90.setText('')
+        self.lineEdit_108.setText('')
+        self.pushButton_44.setEnabled(True)
+        self.pushButton_45.setEnabled(False)
+        self.pushButton_46.setEnabled(True)
+        self.pushButton_47.setEnabled(False)
+        self.pushButton_48.setEnabled(False)
 
 # =============== Sales ===============
     def shift_change(self):
@@ -2780,7 +2767,6 @@ class Main(QMainWindow, MainUI):
         self.resalebill_table_fill()
         self.resalebill_clear()
 
-
     def resalebill_table_fill(self):        
         sql = '''SELECT resalebill_id, resale_item_id,
         resale_item_name, unit_price, resale_item_qty, 
@@ -2839,8 +2825,7 @@ class Main(QMainWindow, MainUI):
         # Set the time in QTimeEdit
         self.timeEdit_13.setTime(QTime(int(hours), int(minutes), int(seconds)))         
         self.pushButton_67.setEnabled(True)
-        self.pushButton_68.setEnabled(False)
-        self.pushButton_69.setEnabled(False)
+        self.pushButton_68.setEnabled(False)        
         self.pushButton_70.setEnabled(True)
         self.pushButton_71.setEnabled(True)
 

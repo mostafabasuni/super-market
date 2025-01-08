@@ -105,14 +105,14 @@ class Salebill_details(BaseModel):
 class Rebuybill(BaseModel):    
     rebuy_date = DateField()
     rebuy_time = TimeField()    
-    buybill_id = ForeignKeyField(Buybill, backref='rebuybills', on_update='CASCADE', on_delete='CASCADE')    
-    import_bill_no = IntegerField()
+    buybill_id = ForeignKeyField(Buybill, backref='rebuybills', on_update='CASCADE', on_delete='CASCADE')
     rebuy_total_price = DecimalField(max_digits=10, decimal_places=2)
     importer = ForeignKeyField(Importer, backref='rebuybills')
     rebuy_user= ForeignKeyField(User, backref='rebuybills')
 
 class Rebuybill_details(BaseModel):
     bill_id = ForeignKeyField(Rebuybill)
+    import_bill_no = IntegerField()  # رقم فاتورة المورد
     rebuy_item_id = ForeignKeyField(Item, backref='rebuybills')
     rebuy_item_name = CharField(max_length=100)
     rebuy_item_qty = DecimalField(max_digits=6, decimal_places=2)

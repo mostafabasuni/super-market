@@ -6325,9 +6325,9 @@
            <property name="geometry">
             <rect>
              <x>11</x>
-             <y>41</y>
+             <y>29</y>
              <width>218</width>
-             <height>23</height>
+             <height>24</height>
             </rect>
            </property>
            <property name="font">
@@ -6342,8 +6342,8 @@
           <widget class="QLabel" name="label_107">
            <property name="geometry">
             <rect>
-             <x>240</x>
-             <y>43</y>
+             <x>241</x>
+             <y>32</y>
              <width>103</width>
              <height>19</height>
             </rect>
@@ -6364,7 +6364,7 @@
            <property name="geometry">
             <rect>
              <x>11</x>
-             <y>70</y>
+             <y>59</y>
              <width>218</width>
              <height>23</height>
             </rect>
@@ -6378,8 +6378,8 @@
           <widget class="QLabel" name="label_88">
            <property name="geometry">
             <rect>
-             <x>240</x>
-             <y>73</y>
+             <x>241</x>
+             <y>63</y>
              <width>68</width>
              <height>19</height>
             </rect>
@@ -6402,9 +6402,9 @@
            </property>
            <property name="geometry">
             <rect>
-             <x>168</x>
-             <y>99</y>
-             <width>61</width>
+             <x>178</x>
+             <y>117</y>
+             <width>51</width>
              <height>23</height>
             </rect>
            </property>
@@ -6423,8 +6423,8 @@
           <widget class="QLabel" name="label_104">
            <property name="geometry">
             <rect>
-             <x>240</x>
-             <y>102</y>
+             <x>241</x>
+             <y>119</y>
              <width>26</width>
              <height>19</height>
             </rect>
@@ -6444,8 +6444,8 @@
           <widget class="QLabel" name="label_110">
            <property name="geometry">
             <rect>
-             <x>240</x>
-             <y>131</y>
+             <x>241</x>
+             <y>148</y>
              <width>52</width>
              <height>19</height>
             </rect>
@@ -6468,9 +6468,9 @@
            </property>
            <property name="geometry">
             <rect>
-             <x>78</x>
-             <y>128</y>
-             <width>151</width>
+             <x>98</x>
+             <y>146</y>
+             <width>131</width>
              <height>23</height>
             </rect>
            </property>
@@ -6489,8 +6489,8 @@
           <widget class="QLabel" name="label_111">
            <property name="geometry">
             <rect>
-             <x>240</x>
-             <y>159</y>
+             <x>241</x>
+             <y>177</y>
              <width>69</width>
              <height>19</height>
             </rect>
@@ -6513,9 +6513,9 @@
            </property>
            <property name="geometry">
             <rect>
-             <x>78</x>
-             <y>157</y>
-             <width>151</width>
+             <x>68</x>
+             <y>175</y>
+             <width>161</width>
              <height>23</height>
             </rect>
            </property>
@@ -6529,6 +6529,48 @@
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+          <widget class="QLineEdit" name="lineEdit_108">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>11</x>
+             <y>88</y>
+             <width>218</width>
+             <height>23</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>14</pointsize>
+            </font>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+          <widget class="QLabel" name="label_148">
+           <property name="geometry">
+            <rect>
+             <x>241</x>
+             <y>92</y>
+             <width>24</width>
+             <height>19</height>
+            </rect>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>العطل</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
            </property>
           </widget>
          </widget>
@@ -6640,7 +6682,7 @@
             </font>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
            </property>
           </widget>
           <widget class="QLabel" name="label_115">
@@ -6703,7 +6745,7 @@
             </font>
            </property>
            <property name="alignment">
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
            </property>
           </widget>
           <widget class="QDateEdit" name="dateEdit_17">
