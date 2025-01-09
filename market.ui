@@ -5968,9 +5968,9 @@
           </property>
           <property name="geometry">
            <rect>
-            <x>690</x>
+            <x>670</x>
             <y>221</y>
-            <width>75</width>
+            <width>91</width>
             <height>38</height>
            </rect>
           </property>
@@ -5980,7 +5980,7 @@
            </font>
           </property>
           <property name="text">
-           <string>إضـــافة</string>
+           <string>طلب مرتجع</string>
           </property>
          </widget>
          <widget class="QPushButton" name="pushButton_45">
@@ -5989,9 +5989,9 @@
           </property>
           <property name="geometry">
            <rect>
-            <x>590</x>
+            <x>530</x>
             <y>221</y>
-            <width>75</width>
+            <width>101</width>
             <height>38</height>
            </rect>
           </property>
@@ -6001,7 +6001,7 @@
            </font>
           </property>
           <property name="text">
-           <string>حــــفظ</string>
+           <string>إضافة صنف</string>
           </property>
          </widget>
          <widget class="QPushButton" name="pushButton_46">
@@ -6010,7 +6010,7 @@
           </property>
           <property name="geometry">
            <rect>
-            <x>490</x>
+            <x>420</x>
             <y>221</y>
             <width>75</width>
             <height>38</height>
@@ -6031,7 +6031,7 @@
           </property>
           <property name="geometry">
            <rect>
-            <x>390</x>
+            <x>310</x>
             <y>221</y>
             <width>75</width>
             <height>38</height>
@@ -6052,7 +6052,7 @@
           </property>
           <property name="geometry">
            <rect>
-            <x>290</x>
+            <x>200</x>
             <y>221</y>
             <width>75</width>
             <height>38</height>

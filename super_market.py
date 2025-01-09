@@ -2170,7 +2170,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_48.setEnabled(False)        
 
     def rebuybill_save(self):
-        rebuybill_id = int(self.lineEdit_76.text()) # الرقم المرجعي لفاتورة الشراء        
+        rebuybill_id = int(self.lineEdit_76.text()) # رقم طلب مرتجع الشراء      
         buybill_no = int(self.lineEdit_79.text())
         date = self.dateEdit_12.date().toString(QtCore.Qt.ISODate)        
         time = self.timeEdit_10.time().toString(QtCore.Qt.ISODate)        
