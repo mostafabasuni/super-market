@@ -82,7 +82,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_71.textChanged.connect(self.buy_unit_total)
         self.lineEdit_70.textChanged.connect(self.total_discount)
         
-        #self.lineEdit_75.textEdited.connect(self.rebuybill_save_but)
+        self.lineEdit_73.returnPressed.connect(self.enabled_buy_item_but)
         self.lineEdit_77.returnPressed.connect(self.rebuy_item_info)
         self.lineEdit_81.textChanged.connect(self.rebuybill_save_but)
         self.lineEdit_64.textChanged.connect(self.cash_rset)
@@ -180,7 +180,7 @@ class Main(QMainWindow, MainUI):
         self.pushButton_31.clicked.connect(self.buybill_save)
         self.pushButton_32.clicked.connect(self.buybill_add_new)
         self.pushButton_33.clicked.connect(self.buy_item_add_new)
-        
+        self.pushButton_34.clicked.connect(self.buy_item_clear)        
         self.pushButton_35.clicked.connect(self.buybill_update)
 
         self.pushButton_36.clicked.connect(self.buy_item_search)
@@ -856,7 +856,7 @@ class Main(QMainWindow, MainUI):
             self.cur.execute(sql, [(imp_name)])
             data = self.cur.fetchone()               
             self.lineEdit_49.setText(str(data[0]))
-            self.lineEdit_50.setText(str(data[1]))
+            self.lineEdit_51.setText(str(data[1]))
             self.lineEdit_53.setText(str(data[2]))
             self.lineEdit_54.setText(str(data[3]))
 
@@ -1552,6 +1552,9 @@ class Main(QMainWindow, MainUI):
 
 #=========== فاتورة الشراء =========== 
 
+    def enabled_buy_item_but(self):
+        self.pushButton_33.setEnabled(True)
+
     def buy_item_add_new(self):
         code = self.lineEdit_73.text()
         name = self.lineEdit_68.text()
@@ -1613,6 +1616,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_71.setText('0')
         self.lineEdit_65.setText('0')
         self.pushButton_31.setEnabled(True)
+        self.pushButton_33.setEnabled(False)
         self.buy_item_table_fill()
 
     def buy_item_search(self):
@@ -1749,7 +1753,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_65.setText(str(data[8]))          
         self.lineEdit_66.setText(str(data[7]))  
         self.lineEdit_73.setText(item_code)
-        self.pushButton_34.setEnabled(False)
+        self.pushButton_34.setEnabled(True)
         self.pushButton_37.setEnabled(True)
         self.pushButton_39.setEnabled(True)
 
@@ -1769,9 +1773,9 @@ class Main(QMainWindow, MainUI):
         self.pushButton_33.setEnabled(True)
         self.pushButton_41.setEnabled(True)        
         
-    def buy_item_table_fill(self):        
-               
-        bill_id = self.lineEdit_72.text()
+    def buy_item_table_fill(self):
+
+        bill_id = self.lineEdit_72.text()        
         self.tableWidget_11.setRowCount(0)
         self.tableWidget_11.insertRow(0)
         sql = f''' SELECT b.id, i.item_name, i.item_barcode, i.item_unit,
@@ -1781,7 +1785,7 @@ class Main(QMainWindow, MainUI):
         WHERE b.buybill_id = {bill_id}
         '''
         self.cur.execute(sql)
-        data = self.cur.fetchall()        
+        data = self.cur.fetchall()       
         for row, form in enumerate(data):
             for col, item in enumerate(form):
                 self.tableWidget_11.setItem(row, col, QTableWidgetItem(str(item)))
@@ -1826,6 +1830,22 @@ class Main(QMainWindow, MainUI):
         self.total_sale_price
         '''
 
+    def buy_item_clear(self):
+        self.lineEdit_73.setText('')
+        self.lineEdit_68.setText('')
+        self.lineEdit_69.setText('0')
+        self.lineEdit_66.setText('')
+        self.lineEdit_70.setText('0')
+        self.lineEdit_71.setText('0')
+        self.lineEdit_65.setText('0')
+        self.pushButton_31.setEnabled(True)
+        self.pushButton_33.setEnabled(False)
+        self.pushButton_34.setEnabled(False)
+        self.pushButton_37.setEnabled(False)
+        self.pushButton_39.setEnabled(False)
+        self.pushButton_41.setEnabled(False)
+
+
     def buybill_add_new(self):
         importer_name = self.comboBox_9.currentText()
         user_name = self.comboBox_11.currentText()
@@ -1833,9 +1853,9 @@ class Main(QMainWindow, MainUI):
         buy_time = self.timeEdit_9.time().toString(Qt.ISODate)
         imp_bil_no = self.lineEdit_50.text()
 
-        #if self.lineEdit_52.text() == '':
-        #    QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم الفاتورة ', QMessageBox.Ok)
-        #    return        
+        if self.lineEdit_50.text() == '':
+            QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل رقم فاتورة المورد ', QMessageBox.Ok)
+            return        
         self.cur.execute("SELECT id, buy_total_price FROM buybill WHERE id=(SELECT max(id) FROM buybill)")        
         data = self.cur.fetchone()        
         if data and data[1] == 0:
@@ -1874,8 +1894,8 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_65.setText('0')    
         self.lineEdit_52.setText(str(id))        
         self.lineEdit_72.setText(self.lineEdit_52.text())
-        self.pushButton_33.setEnabled(True)
-        self.pushButton_34.setEnabled(False)
+        self.pushButton_33.setEnabled(False)
+        self.pushButton_34.setEnabled(True)
         self.pushButton_36.setEnabled(True)
         self.pushButton_37.setEnabled(False)
         self.pushButton_39.setEnabled(False)
@@ -1887,7 +1907,8 @@ class Main(QMainWindow, MainUI):
         self.tableWidget_10.setRowCount(0)
         self.tableWidget_10.insertRow(0)
         sql = f''' SELECT b.id, b.buy_date, b.buy_time, i.id,
-        u.id, b.buy_total_price, b.buy_discount, b.buy_item_count
+        b.importer_bill_no, u.id, b.buy_total_price,
+        b.buy_discount, b.buy_item_count
         FROM buybill b 
         LEFT JOIN importer i ON i.id = b.buy_importer_id
         LEFT JOIN user u ON u.id = b.buy_user_id
@@ -1942,12 +1963,10 @@ class Main(QMainWindow, MainUI):
             WHERE id=%s ''',(total, diccount, count, buybill_id))
                 
         self.db.commit()
-
         self.buybill_table_fill()
-        
-        self.lineEdit_51.setText('')
+
         self.lineEdit_52.setText('')
-        self.lineEdit_72.setText('')
+        #self.lineEdit_72.setText('')
         self.lineEdit_73.setText('')
         self.pushButton_31.setEnabled(False)
         self.pushButton_32.setEnabled(True)
@@ -1959,8 +1978,9 @@ class Main(QMainWindow, MainUI):
     def buybill_table_select(self):
         row = self.tableWidget_10.currentItem().row()
         buybill_id = self.tableWidget_10.item(row, 0).text()
+        self.lineEdit_72.setText(buybill_id)
         importer_id = int(self.tableWidget_10.item(row, 3).text())        
-        user_id = int(self.tableWidget_10.item(row, 4).text())        
+        user_id = int(self.tableWidget_10.item(row, 5).text())        
         
         # Combined SQL query with JOINs to get user_fullname and grp_name in one query
         sql = f'''
@@ -1971,21 +1991,19 @@ class Main(QMainWindow, MainUI):
         WHERE b.id = {buybill_id}
         '''        
         self.cur.execute(sql)
-        data = self.cur.fetchone()       
-       
+        data = self.cur.fetchone()        
         h, m, s = map(int, (str(data[2])).split(":"))
         x = QTime(h, m)
         self.lineEdit_52.setText(str(data[0]))
         self.dateEdit_11.setDate(data[1])
-        self.timeEdit_9.setTime(x)
-        self.lineEdit_52.setText(str(data[0]))
-        self.lineEdit_72.setText(str(data[0]))
+        self.timeEdit_9.setTime(x)        
+        self.lineEdit_50.setText(str(data[4]))
         self.lineEdit_57.setText(str(data[5]))
         self.lineEdit_56.setText(str(data[6]))
         self.lineEdit_58.setText(str(data[7]))
-        self.comboBox_9.setCurrentText(data[8])
-        self.lineEdit_49.setText(str(data[9]))
-        self.comboBox_11.setCurrentText(data[10])
+        self.comboBox_9.setCurrentText(data[9])
+        self.lineEdit_49.setText(str(data[10]))
+        self.comboBox_11.setCurrentText(data[11])
         self.pushButton_32.setEnabled(False)
         self.pushButton_35.setEnabled(True)
         self.pushButton_40.setEnabled(True)
