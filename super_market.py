@@ -1674,7 +1674,7 @@ class Main(QMainWindow, MainUI):
         public_price = Decimal(self.lineEdit_65.text())
         total = Decimal(self.lineEdit_67.text())
         discount = Decimal(self.lineEdit_70.text())
-        count = int(self.lineEdit_58.text())        
+        
 
         sql = '''
             UPDATE buybill_details b
@@ -1735,7 +1735,8 @@ class Main(QMainWindow, MainUI):
         item_name = self.tableWidget_11.item(row, 1).text()
         item_code = self.tableWidget_11.item(row, 2).text()       
 
-        query = '''SELECT b.*, i.item_unit, i.item_public_price
+        query = '''SELECT b.*, i.item_unit,
+            i.item_public_price, i.item_discount
             FROM buybill_details b
             LEFT JOIN item i 
             ON i.item_barcode = %s
@@ -1743,14 +1744,14 @@ class Main(QMainWindow, MainUI):
             '''
         self.cur.execute(query, (item_code, bb_id, band_id))
         data = self.cur.fetchone()
-       
         
         self.lineEdit_68.setText(item_name)
         self.lineEdit_69.setText(str(data[4]))
         self.lineEdit_70.setText(str(data[5]))
         self.lineEdit_71.setText(str(data[3]))
         self.lineEdit_67.setText(str(data[6]))
-        self.lineEdit_65.setText(str(data[8]))          
+        self.lineEdit_65.setText(str(data[8]))
+        self.lineEdit_70.setText(str(data[9]))          
         self.lineEdit_66.setText(str(data[7]))  
         self.lineEdit_73.setText(item_code)
         self.pushButton_34.setEnabled(True)
@@ -1797,9 +1798,9 @@ class Main(QMainWindow, MainUI):
 
         row = self.tableWidget_11.currentItem().row()
         id = self.tableWidget_11.item(row, 0).text()
-        buybill_id = self.lineEdit_73.text()
-        item_name = self.comboBox_12.currentText()
-        buy_unit_count = self.lineEdit_69.text()
+        buybill_id = int(self.lineEdit_72.text())
+        item_name = self.lineEdit_68.text()
+        buy_unit_qty = self.lineEdit_69.text()
 
         del_item = QMessageBox.warning(self, 'مسح بيانات' , 'هل انت متأكد من حذف هذه البيانات', QMessageBox.Yes | QMessageBox.No)
         if del_item == QMessageBox.No :
@@ -1807,11 +1808,11 @@ class Main(QMainWindow, MainUI):
         else:
             sql = f" DELETE FROM buybill_details WHERE buybill_id={buybill_id} AND id={id} "
             self.cur.execute(sql)
-            self.cur.execute(''' SELECT item_qty FROM items WHERE item_name=%s ''', [(item_name)])
+            self.cur.execute(''' SELECT item_qty FROM item WHERE item_name=%s ''', [(item_name)])
             data = self.cur.fetchone()            
-            item_qty = data[0] - int(buy_unit_count)
+            item_qty = data[0] - Decimal(buy_unit_qty)
 
-            self.cur.execute(''' UPDATE items SET item_qty=%s WHERE item_name=%s'''
+            self.cur.execute(''' UPDATE item SET item_qty=%s WHERE item_name=%s'''
             , (item_qty, item_name))
 
             self.db.commit()
@@ -2099,7 +2100,7 @@ class Main(QMainWindow, MainUI):
     def total_discount(self):
         qty = Decimal(self.lineEdit_69.text())
         unit_dis = Decimal(self.lineEdit_70.text())
-        dis = qty * unit_dis
+        dis = round(qty * unit_dis, 2)
         self.lineEdit_100.setText(str(dis))
 
     def row_go(self):        
