@@ -5,21 +5,19 @@ from PyQt5.QtWidgets import QApplication, QPushButton
 from PyQt5.QtCore import *
 from PyQt5.QtCore import QDate, QTime, QDateTime, Qt
 from PyQt5 import QtCore
-from PyQt5.QtCore import QTime
 from PyQt5.uic import loadUiType
 import sys
 from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
-from  datetime import date
+from datetime import date
 from reportlab.pdfbase.ttfonts import TTFont
 import arabic_reshaper
 from bidi.algorithm import get_display
 import os
 from datetime import datetime, timedelta
 from decimal import Decimal
-#import datetime
 import mysql.connector
 
 MainUI,_ = loadUiType('market.ui')
@@ -27,47 +25,22 @@ class Main(QMainWindow, MainUI):
     def __init__(self,parent=None):
         super(Main,self).__init__(parent)
         QMainWindow.__init__(self)
-        self.setupUi(self)
+        self.setupUi(self)        
 
-        # self.timeEdit_6 = QtCore.QTimer(self)
-        # self.timeEdit_6.timeout.connect(self.second)
-        # self.timeEdit_6.start(1000)
+        # إعداد مؤقت لتحديث الوقت بشكل دوري
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_time)
+        self.timer.timeout.connect(self.update_date)
+        self.timer.timeout.connect(self.update_title)
+        
+        self.timer.start(1000)  # تحديث كل ثانية (1000 ميلي ثانية)
         # self.c = canvas.Canvas(my_path,pagesize=letter)
-        self.dateEdit.setDate(QDate.currentDate())  
-        self.dateEdit_2.setDate(QDate.currentDate())
-        self.dateEdit_3.setDate(QDate.currentDate())
-        self.dateEdit_4.setDate(QDate.currentDate()) 
-        self.dateEdit_5.setDate(QDate.currentDate())
-        self.dateEdit_6.setDate(QDate.currentDate())
-        self.dateEdit_7.setDate(QDate.currentDate())
-        self.dateEdit_8.setDate(QDate.currentDate())
-        self.dateEdit_9.setDate(QDate.currentDate())
-        self.dateEdit_10.setDate(QDate.currentDate())
-        self.dateEdit_11.setDate(QDate.currentDate())
-        self.dateEdit_12.setDate(QDate.currentDate())
-        self.dateEdit_13.setDate(QDate.currentDate())
-        self.dateEdit_14.setDate(QDate.currentDate())        
-        self.dateEdit_15.setDate(QDate.currentDate())
-        self.dateEdit_16.setDate(QDate.currentDate())
-        self.dateEdit_19.setDate(QDate.currentDate())
-
-        self.timeEdit.setTime(QTime.currentTime())        
-        self.timeEdit_2.setTime(QTime.currentTime())        
-        self.timeEdit_3.setTime(QTime.currentTime())        
-        self.timeEdit_4.setTime(QTime.currentTime())       
-        self.timeEdit_5.setTime(QTime.currentTime())
-        self.timeEdit_6.setTime(QTime.currentTime())        
-        # self.timeEdit_7.setTime(QTime.currentTime())
-        # self.timeEdit_8.setTime(QTime.currentTime())
-        self.timeEdit_9.setTime(QTime.currentTime())
-        self.timeEdit_10.setTime(QTime.currentTime())
-        self.timeEdit_11.setTime(QTime.currentTime())
-        self.timeEdit_14.setTime(QTime.currentTime())
+        self.timeEdit_2.setTime(QTime.currentTime())
+        self.dateEdit_4.setDate(QDate.currentDate())
+        
 
         self.groupBox_14.hide()
         #self.tab_13.setEnabled(False)
-
-
         self.checkBox.stateChanged.connect(self.user_enabled)        
         self.comboBox_9.currentTextChanged.connect(self.importer_info)
         self.comboBox_24.currentTextChanged.connect(self.customer_info)
@@ -135,6 +108,46 @@ class Main(QMainWindow, MainUI):
         self.customer_combo_fill()
         self.resalebill_table_fill()
         
+    def update_time(self):
+        # الحصول على الوقت الحالي
+        current_time = QTime.currentTime()
+        # تحديث عنصر timeEdit
+        self.timeEdit.setTime(current_time) 
+        self.timeEdit_2.setTime(current_time)
+        self.timeEdit_4.setTime(current_time)
+        self.timeEdit_5.setTime(current_time)
+        self.timeEdit_8.setTime(current_time)
+        self.timeEdit_9.setTime(current_time)
+        self.timeEdit_11.setTime(current_time)
+        self.timeEdit_14.setTime(current_time)
+
+    def update_date(self):
+        # الحصول على التاريخ الحالي
+        current_date = QDate.currentDate()
+        # تحديث عنصر dateEdit
+        self.dateEdit.setDate(current_date)         
+        self.dateEdit_2.setDate(current_date)
+        self.dateEdit_3.setDate(current_date)         
+        self.dateEdit_5.setDate(current_date)
+        self.dateEdit_6.setDate(current_date)
+        self.dateEdit_7.setDate(current_date)
+        self.dateEdit_8.setDate(current_date)
+        self.dateEdit_9.setDate(current_date)
+        self.dateEdit_10.setDate(current_date)
+        self.dateEdit_11.setDate(current_date)
+        self.dateEdit_12.setDate(current_date)
+        self.dateEdit_13.setDate(current_date)
+        self.dateEdit_14.setDate(current_date)        
+        self.dateEdit_15.setDate(current_date)
+        self.dateEdit_16.setDate(current_date)
+        self.dateEdit_19.setDate(current_date)
+
+    def update_title(self):
+        # الحصول على الوقت والتاريخ الحاليين
+        current_datetime = QDateTime.currentDateTime()
+        formatted_datetime = current_datetime.toString("yyyy-MM-dd hh:mm")  # صيغة التاريخ والوقت
+        # تعيين العنوان
+        self.setWindowTitle(f"{formatted_datetime}")
 
     def db_connect(self):
         self.db = mysql.connector.connect(user='root', password=str(""),
@@ -1999,9 +2012,9 @@ class Main(QMainWindow, MainUI):
         self.dateEdit_11.setDate(data[1])
         self.timeEdit_9.setTime(x)        
         self.lineEdit_50.setText(str(data[4]))
-        self.lineEdit_57.setText(str(data[5]))
-        self.lineEdit_56.setText(str(data[6]))
-        self.lineEdit_58.setText(str(data[7]))
+        self.lineEdit_57.setText(str(data[6]))
+        self.lineEdit_56.setText(str(data[7]))
+        self.lineEdit_58.setText(str(data[8]))
         self.comboBox_9.setCurrentText(data[9])
         self.lineEdit_49.setText(str(data[10]))
         self.comboBox_11.setCurrentText(data[11])
