@@ -34,6 +34,8 @@ class Main(QMainWindow, MainUI):
         self.timer.timeout.connect(self.update_title)
         
         self.timer.start(1000)  # تحديث كل ثانية (1000 ميلي ثانية)
+
+        self.update_title()
         # self.c = canvas.Canvas(my_path,pagesize=letter)
         self.timeEdit_2.setTime(QTime.currentTime())
         self.dateEdit_4.setDate(QDate.currentDate())
@@ -145,7 +147,7 @@ class Main(QMainWindow, MainUI):
     def update_title(self):
         # الحصول على الوقت والتاريخ الحاليين
         current_datetime = QDateTime.currentDateTime()
-        formatted_datetime = current_datetime.toString("yyyy-MM-dd hh:mm")  # صيغة التاريخ والوقت
+        formatted_datetime = current_datetime.toString("yyyy-MM-dd  hh:mm")  # صيغة التاريخ والوقت
         # تعيين العنوان
         self.setWindowTitle(f"{formatted_datetime}")
 
@@ -229,10 +231,13 @@ class Main(QMainWindow, MainUI):
         self.pushButton_63.clicked.connect(self.buy_range_report)
         self.pushButton_64.clicked.connect(self.Items_inventory)
         self.pushButton_65.clicked.connect(self.salebill_print)
+
         self.pushButton_66.clicked.connect(self.toggle_keypad)
         self.pushButton_67.clicked.connect(self.resalebill_add_new)
         self.pushButton_68.clicked.connect(self.resalebill_save)
+        self.pushButton_69.clicked.connect(self.item_clear)
         self.pushButton_70.clicked.connect(self.resalebill_update)
+
         self.pushButton_71.clicked.connect(self.resalebill_delete)
     # ===================== keybad =======================
         self.keypad = QFrame(self)
@@ -898,6 +903,7 @@ class Main(QMainWindow, MainUI):
         self.lineEdit_29.setText('')
         self.lineEdit_30.setText('')
         self.lineEdit_31.setText('')
+        self.pushButton_16.setEnabled(True)
 
     def item_table_fill(self):        
         self.tableWidget_4.setRowCount(0)
@@ -929,7 +935,7 @@ class Main(QMainWindow, MainUI):
         self.cur.execute(sql)
         data = self.cur.fetchone()     
        
-        #self.lineEdit_24.setText(str(data[0]))
+        self.lineEdit_24.setText(str(data[0]))
         self.lineEdit_25.setText(str(data[2]))
         self.lineEdit_26.setText(str(data[1]))
         self.comboBox_4.setCurrentText(str(data[10]))
@@ -1003,7 +1009,10 @@ class Main(QMainWindow, MainUI):
         LEFT JOIN company c ON c.id = im.importer_company_id
         WHERE i.item_name LIKE '%{name}%' '''            
         self.cur.execute(sql)
-        data = self.cur.fetchone()       
+        data = self.cur.fetchone()
+        if data == None:
+            QMessageBox.warning(self, ' إفادة', 'الصنف الذي تبحث عنه غير موجود', QMessageBox.Ok)
+            return
 
         self.lineEdit_24.setText(str(data[0]))
         self.lineEdit_25.setText(str(data[2]))
@@ -1073,7 +1082,7 @@ class Main(QMainWindow, MainUI):
             self.pushButton_34.setEnabled(False)
         else:
             self.pushButton_34.setEnabled(True)
-
+    
 # =========== Groups ===========
 
     def grp_add_new(self):
