@@ -79,7 +79,8 @@ class Main(QMainWindow, MainUI):
         self.tableWidget_17.itemClicked.connect(self.resalebill_table_select)
 
         validator = QRegExpValidator(QRegExp(r'[0-9]+')) 
-        
+        self.lineEdit_64.setValidator(QDoubleValidator())
+        self.lineEdit_87.setValidator(QDoubleValidator())
         self.lineEdit_73.setValidator(QDoubleValidator())
         self.lineEdit_73.setMaxLength(13)
         self.lineEdit_69.setValidator(QDoubleValidator())
@@ -91,6 +92,13 @@ class Main(QMainWindow, MainUI):
         self.pushButton_35.setEnabled(False)
         self.pushButton_40.setEnabled(False)
         self.pushButton_43.setEnabled(False)
+
+        # افترض أن لديك عنصر lineEdit في ملف التصميم
+        self.lineEdit_64 = self.findChild(QtWidgets.QLineEdit, 'lineEdit_64')
+        self.lineEdit_64.installEventFilter(self)
+
+       
+        
        
 
         self.db_connect()
@@ -109,7 +117,12 @@ class Main(QMainWindow, MainUI):
         self.item_combo_fill()
         self.customer_combo_fill()
         self.resalebill_table_fill()
-        
+
+    def eventFilter(self, source, event):        
+        if source == self.lineEdit_64 and event.type() == event.FocusIn:  # عند التركيز                                    
+            self.lineEdit_64.selectAll()  # تحديد النص بالكامل
+        return super(Main, self).eventFilter(source, event)    
+
     def update_time(self):
         # الحصول على الوقت الحالي
         current_time = QTime.currentTime()
@@ -2471,6 +2484,11 @@ class Main(QMainWindow, MainUI):
         sql = f"SELECT item_name, item_public_price, item_unit, item_discount FROM item WHERE item_barcode={bar_code}"
         self.cur.execute(sql)
         data = self.cur.fetchone()
+        if data == None :
+            QMessageBox.warning(self, 'بيانات خاطئة', 'هذا الصنف غير موجود', QMessageBox.Ok)
+            self.lineEdit_86.setText('')
+            return
+
         qty = Decimal(self.lineEdit_83.text())
         discount = data[3] * qty
         discount = f"{discount:.2f}"
