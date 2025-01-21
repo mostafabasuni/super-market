@@ -1,4 +1,4 @@
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, uic
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtWidgets import QApplication, QPushButton
@@ -19,13 +19,18 @@ import os
 from datetime import datetime, timedelta
 from decimal import Decimal
 import mysql.connector
-
+'''
 MainUI,_ = loadUiType('market.ui')
 class Main(QMainWindow, MainUI):
     def __init__(self,parent=None):
         super(Main,self).__init__(parent)
         QMainWindow.__init__(self)
         self.setupUi(self)        
+'''
+class Main(QtWidgets.QMainWindow):
+    def __init__(self):
+        super(Main, self).__init__()
+        uic.loadUi('market.ui', self)  # تحميل ملف التصميم
 
         # إعداد مؤقت لتحديث الوقت بشكل دوري
         self.timer = QTimer(self)
@@ -92,14 +97,9 @@ class Main(QMainWindow, MainUI):
         self.pushButton_35.setEnabled(False)
         self.pushButton_40.setEnabled(False)
         self.pushButton_43.setEnabled(False)
-
-        # افترض أن لديك عنصر lineEdit في ملف التصميم
-        self.lineEdit_64 = self.findChild(QtWidgets.QLineEdit, 'lineEdit_64')
-        self.lineEdit_64.installEventFilter(self)
-
-       
         
-       
+        #self.lineEdit_64 = self.findChild(QtWidgets.QLineEdit, 'lineEdit_64')
+        #self.lineEdit_64.installEventFilter(self)       
 
         self.db_connect()
         self.handel_buttons()
@@ -117,12 +117,15 @@ class Main(QMainWindow, MainUI):
         self.item_combo_fill()
         self.customer_combo_fill()
         self.resalebill_table_fill()
-
+    '''
     def eventFilter(self, source, event):        
         if source == self.lineEdit_64 and event.type() == event.FocusIn:  # عند التركيز                                    
+            #self.lineEdit_64.setText('0')
             self.lineEdit_64.selectAll()  # تحديد النص بالكامل
+            print('Mostafa')
+            
         return super(Main, self).eventFilter(source, event)    
-
+    '''
     def update_time(self):
         # الحصول على الوقت الحالي
         current_time = QTime.currentTime()
@@ -3100,8 +3103,9 @@ class Main(QMainWindow, MainUI):
 
 def main():
     #app = QApplication(sys.argv)  
-    app = QtWidgets.QApplication([])
-    Window = QtWidgets.QWidget()  
+    #app = QtWidgets.QApplication([])
+    app = QtWidgets.QApplication(sys.argv)
+    #Window = QtWidgets.QWidget()  
     Window = Main()
     Window.show()
     app.exec_()
