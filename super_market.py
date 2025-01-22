@@ -17,6 +17,7 @@ import arabic_reshaper
 from bidi.algorithm import get_display
 import os
 from datetime import datetime, timedelta
+import datetime
 from decimal import Decimal
 import mysql.connector
 '''
@@ -36,14 +37,13 @@ class Main(QtWidgets.QMainWindow):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_time)
         self.timer.timeout.connect(self.update_date)
-        self.timer.timeout.connect(self.update_title)
-        
+        self.timer.timeout.connect(self.update_title)        
         self.timer.start(1000)  # تحديث كل ثانية (1000 ميلي ثانية)
-
         self.update_title()
         # self.c = canvas.Canvas(my_path,pagesize=letter)
         self.timeEdit_2.setTime(QTime.currentTime())
         self.dateEdit_4.setDate(QDate.currentDate())
+        self.dateEdit_14.setDate(QDate.currentDate())
         
 
         self.groupBox_14.hide()
@@ -155,17 +155,15 @@ class Main(QtWidgets.QMainWindow):
         self.dateEdit_11.setDate(current_date)
         self.dateEdit_12.setDate(current_date)
         self.dateEdit_13.setDate(current_date)
-        self.dateEdit_14.setDate(current_date)        
+        #self.dateEdit_14.setDate(current_date)        
         self.dateEdit_15.setDate(current_date)
         self.dateEdit_16.setDate(current_date)
         self.dateEdit_19.setDate(current_date)
 
     def update_title(self):
         # الحصول على الوقت والتاريخ الحاليين
-        current_datetime = QDateTime.currentDateTime()
-        formatted_datetime = current_datetime.toString("yyyy-MM-dd  hh:mm")  # صيغة التاريخ والوقت
-        # تعيين العنوان
-        self.setWindowTitle(f"{formatted_datetime}")
+        current_time = datetime.datetime.now().strftime('%d/%m/%Y    %I:%M:%S %p')
+        self.setWindowTitle(current_time)  # تحديث عنوان النافذة
 
     def db_connect(self):
         self.db = mysql.connector.connect(user='root', password=str(""),
@@ -255,6 +253,7 @@ class Main(QtWidgets.QMainWindow):
         self.pushButton_70.clicked.connect(self.resalebill_update)
 
         self.pushButton_71.clicked.connect(self.resalebill_delete)
+        self.pushButton_72.clicked.connect(self.item_table_fill)
     # ===================== keybad =======================
         self.keypad = QFrame(self)
         self.keypad.setGeometry(132, 142, 180, 230)
@@ -949,7 +948,8 @@ class Main(QtWidgets.QMainWindow):
             WHERE i.item_barcode = {barcode} ''' 
 
         self.cur.execute(sql)
-        data = self.cur.fetchone()     
+        data = self.cur.fetchone()
+        print(data)     
        
         self.lineEdit_24.setText(str(data[0]))
         self.lineEdit_25.setText(str(data[2]))
@@ -2944,24 +2944,15 @@ class Main(QtWidgets.QMainWindow):
     def cashier_daily_tally(self):
 
         casher = self.comboBox_20.currentText()
-        date = self.dateEdit_14.date()
-        date = date.toString(QtCore.Qt.ISODate)
+        date = self.dateEdit_14.date().toString(QtCore.Qt.ISODate)
         
-        sql = ''' SELECT o.casher_name,
-                        o.shift_no,
-                        o.sale_cash,
-                        o.sale_visa,
-                        o.oper_date,
-                        h.he_come,
-                        h.he_go,
-                        h.he_difference
-                        FROM operations o
-                        JOIN hodoor_ensraf h
-                        ON o.employee_id = h.he_employee_id
-                        AND o.oper_date=%s AND h.he_date=%s
-                        '''
-        self.cur.execute(sql, [(date), (date)])
-        data = self.cur.fetchall()
+        
+        sql = ''' SELECT u.user_fullname, s.date, SUM(s.cash),
+            SUM(s.visa) FROM salebill s
+            JOIN user u ON u.user_fullname = %s
+            WHERE s.date = %s AND s.user_id = u.id '''
+        self.cur.execute(sql, [(casher), (date)])
+        data = self.cur.fetchall()       
         
         self.tableWidget_14.setRowCount(0)
         self.tableWidget_14.insertRow(0)
@@ -3102,7 +3093,7 @@ class Main(QtWidgets.QMainWindow):
         os.startfile("my_pdf.pdf")
 
 def main():
-    #app = QApplication(sys.argv)  
+    ##app = QApplication(sys.argv)  
     #app = QtWidgets.QApplication([])
     app = QtWidgets.QApplication(sys.argv)
     #Window = QtWidgets.QWidget()  

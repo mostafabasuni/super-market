@@ -49,7 +49,7 @@
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>3</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -1950,7 +1950,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>0</number>
         </property>
         <property name="documentMode">
          <bool>false</bool>
@@ -2066,7 +2066,7 @@
          <widget class="QLineEdit" name="lineEdit_23">
           <property name="geometry">
            <rect>
-            <x>460</x>
+            <x>380</x>
             <y>240</y>
             <width>211</width>
             <height>31</height>
@@ -2081,7 +2081,7 @@
          <widget class="QPushButton" name="pushButton_20">
           <property name="geometry">
            <rect>
-            <x>360</x>
+            <x>280</x>
             <y>240</y>
             <width>75</width>
             <height>31</height>
@@ -2612,6 +2612,19 @@
             <string>سعر الجمهور</string>
            </property>
           </column>
+         </widget>
+         <widget class="QPushButton" name="pushButton_72">
+          <property name="geometry">
+           <rect>
+            <x>610</x>
+            <y>240</y>
+            <width>121</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>تحديث البيانات</string>
+          </property>
          </widget>
         </widget>
         <widget class="QWidget" name="tab_5">
@@ -8746,7 +8759,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="tab_17">
          <attribute name="title">
@@ -8776,37 +8789,17 @@
           </column>
           <column>
            <property name="text">
-            <string>رقم  الوردية</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>حصيلة الوردية-نقدا</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>حصيلة الوردية-فيزا</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
             <string>التاريخ</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>وقت الحضور</string>
+            <string>الحصيلة - نقدا</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>وقت الانصراف</string>
-           </property>
-          </column>
-          <column>
-           <property name="text">
-            <string>عدد ساعات العمل</string>
+            <string>الحصيلة - فيزا</string>
            </property>
           </column>
          </widget>
@@ -8967,17 +8960,22 @@
           </column>
           <column>
            <property name="text">
+            <string>المتوفر</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
             <string>الوحدة</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>سعر البيع</string>
+            <string>سعر الوحدة</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>إجمالي سعر البيع</string>
+            <string>إجمالي البيع</string>
            </property>
           </column>
          </widget>
