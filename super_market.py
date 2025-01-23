@@ -44,6 +44,8 @@ class Main(QtWidgets.QMainWindow):
         self.timeEdit_2.setTime(QTime.currentTime())
         self.dateEdit_4.setDate(QDate.currentDate())
         self.dateEdit_14.setDate(QDate.currentDate())
+        self.dateEdit_15.setDate(QDate.currentDate())
+        self.dateEdit_16.setDate(QDate.currentDate())
         
 
         self.groupBox_14.hide()
@@ -156,8 +158,8 @@ class Main(QtWidgets.QMainWindow):
         self.dateEdit_12.setDate(current_date)
         self.dateEdit_13.setDate(current_date)
         #self.dateEdit_14.setDate(current_date)        
-        self.dateEdit_15.setDate(current_date)
-        self.dateEdit_16.setDate(current_date)
+        #self.dateEdit_15.setDate(current_date)
+        #self.dateEdit_16.setDate(current_date)
         self.dateEdit_19.setDate(current_date)
 
     def update_title(self):
@@ -948,8 +950,7 @@ class Main(QtWidgets.QMainWindow):
             WHERE i.item_barcode = {barcode} ''' 
 
         self.cur.execute(sql)
-        data = self.cur.fetchone()
-        print(data)     
+        data = self.cur.fetchone()       
        
         self.lineEdit_24.setText(str(data[0]))
         self.lineEdit_25.setText(str(data[2]))
@@ -2486,7 +2487,7 @@ class Main(QtWidgets.QMainWindow):
         bar_code = self.lineEdit_86.text()
         sql = f"SELECT item_name, item_public_price, item_unit, item_discount FROM item WHERE item_barcode={bar_code}"
         self.cur.execute(sql)
-        data = self.cur.fetchone()
+        data = self.cur.fetchone()        
         if data == None :
             QMessageBox.warning(self, 'بيانات خاطئة', 'هذا الصنف غير موجود', QMessageBox.Ok)
             self.lineEdit_86.setText('')
@@ -2966,10 +2967,9 @@ class Main(QtWidgets.QMainWindow):
 
     def most_selling_item(self):
 
-        query = ''' SELECT s.item_name,s.item_code, SUM(s.item_total_price) as total_sales
-                FROM salebill_details s
-                JOIN items i ON s.item_code = i.item_barcode
-                GROUP BY s.item_code
+        query = ''' SELECT item_name,item_barcode, SUM(total_price) as total_sales
+                FROM salebill_details                
+                GROUP BY item_barcode
                 ORDER BY total_sales DESC '''
         self.cur.execute(query)
         data = self.cur.fetchall()
@@ -2984,7 +2984,7 @@ class Main(QtWidgets.QMainWindow):
 
     def daily_sales(self):
         date = self.dateEdit_15.date().toString(QtCore.Qt.ISODate)        
-        query = ''' SELECT SUM(sale_cash), SUM(sale_visa) FROM operations WHERE oper_date=%s '''
+        query = ''' SELECT SUM(cash), SUM(visa) FROM salebill WHERE date=%s '''
         self.cur.execute(query, [(date)])
         data = self.cur.fetchone()        
         self.lineEdit_91.setText(str(data[0]))
@@ -2994,7 +2994,7 @@ class Main(QtWidgets.QMainWindow):
 
         date1 = self.dateEdit_15.date().toString(QtCore.Qt.ISODate)        
         date2 = self.dateEdit_16.date().toString(QtCore.Qt.ISODate)        
-        query = ''' SELECT SUM(sale_cash), SUM(sale_visa) FROM operations WHERE oper_date BETWEEN %s AND %s '''
+        query = ''' SELECT SUM(cash), SUM(visa) FROM salebill WHERE date BETWEEN %s AND %s '''
         self.cur.execute(query, [(date1), (date2)])
         data = self.cur.fetchone()        
         self.lineEdit_93.setText(str(data[0]))
@@ -3003,7 +3003,7 @@ class Main(QtWidgets.QMainWindow):
     def buy_range_report(self):
         date1 = self.dateEdit_15.date().toString(QtCore.Qt.ISODate)        
         date2 = self.dateEdit_16.date().toString(QtCore.Qt.ISODate)       
-        query = ''' SELECT SUM(buy_totalB), SUM(buy_extra_exp) FROM operations WHERE oper_date BETWEEN %s AND %s '''
+        query = ''' SELECT SUM(buy_total_price), SUM(buy_discount) FROM buybill WHERE buy_date BETWEEN %s AND %s '''
         self.cur.execute(query, [(date1), (date2)])
         data = self.cur.fetchone()        
         self.lineEdit_95.setText(str(data[0]))
