@@ -2967,10 +2967,20 @@ class Main(QtWidgets.QMainWindow):
 
     def most_selling_item(self):
 
-        query = ''' SELECT item_name,item_barcode, SUM(total_price) as total_sales
-                FROM salebill_details                
-                GROUP BY item_barcode
-                ORDER BY total_sales DESC '''
+        query = '''
+        SELECT s.item_name,
+            s.item_barcode,
+            SUM(s.item_qty) AS qty,
+            SUM(s.total_price) AS total,
+            SUM(s.item_discount) AS discount,
+            (SUM(s.total_price) - SUM(s.item_discount)) AS net,
+            ROUND((SUM(s.item_qty) * i.item_price), 2) AS net_buy, 
+            ((SUM(s.total_price) - SUM(s.item_discount))-ROUND((SUM(s.item_qty) * i.item_price), 2)) AS profits
+        FROM salebill_details s
+        JOIN item i ON s.item_barcode = i.item_barcode
+        GROUP BY s.item_barcode
+        ORDER BY qty DESC
+        '''
         self.cur.execute(query)
         data = self.cur.fetchall()
         self.tableWidget_15.setRowCount(0)

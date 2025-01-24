@@ -49,7 +49,7 @@
        <enum>Qt::RightToLeft</enum>
       </property>
       <property name="currentIndex">
-       <number>6</number>
+       <number>8</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -8759,7 +8759,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>3</number>
+         <number>2</number>
         </property>
         <widget class="QWidget" name="tab_17">
          <attribute name="title">
@@ -9024,17 +9024,42 @@
           </property>
           <column>
            <property name="text">
-            <string>اسم الصنف </string>
+            <string>الصنف </string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>كود الصنف</string>
+            <string>الكود</string>
            </property>
           </column>
           <column>
            <property name="text">
-            <string>إجمالي مبيعات الصنف</string>
+            <string>الكمية</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>إجمالي المبيعات</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>إجمالي الخصومات</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>صافي المبيعات</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>إجمالي المشتريات</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>الأرباح</string>
            </property>
           </column>
          </widget>
