@@ -322,7 +322,7 @@ class Main(QtWidgets.QMainWindow):
         self.groupBox_3.setEnabled(True)
         self.checkBox.setChecked(True)
         row = self.tableWidget.currentItem().row()
-        id = self.tableWidget.item(row, 0).text()
+        id = self.tableWidget.item(row, 0).text()        
         sql = f"SELECT * FROM user WHERE id={id}"
         self.cur.execute(sql) #, [(id)])
         data = self.cur.fetchone()
@@ -2966,7 +2966,6 @@ class Main(QtWidgets.QMainWindow):
         
 
     def most_selling_item(self):
-
         query = '''
         SELECT s.item_name,
             s.item_barcode,
@@ -2974,23 +2973,35 @@ class Main(QtWidgets.QMainWindow):
             SUM(s.total_price) AS total,
             SUM(s.item_discount) AS discount,
             (SUM(s.total_price) - SUM(s.item_discount)) AS net,
-            ROUND((SUM(s.item_qty) * i.item_price), 2) AS net_buy, 
-            ((SUM(s.total_price) - SUM(s.item_discount))-ROUND((SUM(s.item_qty) * i.item_price), 2)) AS profits
+            ROUND(SUM(s.item_qty * i.item_price), 2) AS net_buy,
+            ( (SUM(s.total_price) - SUM(s.item_discount)) - ROUND(SUM(s.item_qty * i.item_price), 2) ) AS profits
         FROM salebill_details s
         JOIN item i ON s.item_barcode = i.item_barcode
-        GROUP BY s.item_barcode
-        ORDER BY qty DESC
+        GROUP BY s.item_name, s.item_barcode
+        ORDER BY qty DESC;
         '''
         self.cur.execute(query)
         data = self.cur.fetchall()
+        total_sales = 0
+        total_buys = 0
+        total_profits = 0
         self.tableWidget_15.setRowCount(0)
         self.tableWidget_15.insertRow(0)
         for row, form in enumerate(data):
             for col, item in enumerate(form):
+                if col == 5:
+                    total_sales += item
+                if col == 6:
+                    total_buys += item
+                if col == 7:
+                    total_profits += item   
                 self.tableWidget_15.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_15.rowCount()
             self.tableWidget_15.insertRow(row_pos)
+        self.lineEdit_33.setText(str(total_sales))
+        self.lineEdit_34.setText(str(total_buys))
+        self.lineEdit_39.setText(str(total_profits))
 
     def daily_sales(self):
         date = self.dateEdit_15.date().toString(QtCore.Qt.ISODate)        

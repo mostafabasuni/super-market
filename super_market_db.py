@@ -68,7 +68,11 @@ class Item(BaseModel):
     item_discount = DecimalField(max_digits=6, decimal_places=2) # خصم خاص بالمستهلك
     item_public_price = DecimalField(max_digits=10, decimal_places=2) # سعر البيع للجمهور
     item_importer = ForeignKeyField(Importer, backref='items', on_update='CASCADE')
-
+    '''
+    @property
+    def buy_price(self):
+        return self.item_price
+    '''
 class Buybill_details(BaseModel):    
     buybill_id = ForeignKeyField(Buybill, on_update='CASCADE', on_delete='CASCADE')
     item_id = ForeignKeyField(Item)
@@ -100,8 +104,16 @@ class Salebill_details(BaseModel):
     item_count = IntegerField() # عدد القطع من نفس الصنف
     item_discount = DecimalField(max_digits=6, decimal_places=2)
     total_price = DecimalField(max_digits=10, decimal_places=2)
+    '''
+    @property
+    def net_price(self):
+        return self.total_price - self.item_discount
 
- 
+    @property
+    def profits(self):
+        net_buy = self.item_qty * self.buy_price
+        return self.net_price - net_buy
+    '''
 class Rebuybill(BaseModel):    
     rebuy_date = DateField()
     rebuy_time = TimeField()    
