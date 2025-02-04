@@ -135,7 +135,7 @@ class Main(QtWidgets.QMainWindow):
         self.timeEdit.setTime(current_time) 
         self.timeEdit_2.setTime(current_time)
         self.timeEdit_4.setTime(current_time)
-        self.timeEdit_5.setTime(current_time)
+        #self.timeEdit_5.setTime(current_time)
         self.timeEdit_8.setTime(current_time)
         self.timeEdit_9.setTime(current_time)
         self.timeEdit_11.setTime(current_time)
@@ -150,7 +150,7 @@ class Main(QtWidgets.QMainWindow):
         self.dateEdit_3.setDate(current_date)         
         self.dateEdit_5.setDate(current_date)
         self.dateEdit_6.setDate(current_date)
-        self.dateEdit_7.setDate(current_date)
+        #self.dateEdit_7.setDate(current_date)
         self.dateEdit_8.setDate(current_date)
         self.dateEdit_9.setDate(current_date)
         self.dateEdit_10.setDate(current_date)
@@ -496,7 +496,7 @@ class Main(QtWidgets.QMainWindow):
         self.comboBox_20.clear()
         self.comboBox_17.clear()
         self.comboBox_18.clear()
-        self.comboBox_19.clear()
+        #self.comboBox_19.clear()
         self.comboBox_26.clear()
         self.cur.execute('''SELECT user_fullname, user_job FROM user ORDER BY id ''')
         users = self.cur.fetchall()        
@@ -510,7 +510,7 @@ class Main(QtWidgets.QMainWindow):
                 self.comboBox_20.addItem(user[0])
             self.comboBox_17.addItem(user[0])
             self.comboBox_18.addItem(user[0])
-            self.comboBox_19.addItem(user[0])
+            #self.comboBox_19.addItem(user[0])
             self.comboBox_26.addItem(user[0])
 
     def user_field_clear(self):
@@ -3045,7 +3045,21 @@ class Main(QtWidgets.QMainWindow):
                 self.tableWidget_16.setItem(row, col, QTableWidgetItem(str(item)))
                 col += 1
             row_pos = self.tableWidget_16.rowCount()
-            self.tableWidget_16.insertRow(row_pos)
+            self.tableWidget_16.insertRow(row_pos)    
+
+    def edit_permissions(self):
+        user = self.comboBox_12.currentText()
+        shore_butn = QMessageBox.warning(self, 'تأكيد بيانات','هل تريد حقا تأكيد هذه الصلاحيات للموظف {}'.format(empolyee_name), QMessageBox.Ok | QMessageBox.Cancel)
+        if shore_butn == QMessageBox.Cancel:
+            return
+        else:
+            if self.checkBox_23.isChecked() == True:
+                query = ''' INSEERT INTO permissions (user, users_tab,
+                customer_tab, importers_tab, items_tab, hodoor_ensraf_tab,
+                purchases_tab, sales_tab, resales_tab, reporters_tab,
+                permissions_tab)'''
+                self.cur.execute()
+
 
     def salebill_print(self):
 

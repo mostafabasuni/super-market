@@ -155,8 +155,23 @@ class Hodoor_Ensraf(BaseModel):
     he_note = CharField(null=True)
     he_user = CharField(null=True)
 
+class Permissions(BaseModel):
+    user = ForeignKeyField(User, backref='permissions', on_update='CASCADE', on_delete='CASCADE')
+    users_tab = BooleanField()
+    customer_tab = BooleanField()
+    importers_tab = BooleanField()
+    items_tab = BooleanField()
+    hodoor_ensraf_tab = BooleanField()
+    purchases_tab = BooleanField()
+    sales_tab = BooleanField()
+    resales_tab = BooleanField()
+    reporters_tab = BooleanField()
+    permissions_tab = BooleanField()
+
+
 db.connect()
-db.create_tables([User, Customer, Grp, Company,  Importer, Buybill, \
-    Item, Buybill_details,Salebill, Salebill_details,Rebuybill, \
-    Rebuybill_details, Resalebill, Resalebill_details, Hodoor_Ensraf])
+db.create_tables([User, Customer, Grp, Company,\
+    Importer, Buybill, Item, Buybill_details,Salebill,\
+    Salebill_details,Rebuybill, Rebuybill_details, Resalebill,\
+    Resalebill_details, Hodoor_Ensraf, Permissions])
 
