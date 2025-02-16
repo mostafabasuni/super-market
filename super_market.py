@@ -49,7 +49,8 @@ class Main(QtWidgets.QMainWindow):
         
 
         self.groupBox_14.hide()
-        #self.tab_13.setEnabled(False)
+        self.tab_4.setEnabled(False)
+        #self.tabWidget.setCurrentIndex(0)
         self.checkBox.stateChanged.connect(self.user_enabled)        
         self.comboBox_9.currentTextChanged.connect(self.importer_info)
         self.comboBox_24.currentTextChanged.connect(self.customer_info)
@@ -102,6 +103,8 @@ class Main(QtWidgets.QMainWindow):
         
         #self.lineEdit_64 = self.findChild(QtWidgets.QLineEdit, 'lineEdit_64')
         #self.lineEdit_64.installEventFilter(self)       
+
+        self.tabWidget.tabBar().setVisible(False)
 
         self.db_connect()
         self.handel_buttons()
@@ -202,6 +205,7 @@ class Main(QtWidgets.QMainWindow):
         self.pushButton_22.clicked.connect(self.grp_delete)
         self.pushButton_23.clicked.connect(self.company_save)
         self.pushButton_24.clicked.connect(self.company_delete)
+        self.pushButton_25.clicked.connect(self.user_login)
         
         self.pushButton_27.clicked.connect(self.hodor_save)
         self.pushButton_28.clicked.connect(self.hodor_delete)
@@ -239,6 +243,8 @@ class Main(QtWidgets.QMainWindow):
         self.pushButton_55.clicked.connect(self.company_add_new)
         
         self.pushButton_56.clicked.connect(self.company_update)        
+        self.pushButton_57.clicked.connect(self.permissions_save)
+        self.pushButton_58.clicked.connect(self.logout)
         self.pushButton_59.clicked.connect(self.cashier_daily_tally)
         self.pushButton_60.clicked.connect(self.most_selling_item)
         
@@ -256,6 +262,17 @@ class Main(QtWidgets.QMainWindow):
 
         self.pushButton_71.clicked.connect(self.resalebill_delete)
         self.pushButton_72.clicked.connect(self.item_table_fill)
+        self.pushButton_73.clicked.connect(self.permissions_check)
+        self.pushButton_74.clicked.connect(self.open_users_tab)
+        self.pushButton_75.clicked.connect(self.open_customers_tab)
+        self.pushButton_76.clicked.connect(self.open_importers_tab)
+        self.pushButton_77.clicked.connect(self.open_items_tab)
+        self.pushButton_78.clicked.connect(self.open_hodoor_tab)
+        self.pushButton_79.clicked.connect(self.open_purchases_tab)
+        self.pushButton_80.clicked.connect(self.open_sales_tab)
+        self.pushButton_81.clicked.connect(self.open_resales_tab)
+        self.pushButton_82.clicked.connect(self.open_reports_tab)
+        self.pushButton_83.clicked.connect(self.open_permissions_tab)
     # ===================== keybad =======================
         self.keypad = QFrame(self)
         self.keypad.setGeometry(132, 142, 180, 230)
@@ -491,27 +508,28 @@ class Main(QtWidgets.QMainWindow):
         self.comboBox_7.clear()
         self.comboBox_8.clear()        
         self.comboBox_11.clear()
+        self.comboBox_12.clear()
         self.comboBox_14.clear()
         self.comboBox_15.clear()
-        self.comboBox_20.clear()
         self.comboBox_17.clear()
         self.comboBox_18.clear()
-        #self.comboBox_19.clear()
+        self.comboBox_20.clear()        
         self.comboBox_26.clear()
         self.cur.execute('''SELECT user_fullname, user_job FROM user ORDER BY id ''')
         users = self.cur.fetchall()        
         for user in users:            
             self.comboBox_7.addItem(user[0])
             self.comboBox_8.addItem(user[0])            
-            self.comboBox_11.addItem(user[0])    
+            self.comboBox_11.addItem(user[0])
+            self.comboBox_12.addItem(user[0])    
             self.comboBox_14.addItem(user[0])
+            self.comboBox_17.addItem(user[0])
+            self.comboBox_18.addItem(user[0])            
+            self.comboBox_26.addItem(user[0])
             if user[1] == 'كاشير' :
                 self.comboBox_15.addItem(user[0])
                 self.comboBox_20.addItem(user[0])
-            self.comboBox_17.addItem(user[0])
-            self.comboBox_18.addItem(user[0])
-            #self.comboBox_19.addItem(user[0])
-            self.comboBox_26.addItem(user[0])
+            
 
     def user_field_clear(self):
 
@@ -3047,19 +3065,177 @@ class Main(QtWidgets.QMainWindow):
             row_pos = self.tableWidget_16.rowCount()
             self.tableWidget_16.insertRow(row_pos)    
 
-    def edit_permissions(self):
-        user = self.comboBox_12.currentText()
-        shore_butn = QMessageBox.warning(self, 'تأكيد بيانات','هل تريد حقا تأكيد هذه الصلاحيات للموظف {}'.format(empolyee_name), QMessageBox.Ok | QMessageBox.Cancel)
+    def permissions_save(self):
+        user_name = self.comboBox_12.currentText()
+        shore_butn = QMessageBox.warning(self, 'تأكيد بيانات','هل تريد حقا تأكيد هذه الصلاحيات للموظف {}'.format(user_name), QMessageBox.Ok | QMessageBox.Cancel)
         if shore_butn == QMessageBox.Cancel:
             return
         else:
             if self.checkBox_23.isChecked() == True:
-                query = ''' INSEERT INTO permissions (user, users_tab,
-                customer_tab, importers_tab, items_tab, hodoor_ensraf_tab,
-                purchases_tab, sales_tab, resales_tab, reporters_tab,
-                permissions_tab)'''
-                self.cur.execute()
+                query = ''' INSEERT INTO permissions ( 
+                users_tab, customer_tab, importers_tab, 
+                items_tab, hodoor_ensraf_tab, purchases_tab,
+                sales_tab, resales_tab, reporters_tab,
+                permissions_tab, user) SELECT %s, %s, %s,
+                %s, %s, %s, %s, %s, %s, %s, (SELECT id 
+                FROM user WHERE user_fullname = %s ))'''
+                self.cur.execute(query, (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, user_name))
+                self.db.commit()
+                self.statusBar().showMessage('تم إضافة جميع الصلاحيات للموظف بنجاح')
+            else:
+                users_tab = 0
+                customer_tab = 0
+                importers_tab = 0
+                items_tab = 0
+                hodoor_ensraf_tab = 0
+                purchases_tab = 0
+                sales_tab = 0
+                resales_tab = 0
+                reporters_tab = 0
+                permissions_tab = 0
 
+                if self.checkBox_7.isChecked() == True:
+                    users_tab = 1
+                if self.checkBox_8.isChecked() == True:
+                    customer_tab = 1
+                if self.checkBox_9.isChecked() == True:
+                    importers_tab = 1
+                if self.checkBox_10.isChecked() == True:
+                    items_tab = 1
+                if self.checkBox_11.isChecked() == True:
+                    hodoor_ensraf_tab = 1
+                if self.checkBox_12.isChecked() == True:
+                    purchases_tab = 1    
+                if self.checkBox_19.isChecked() == True:
+                    sales_tab = 1
+                if self.checkBox_20.isChecked() == True:
+                    resales_tab = 1 
+                if self.checkBox_21.isChecked() == True:
+                    reporters_tab = 1 
+                if self.checkBox_22.isChecked() == True:
+                    permissions_tab = 1
+                
+                sql = '''INSERT INTO permissions 
+                (users_tab, customer_tab, importers_tab, 
+                items_tab, hodoor_ensraf_tab, purchases_tab, 
+                sales_tab, resales_tab, reporters_tab, 
+                permissions_tab, user_id)
+                SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                (SELECT id FROM user WHERE user_fullname = %s LIMIT 1)
+                '''
+                self.cur.execute(sql, (
+                    users_tab, customer_tab, importers_tab, items_tab,
+                    hodoor_ensraf_tab, purchases_tab, sales_tab,
+                    resales_tab, reporters_tab, permissions_tab, user_name
+                ))
+                self.db.commit()
+                self.statusBar().showMessage('تم إضافة صلاحيات الموظف بنجاح')
+
+    def permissions_check(self):
+        user_name = self.comboBox_12.currentText()
+        self.cur.execute('''
+         SELECT p.*, u.id
+         FROM permissions p
+         JOIN user u ON u.user_fullname = %s
+         WHERE p.user_id = u.id
+         ''', (user_name,))
+        user_permission = self.cur.fetchone()
+        print(user_permission)
+        if user_permission[1] == 1:
+            self.checkBox_7.setChecked(True)
+        else: self.checkBox_7.setChecked(False)
+
+    def user_login(self):
+        self.groupBox_12.setEnabled(True)
+        self.pushButton_74.setEnabled(False)
+        self.pushButton_75.setEnabled(False)
+        self.pushButton_76.setEnabled(False)
+        self.pushButton_77.setEnabled(False)
+        self.pushButton_78.setEnabled(False)
+        self.pushButton_79.setEnabled(False)
+        self.pushButton_80.setEnabled(False)
+        self.pushButton_81.setEnabled(False)
+        self.pushButton_82.setEnabled(False)
+        self.pushButton_83.setEnabled(False)
+
+        user_name = self.lineEdit_40.text()
+        password = self.lineEdit_41.text()
+        sql = ("SELECT id FROM user WHERE user_name=%s AND user_password=%s")
+        self.cur.execute(sql, (user_name, password))
+        data = self.cur.fetchone()        
+        if data == None:
+            QMessageBox.warning(self, 'بيانات خاطئة', 'هناك خطأ إما اسم المستخدم أو كلمة المرور', QMessageBox.Ok)
+            return
+        else:
+            id = data[0]
+            self.cur.execute('''
+            SELECT * FROM permissions WHERE user_id = %s
+            ''', (id, ))
+            user_permission = self.cur.fetchone()
+            if user_permission[2] == 1:                
+                self.pushButton_74.setEnabled(True)
+            if user_permission[3] == 1:
+                self.pushButton_75.setEnabled(True)
+            if user_permission[4] == 1:
+                self.pushButton_76.setEnabled(True)
+            if user_permission[5] == 1:
+                self.pushButton_77.setEnabled(True)
+            if user_permission[6] == 1:
+                self.pushButton_78.setEnabled(True)
+            if user_permission[7] == 1:
+                self.pushButton_79.setEnabled(True)
+            if user_permission[8] == 1:
+                self.pushButton_80.setEnabled(True)
+            if user_permission[9] == 1:
+                self.pushButton_81.setEnabled(True)
+            if user_permission[10] == 1:
+                self.pushButton_82.setEnabled(True)
+            if user_permission[11] == 1:
+                self.pushButton_83.setEnabled(True)
+    
+    def logout(self):        
+        self.pushButton_74.setEnabled(False)
+        self.pushButton_75.setEnabled(False)
+        self.pushButton_76.setEnabled(False)
+        self.pushButton_77.setEnabled(False)
+        self.pushButton_78.setEnabled(False)
+        self.pushButton_79.setEnabled(False)
+        self.pushButton_80.setEnabled(False)
+        self.pushButton_81.setEnabled(False)
+        self.pushButton_82.setEnabled(False)
+        self.pushButton_83.setEnabled(False)
+        self.pushButton_25.setEnabled(True)
+        self.tabWidget.setCurrentIndex(10)
+
+    def open_users_tab(self):
+        self.tabWidget.setCurrentIndex(0)
+
+    def open_customers_tab(self):
+        self.tabWidget.setCurrentIndex(1)
+    
+    def open_importers_tab(self):
+        self.tabWidget.setCurrentIndex(2)
+    
+    def open_items_tab(self):
+        self.tabWidget.setCurrentIndex(3)
+
+    def open_hodoor_tab(self):
+        self.tabWidget.setCurrentIndex(4)
+
+    def open_purchases_tab(self):
+        self.tabWidget.setCurrentIndex(5)
+
+    def open_sales_tab(self):
+        self.tabWidget.setCurrentIndex(6)
+    
+    def open_resales_tab(self):
+        self.tabWidget.setCurrentIndex(7)
+
+    def open_reports_tab(self):
+        self.tabWidget.setCurrentIndex(8)
+
+    def open_permissions_tab(self):
+        self.tabWidget.setCurrentIndex(9)
 
     def salebill_print(self):
 

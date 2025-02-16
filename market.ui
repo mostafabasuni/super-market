@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1168</width>
+    <width>1183</width>
     <height>675</height>
    </rect>
   </property>
@@ -17,9 +17,9 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>40</x>
+      <x>30</x>
       <y>10</y>
-      <width>1103</width>
+      <width>1011</width>
       <height>571</height>
      </rect>
     </property>
@@ -40,6 +40,21 @@
     </property>
     <property name="elideMode">
      <enum>Qt::ElideNone</enum>
+    </property>
+    <property name="usesScrollButtons">
+     <bool>true</bool>
+    </property>
+    <property name="documentMode">
+     <bool>false</bool>
+    </property>
+    <property name="tabsClosable">
+     <bool>false</bool>
+    </property>
+    <property name="movable">
+     <bool>false</bool>
+    </property>
+    <property name="tabBarAutoHide">
+     <bool>false</bool>
     </property>
     <widget class="QWidget" name="users">
      <attribute name="title">
@@ -4138,7 +4153,7 @@
        </rect>
       </property>
       <property name="currentIndex">
-       <number>2</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab_12">
        <attribute name="title">
@@ -5617,7 +5632,7 @@
        <widget class="QTableWidget" name="tableWidget_12">
         <property name="geometry">
          <rect>
-          <x>14</x>
+          <x>0</x>
           <y>270</y>
           <width>971</width>
           <height>211</height>
@@ -5807,7 +5822,7 @@
        <widget class="QGroupBox" name="groupBox_19">
         <property name="geometry">
          <rect>
-          <x>710</x>
+          <x>700</x>
           <y>10</y>
           <width>271</width>
           <height>201</height>
@@ -6046,7 +6061,7 @@
        <widget class="QGroupBox" name="groupBox_20">
         <property name="geometry">
          <rect>
-          <x>10</x>
+          <x>0</x>
           <y>10</y>
           <width>351</width>
           <height>201</height>
@@ -6314,7 +6329,7 @@
        <widget class="QGroupBox" name="groupBox_21">
         <property name="geometry">
          <rect>
-          <x>386</x>
+          <x>376</x>
           <y>10</y>
           <width>301</width>
           <height>201</height>
@@ -6559,7 +6574,7 @@
        <rect>
         <x>10</x>
         <y>195</y>
-        <width>781</width>
+        <width>731</width>
         <height>261</height>
        </rect>
       </property>
@@ -6716,7 +6731,7 @@
      <widget class="QGroupBox" name="groupBox_15">
       <property name="geometry">
        <rect>
-        <x>770</x>
+        <x>730</x>
         <y>10</y>
         <width>271</width>
         <height>161</height>
@@ -6846,7 +6861,7 @@
      <widget class="QGroupBox" name="groupBox_16">
       <property name="geometry">
        <rect>
-        <x>260</x>
+        <x>240</x>
         <y>10</y>
         <width>481</width>
         <height>161</height>
@@ -7326,7 +7341,7 @@
      <widget class="QGroupBox" name="groupBox_18">
       <property name="geometry">
        <rect>
-        <x>800</x>
+        <x>760</x>
         <y>180</y>
         <width>241</width>
         <height>331</height>
@@ -7688,9 +7703,9 @@
      <widget class="QTableWidget" name="tableWidget_17">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>20</x>
         <y>291</y>
-        <width>981</width>
+        <width>961</width>
         <height>231</height>
        </rect>
       </property>
@@ -7746,7 +7761,7 @@
      <widget class="QGroupBox" name="groupBox_22">
       <property name="geometry">
        <rect>
-        <x>50</x>
+        <x>20</x>
         <y>30</y>
         <width>641</width>
         <height>201</height>
@@ -8185,7 +8200,7 @@
      <widget class="QGroupBox" name="groupBox_23">
       <property name="geometry">
        <rect>
-        <x>710</x>
+        <x>670</x>
         <y>40</y>
         <width>311</width>
         <height>191</height>
@@ -9549,13 +9564,239 @@
      <string>خروج</string>
     </property>
    </widget>
+   <widget class="QGroupBox" name="groupBox_12">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="geometry">
+     <rect>
+      <x>1050</x>
+      <y>50</y>
+      <width>121</width>
+      <height>531</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string/>
+    </property>
+    <widget class="QPushButton" name="pushButton_74">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>26</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>المستخدمين</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_75">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>75</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>العمـــلاء</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_76">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>124</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>الموردون</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_77">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>173</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>الأصناف</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_78">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>222</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>13</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>حضور وانصراف</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_79">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>271</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>المشتريات</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_80">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>320</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>المبيعات</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_81">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>369</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>13</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>مرتجع المبيعات</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_82">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>418</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>تقارير</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_83">
+     <property name="geometry">
+      <rect>
+       <x>11</x>
+       <y>467</y>
+       <width>101</width>
+       <height>38</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <family>ae_AlMateen</family>
+       <pointsize>16</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>الصلاحيات</string>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1168</width>
+     <width>1183</width>
      <height>21</height>
     </rect>
    </property>
