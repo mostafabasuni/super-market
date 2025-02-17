@@ -3066,70 +3066,96 @@ class Main(QtWidgets.QMainWindow):
             self.tableWidget_16.insertRow(row_pos)    
 
     def permissions_save(self):
-        user_name = self.comboBox_12.currentText()
-        shore_butn = QMessageBox.warning(self, 'تأكيد بيانات','هل تريد حقا تأكيد هذه الصلاحيات للموظف {}'.format(user_name), QMessageBox.Ok | QMessageBox.Cancel)
-        if shore_butn == QMessageBox.Cancel:
-            return
-        else:
-            if self.checkBox_23.isChecked() == True:
-                query = ''' INSEERT INTO permissions ( 
-                users_tab, customer_tab, importers_tab, 
-                items_tab, hodoor_ensraf_tab, purchases_tab,
-                sales_tab, resales_tab, reporters_tab,
-                permissions_tab, user) SELECT %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s, (SELECT id 
-                FROM user WHERE user_fullname = %s ))'''
-                self.cur.execute(query, (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, user_name))
-                self.db.commit()
-                self.statusBar().showMessage('تم إضافة جميع الصلاحيات للموظف بنجاح')
-            else:
-                users_tab = 0
-                customer_tab = 0
-                importers_tab = 0
-                items_tab = 0
-                hodoor_ensraf_tab = 0
-                purchases_tab = 0
-                sales_tab = 0
-                resales_tab = 0
-                reporters_tab = 0
-                permissions_tab = 0
+        users_tab = 0
+        customer_tab = 0
+        importers_tab = 0
+        items_tab = 0
+        hodoor_ensraf_tab = 0
+        purchases_tab = 0
+        sales_tab = 0
+        resales_tab = 0
+        reporters_tab = 0
+        permissions_tab = 0
 
-                if self.checkBox_7.isChecked() == True:
-                    users_tab = 1
-                if self.checkBox_8.isChecked() == True:
-                    customer_tab = 1
-                if self.checkBox_9.isChecked() == True:
-                    importers_tab = 1
-                if self.checkBox_10.isChecked() == True:
-                    items_tab = 1
-                if self.checkBox_11.isChecked() == True:
-                    hodoor_ensraf_tab = 1
-                if self.checkBox_12.isChecked() == True:
-                    purchases_tab = 1    
-                if self.checkBox_19.isChecked() == True:
-                    sales_tab = 1
-                if self.checkBox_20.isChecked() == True:
-                    resales_tab = 1 
-                if self.checkBox_21.isChecked() == True:
-                    reporters_tab = 1 
-                if self.checkBox_22.isChecked() == True:
-                    permissions_tab = 1
-                
-                sql = '''INSERT INTO permissions 
-                (users_tab, customer_tab, importers_tab, 
-                items_tab, hodoor_ensraf_tab, purchases_tab, 
-                sales_tab, resales_tab, reporters_tab, 
-                permissions_tab, user_id)
-                SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
-                (SELECT id FROM user WHERE user_fullname = %s LIMIT 1)
-                '''
-                self.cur.execute(sql, (
-                    users_tab, customer_tab, importers_tab, items_tab,
-                    hodoor_ensraf_tab, purchases_tab, sales_tab,
-                    resales_tab, reporters_tab, permissions_tab, user_name
-                ))
-                self.db.commit()
-                self.statusBar().showMessage('تم إضافة صلاحيات الموظف بنجاح')
+        if self.checkBox_7.isChecked() == True:
+            users_tab = 1
+        if self.checkBox_8.isChecked() == True:
+            customer_tab = 1
+        if self.checkBox_9.isChecked() == True:
+            importers_tab = 1
+        if self.checkBox_10.isChecked() == True:
+            items_tab = 1
+        if self.checkBox_11.isChecked() == True:
+            hodoor_ensraf_tab = 1
+        if self.checkBox_12.isChecked() == True:
+            purchases_tab = 1    
+        if self.checkBox_19.isChecked() == True:
+            sales_tab = 1
+        if self.checkBox_20.isChecked() == True:
+            resales_tab = 1 
+        if self.checkBox_21.isChecked() == True:
+            reporters_tab = 1 
+        if self.checkBox_22.isChecked() == True:
+            permissions_tab = 1
+
+        user_name = self.comboBox_12.currentText()
+        self.cur.execute('''
+         SELECT p.id, u.id
+         FROM permissions p
+         JOIN user u ON u.user_fullname = %s
+         WHERE p.user_id = u.id
+         ''', (user_name,))
+        user_id = self.cur.fetchone()        
+        if user_id == None:
+            shore_butn = QMessageBox.warning(self, 'تأكيد بيانات','هل تريد حقا تأكيد هذه الصلاحيات للموظف {}'.format(user_name), QMessageBox.Ok | QMessageBox.Cancel)
+            if shore_butn == QMessageBox.Cancel:
+                return
+            else:
+                if self.checkBox_23.isChecked() == True:
+                    query = ''' INSEERT INTO permissions ( 
+                    users_tab, customer_tab, importers_tab, 
+                    items_tab, hodoor_ensraf_tab, purchases_tab,
+                    sales_tab, resales_tab, reporters_tab,
+                    permissions_tab, user) SELECT %s, %s, %s,
+                    %s, %s, %s, %s, %s, %s, %s, (SELECT id 
+                    FROM user WHERE user_fullname = %s ))'''
+                    self.cur.execute(query, (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, user_name))
+                    self.db.commit()
+                    self.statusBar().showMessage('تم إضافة جميع الصلاحيات للموظف بنجاح')
+                else:                    
+                    sql = '''INSERT INTO permissions 
+                    (users_tab, customer_tab, importers_tab, 
+                    items_tab, hodoor_ensraf_tab, purchases_tab, 
+                    sales_tab, resales_tab, reporters_tab, 
+                    permissions_tab, user_id)
+                    SELECT %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, 
+                    (SELECT id FROM user WHERE user_fullname = %s LIMIT 1)
+                    '''
+                    self.cur.execute(sql, (
+                        users_tab, customer_tab, importers_tab, items_tab,
+                        hodoor_ensraf_tab, purchases_tab, sales_tab,
+                        resales_tab, reporters_tab, permissions_tab, user_name
+                    ))
+                    self.db.commit()
+                    #self.statusBar().showMessage('تم إضافة صلاحيات الموظف بنجاح')
+                    QMessageBox.warning(self, 'رسالة تنبه', 'تم إضافة صلاحيات الموظف بنجاح', QMessageBox.Ok)
+                    return
+        else:
+            id = user_id[0]
+            sql = '''
+                UPDATE permissions 
+                SET users_tab=%s, customer_tab=%s, importers_tab=%s, items_tab=%s,
+                    hodoor_ensraf_tab=%s, purchases_tab=%s, sales_tab=%s,
+                    resales_tab=%s, reporters_tab=%s, permissions_tab=%s
+                WHERE id=%s
+            '''
+            self.cur.execute(sql, (
+                users_tab, customer_tab, importers_tab, items_tab, hodoor_ensraf_tab, 
+                purchases_tab, sales_tab, resales_tab, reporters_tab, permissions_tab, id
+            ))
+            self.db.commit()
+
+            QMessageBox.warning(self, 'رسالة تنبه', 'تم تجديث الصلاحيات بنجاح', QMessageBox.Ok)           
 
     def permissions_check(self):
         user_name = self.comboBox_12.currentText()
@@ -3139,11 +3165,40 @@ class Main(QtWidgets.QMainWindow):
          JOIN user u ON u.user_fullname = %s
          WHERE p.user_id = u.id
          ''', (user_name,))
-        user_permission = self.cur.fetchone()
-        print(user_permission)
-        if user_permission[1] == 1:
+        user_permission = self.cur.fetchone()        
+        if user_permission == None:
+            QMessageBox.warning(self, 'رسالة تنبه', 'هذا المستخدم لم يتم اضافة صلاحيات له بعد', QMessageBox.Ok)
+            return            
+        if user_permission[2] == 1:
             self.checkBox_7.setChecked(True)
         else: self.checkBox_7.setChecked(False)
+        if user_permission[3] == 1:
+            self.checkBox_8.setChecked(True)
+        else: self.checkBox_8.setChecked(False)
+        if user_permission[4] == 1:
+            self.checkBox_9.setChecked(True)
+        else: self.checkBox_9.setChecked(False)
+        if user_permission[5] == 1:
+            self.checkBox_10.setChecked(True)
+        else: self.checkBox_10.setChecked(False)
+        if user_permission[6] == 1:
+            self.checkBox_11.setChecked(True)
+        else: self.checkBox_11.setChecked(False)
+        if user_permission[7] == 1:
+            self.checkBox_12.setChecked(True)
+        else: self.checkBox_12.setChecked(False)
+        if user_permission[8] == 1:
+            self.checkBox_19.setChecked(True)
+        else: self.checkBox_19.setChecked(False)
+        if user_permission[9] == 1:
+            self.checkBox_20.setChecked(True)
+        else: self.checkBox_20.setChecked(False)
+        if user_permission[10] == 1:
+            self.checkBox_21.setChecked(True)
+        else: self.checkBox_21.setChecked(False)
+        if user_permission[11] == 1:
+            self.checkBox_22.setChecked(True)
+        else: self.checkBox_22.setChecked(False)
 
     def user_login(self):
         self.groupBox_12.setEnabled(True)
@@ -3192,7 +3247,10 @@ class Main(QtWidgets.QMainWindow):
                 self.pushButton_82.setEnabled(True)
             if user_permission[11] == 1:
                 self.pushButton_83.setEnabled(True)
-    
+            QMessageBox.warning(self, 'تأكيد',  'تم الدخول بنجاح', QMessageBox.Ok)
+            self.lineEdit_40.setText('')
+            self.lineEdit_41.setText('')
+            
     def logout(self):        
         self.pushButton_74.setEnabled(False)
         self.pushButton_75.setEnabled(False)
