@@ -53,7 +53,8 @@ class Main(QtWidgets.QMainWindow):
         #self.tabWidget.setCurrentIndex(0)
         self.checkBox.stateChanged.connect(self.user_enabled)        
         self.comboBox_9.currentTextChanged.connect(self.importer_info)
-        self.comboBox_24.currentTextChanged.connect(self.customer_info)
+        self.comboBox_12.currentTextChanged.connect(self.job_info)
+        self.comboBox_24.currentTextChanged.connect(self.customer_info)        
         self.comboBox_15.activated.connect(self.shift_change)
         self.lineEdit_3.textEdited.connect(self.user_save_enabled)
         self.lineEdit_10.textEdited.connect(self.customer_save_enabled)
@@ -357,6 +358,12 @@ class Main(QtWidgets.QMainWindow):
         self.pushButton_3.setEnabled(True)
         self.pushButton_4.setEnabled(True)
 
+    def job_info(self):
+        user_name = self.comboBox_12.currentText()        
+        sql = '''SELECT user_job FROM user WHERE user_fullname = %s'''
+        self.cur.execute(sql, (user_name, ))
+        job = self.cur.fetchone()        
+        self.lineEdit_42.setText(job[0])
 
     def user_enabled(self):
         if self.checkBox.isChecked() == True:
@@ -3158,6 +3165,7 @@ class Main(QtWidgets.QMainWindow):
             QMessageBox.warning(self, 'رسالة تنبه', 'تم تجديث الصلاحيات بنجاح', QMessageBox.Ok)           
 
     def permissions_check(self):
+        
         user_name = self.comboBox_12.currentText()
         self.cur.execute('''
          SELECT p.*, u.id
@@ -3170,34 +3178,35 @@ class Main(QtWidgets.QMainWindow):
             QMessageBox.warning(self, 'رسالة تنبه', 'هذا المستخدم لم يتم اضافة صلاحيات له بعد', QMessageBox.Ok)
             return            
         if user_permission[2] == 1:
-            self.checkBox_7.setChecked(True)
+            self.checkBox_7.setChecked(True)            
         else: self.checkBox_7.setChecked(False)
         if user_permission[3] == 1:
-            self.checkBox_8.setChecked(True)
+            self.checkBox_8.setChecked(True)            
         else: self.checkBox_8.setChecked(False)
         if user_permission[4] == 1:
-            self.checkBox_9.setChecked(True)
+            self.checkBox_9.setChecked(True)            
         else: self.checkBox_9.setChecked(False)
         if user_permission[5] == 1:
             self.checkBox_10.setChecked(True)
+            self.pushButton_77.setEnabled(True)
         else: self.checkBox_10.setChecked(False)
         if user_permission[6] == 1:
-            self.checkBox_11.setChecked(True)
+            self.checkBox_11.setChecked(True)            
         else: self.checkBox_11.setChecked(False)
         if user_permission[7] == 1:
-            self.checkBox_12.setChecked(True)
+            self.checkBox_12.setChecked(True)            
         else: self.checkBox_12.setChecked(False)
         if user_permission[8] == 1:
-            self.checkBox_19.setChecked(True)
+            self.checkBox_19.setChecked(True)            
         else: self.checkBox_19.setChecked(False)
         if user_permission[9] == 1:
-            self.checkBox_20.setChecked(True)
+            self.checkBox_20.setChecked(True)            
         else: self.checkBox_20.setChecked(False)
         if user_permission[10] == 1:
-            self.checkBox_21.setChecked(True)
+            self.checkBox_21.setChecked(True)            
         else: self.checkBox_21.setChecked(False)
         if user_permission[11] == 1:
-            self.checkBox_22.setChecked(True)
+            self.checkBox_22.setChecked(True)            
         else: self.checkBox_22.setChecked(False)
 
     def user_login(self):

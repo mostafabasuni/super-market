@@ -9416,7 +9416,7 @@
       <property name="geometry">
        <rect>
         <x>350</x>
-        <y>230</y>
+        <y>270</y>
         <width>81</width>
         <height>41</height>
        </rect>
@@ -9451,14 +9451,37 @@
      <widget class="QPushButton" name="pushButton_73">
       <property name="geometry">
        <rect>
-        <x>690</x>
+        <x>660</x>
         <y>30</y>
-        <width>81</width>
+        <width>151</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>تحقق</string>
+       <string>صلاحيات الموظف</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_56">
+      <property name="geometry">
+       <rect>
+        <x>500</x>
+        <y>210</y>
+        <width>71</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>الوظيفة</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="lineEdit_42">
+      <property name="geometry">
+       <rect>
+        <x>270</x>
+        <y>210</y>
+        <width>231</width>
+        <height>31</height>
+       </rect>
       </property>
      </widget>
     </widget>
