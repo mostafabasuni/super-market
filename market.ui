@@ -9451,14 +9451,14 @@
      <widget class="QPushButton" name="pushButton_73">
       <property name="geometry">
        <rect>
-        <x>660</x>
+        <x>640</x>
         <y>30</y>
-        <width>151</width>
+        <width>211</width>
         <height>41</height>
        </rect>
       </property>
       <property name="text">
-       <string>صلاحيات الموظف</string>
+       <string>الصلاحيات الممنوحة للموظف</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_56">
@@ -9502,7 +9502,7 @@
      <widget class="QPushButton" name="pushButton_25">
       <property name="geometry">
        <rect>
-        <x>350</x>
+        <x>470</x>
         <y>310</y>
         <width>91</width>
         <height>31</height>
@@ -9546,22 +9546,6 @@
       </property>
       <property name="text">
        <string>كلمة المرور</string>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_26">
-      <property name="geometry">
-       <rect>
-        <x>580</x>
-        <y>310</y>
-        <width>151</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string> نسيت كلمة المرور</string>
-      </property>
-      <property name="flat">
-       <bool>false</bool>
       </property>
      </widget>
     </widget>
@@ -10085,7 +10069,6 @@
   <tabstop>lineEdit_40</tabstop>
   <tabstop>lineEdit_41</tabstop>
   <tabstop>pushButton_25</tabstop>
-  <tabstop>pushButton_26</tabstop>
   <tabstop>pushButton_58</tabstop>
   <tabstop>pushButton_74</tabstop>
   <tabstop>pushButton_75</tabstop>

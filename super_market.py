@@ -3059,7 +3059,7 @@ class Main(QtWidgets.QMainWindow):
         query = '''SELECT item_barcode,
          item_name, item_qty, item_unit, 
          item_price, item_price * item_qty 
-         FROM items ORDER BY 
+         FROM item ORDER BY 
          item_barcode'''
         self.cur.execute(query)
         data = self.cur.fetchall()
@@ -3156,10 +3156,13 @@ class Main(QtWidgets.QMainWindow):
                     resales_tab=%s, reporters_tab=%s, permissions_tab=%s
                 WHERE id=%s
             '''
-            self.cur.execute(sql, (
-                users_tab, customer_tab, importers_tab, items_tab, hodoor_ensraf_tab, 
-                purchases_tab, sales_tab, resales_tab, reporters_tab, permissions_tab, id
-            ))
+            if self.checkBox_23.isChecked() == True:
+                self.cur.execute(sql, (1, 1, 1, 1, 1, 1, 1, 1, 1, 1, id))
+            else:
+                self.cur.execute(sql, (
+                    users_tab, customer_tab, importers_tab, items_tab, hodoor_ensraf_tab, 
+                    purchases_tab, sales_tab, resales_tab, reporters_tab, permissions_tab, id
+                ))
             self.db.commit()
 
             QMessageBox.warning(self, 'رسالة تنبه', 'تم تجديث الصلاحيات بنجاح', QMessageBox.Ok)           
@@ -3228,7 +3231,7 @@ class Main(QtWidgets.QMainWindow):
         self.cur.execute(sql, (user_name, password))
         data = self.cur.fetchone()        
         if data == None:
-            QMessageBox.warning(self, 'بيانات خاطئة', 'هناك خطأ إما اسم المستخدم أو كلمة المرور', QMessageBox.Ok)
+            QMessageBox.warning(self, 'بيانات خاطئة', 'هناك خطأ في اسم المستخدم أو كلمة المرور', QMessageBox.Ok)
             return
         else:
             id = data[0]
