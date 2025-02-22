@@ -106,7 +106,7 @@ class Main(QtWidgets.QMainWindow):
         #self.lineEdit_64.installEventFilter(self)       
 
         self.tabWidget.tabBar().setVisible(False)
-
+        self.pushButton_25.setDefault(True)
         self.db_connect()
         self.handel_buttons()
         self.user_table_fill()
