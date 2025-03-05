@@ -139,8 +139,8 @@ class Main(QtWidgets.QMainWindow):
         self.timeEdit.setTime(current_time) 
         self.timeEdit_2.setTime(current_time)
         self.timeEdit_4.setTime(current_time)
-        #self.timeEdit_5.setTime(current_time)
-        self.timeEdit_8.setTime(current_time)
+        self.timeEdit_6.setTime(current_time)
+        #self.timeEdit_8.setTime(current_time)
         self.timeEdit_9.setTime(current_time)
         self.timeEdit_11.setTime(current_time)
         self.timeEdit_14.setTime(current_time)
@@ -1453,12 +1453,16 @@ class Main(QtWidgets.QMainWindow):
     def Hodor_table_fill(self):        
         self.tableWidget_8.setRowCount(0)
         self.tableWidget_8.insertRow(0)
-        self.cur.execute(''' SELECT * FROM hodoor_ensraf ''')
+        sql = ''' SELECT he_date, he_time, he_employee,
+        he_come, he_go, he_difference, he_note, he_user
+        FROM hodoor_ensraf
+        '''
+        self.cur.execute(sql)
         data = self.cur.fetchall()
         for row, form in enumerate(data):            
             for col , item in enumerate(form):                
-                if col == 3:                    
-                    sql = '''SELECT user_fullname FROM users WHERE id=%s'''
+                if col == 2:
+                    sql = '''SELECT user_fullname FROM user WHERE id=%s'''
                     self.cur.execute(sql, [((item))])
                     emp_name = self.cur.fetchone()                   
                     if emp_name != None:                        
@@ -1476,30 +1480,31 @@ class Main(QtWidgets.QMainWindow):
         self.timeEdit_7.setTime(QTime.currentTime())
         emp_name = self.comboBox_7.currentText()
         he_date = self.dateEdit_8.date()
-        he_date = he_date.toString(QtCore.Qt.ISODate)        
-        sql = ('''SELECT id FROM users WHERE user_fullname = %s ''')
-        self.cur.execute(sql, [(emp_name)])
-        data = self.cur.fetchone()
-        he_name_id = data[0]
-
-        sql = ('''SELECT he_come FROM hodoor_ensraf WHERE he_date = %s AND he_employee_id = %s''')
-        self.cur.execute(sql, [(he_date), (he_name_id)])
+        he_date = he_date.toString(QtCore.Qt.ISODate)       
+        
+        sql = ('''SELECT h.he_come, u.id 
+        FROM hodoor_ensraf h
+        JOIN user u ON u.user_fullname = %s
+        WHERE h.he_date = %s AND h.he_employee = u.id''')
+        self.cur.execute(sql, [(emp_name), (he_date)])
         data = self.cur.fetchone()
         if data == None:
-            he_time = self.timeEdit_6.time()
-            he_time = he_time.toString(QtCore.Qt.ISODate)        
-            he_come = self.timeEdit_7.time()
-            he_come = he_come.toString(QtCore.Qt.ISODate)        
-            he_go = '' # he_go.toString(QtCore.Qt.ISODate)
-            he_diff = 0 # self.lineEdit_44.text()
-            he_note = '' # self.lineEdit_45.text()
-            he_user = '' # self.lineEdit_46.text()
-            self.cur.execute('''
-                INSERT INTO hodoor_ensraf(he_date, he_time, he_employee_id, he_come, he_go, he_difference, he_note, he_user)
-                VALUES(%s, %s, %s, %s, %s, %s, %s, %s)
-                ''',(he_date, he_time, he_name_id, he_come, he_go, he_diff, he_note, he_user))                     
+            print(data)
+            he_time = self.timeEdit_6.time().toString(QtCore.Qt.ISODate)                
+            he_come = self.timeEdit_7.time().toString(QtCore.Qt.ISODate)                    
+            he_go = self.timeEdit_8.time().toString(QtCore.Qt.ISODate)
+            he_diff = self.lineEdit_44.text()
+            he_note = self.lineEdit_45.text()
+            he_user = self.lineEdit_46.text()
+            sql = '''
+                INSERT INTO hodoor_ensraf(he_date, he_time, he_come, he_go, he_difference, he_note, he_employee, he_user)
+                SELECT %s, %s, %s, %s, %s, %s,
+                (SELECT id FROM user WHERE user_fullname = %s), 
+                (SELECT id FROM user WHERE user_fullname = %s)
+                '''
+            self.cur.execute(sql, (he_date, he_time, he_come, he_go, he_diff, he_note, emp_name, he_user))
             
-            msgbox = QMessageBox(QMessageBox.Information, "تنويه", "تم تسجيل حضور الموظف :  %s" % emp_name, QMessageBox.Ok)
+            msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم تسجيل حضور الموظف بنجاح :  %s" % emp_name, QMessageBox.Ok)
             msgbox.exec_()    
             self.db.commit()        
             self.Hodor_table_fill()
@@ -1521,39 +1526,42 @@ class Main(QtWidgets.QMainWindow):
     def hodor_update(self):
         self.timeEdit_6.setTime(QTime.currentTime())
         self.timeEdit_8.setTime(QTime.currentTime())
-        he_date = self.dateEdit_8.date()
-        he_date = he_date.toString(QtCore.Qt.ISODate)       
-        he_time = self.timeEdit_6.time()
-        he_time = he_time.toString(QtCore.Qt.ISODate) 
-        emp_name = self.comboBox_7.currentText()
-        sql = ('''SELECT id FROM users WHERE user_fullname = %s ''')
-        self.cur.execute(sql, [(emp_name)])
+        he_date = self.dateEdit_8.date().toString(QtCore.Qt.ISODate)              
+        he_time = self.timeEdit_6.time().toString(QtCore.Qt.ISODate)        
+        emp_name = self.comboBox_7.currentText()        
+        sql = ('''SELECT h.he_come, h.he_go, u.id
+               FROM hodoor_ensraf h
+               JOIN user u ON u.user_fullname = %s
+               WHERE h.he_employee = u.id AND h.he_date = %s ''')
+        self.cur.execute(sql, [(emp_name), (he_date)])
         data = self.cur.fetchone()
-        sql = ('''SELECT he_come, he_go FROM hodoor_ensraf WHERE he_employee_id=%s AND he_date = %s ''')
-        self.cur.execute(sql, [(data[0]), (he_date)])
-        dat = self.cur.fetchone()
-        he_come = str(dat[0])
-        he_go = str(dat[1])
-        if he_come == '00:00:00' :            
+        he_come = str(data[0])
+        he_go = str(data[1])        
+        if he_come == '00:00:00' :
             QMessageBox.warning(self, 'تنويه', 'من فضلك يجب تسجيل الحضور أولا', QMessageBox.Ok)
             return
-        if he_go != '0:00:00' :
-            msgbox = QMessageBox(QMessageBox.Warning, "تنويه", "لقد تم تسجيل انصراف الموظف : %s بالفعل هذا اليوم" % emp_name, QMessageBox.Ok)
+        if he_go != '0:00:00' :            
+            msgbox = QMessageBox(QMessageBox.Warning, "تنويه", "لقد تم تسجيل انصراف الموظف : %s بنجاح هذا اليوم" % emp_name, QMessageBox.Ok)
             msgbox.exec_()   
             return
         h, m, s = map(int, (he_come).split(":"))
+        print(type(he_come))
         self.timeEdit_7.setTime(QTime(h, m))
         he_come = datetime.strptime(he_come,"%H:%M:%S")
-        he_go =  self.timeEdit_8.time()
-        he_go = he_go.toString(QtCore.Qt.ISODate)
+        he_go =  self.timeEdit_6.time().toString(QtCore.Qt.ISODate)        
         he_go = datetime.strptime(he_go, '%H:%M:%S')        
         he_diff = timedelta(hours=(he_go.hour - he_come.hour), \
                       minutes=(he_go.minute - he_come.minute), \
                       seconds=(he_go.second - he_come.second))
         
         self.lineEdit_44.setText(str(he_diff))
-        self.cur.execute('''
-        UPDATE hodoor_ensraf SET he_go=%s, he_difference=%s WHERE he_employee_id=%s AND he_date = %s''', (he_go, he_diff, data[0], he_date))
+        sql = '''
+        UPDATE hodoor_ensraf h
+        JOIN user u ON u.user_fullname = %s
+        SET h.he_go = %s, h.he_difference = %s 
+        WHERE h.he_employee = u.id 
+        AND h.he_date = %s'''
+        self.cur.execute(sql, (emp_name, he_go, he_diff, he_date))
 
         self.db.commit()          
         self.Hodor_table_fill()
@@ -3227,13 +3235,14 @@ class Main(QtWidgets.QMainWindow):
 
         user_name = self.lineEdit_40.text()
         password = self.lineEdit_41.text()
-        sql = ("SELECT id FROM user WHERE user_name=%s AND user_password=%s")
+        sql = ("SELECT id, user_fullname FROM user WHERE user_name=%s AND user_password=%s")
         self.cur.execute(sql, (user_name, password))
         data = self.cur.fetchone()        
         if data == None:
             QMessageBox.warning(self, 'بيانات خاطئة', 'هناك خطأ في اسم المستخدم أو كلمة المرور', QMessageBox.Ok)
             return
         else:
+            user = self.lineEdit_46.setText(data[1])
             id = data[0]
             self.cur.execute('''
             SELECT * FROM permissions WHERE user_id = %s

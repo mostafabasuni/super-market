@@ -3625,11 +3625,6 @@
          </property>
          <column>
           <property name="text">
-           <string>تسلسل</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
            <string>التاريخ</string>
           </property>
          </column>
@@ -3640,17 +3635,17 @@
          </column>
          <column>
           <property name="text">
-           <string>اسم الموظف</string>
+           <string>الموظف</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>وقت الحضور</string>
+           <string>الحضور</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>وقت الإنصراف</string>
+           <string>الإنصراف</string>
           </property>
          </column>
          <column>

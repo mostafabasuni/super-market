@@ -148,12 +148,12 @@ class Resalebill_details(BaseModel):
 class Hodoor_Ensraf(BaseModel):    
     he_date = DateField()
     he_time = TimeField()
-    he_employee = IntegerField()
+    he_employee = ForeignKeyField(User, backref='hodoor_ensraf')
     he_come = TimeField(null=True)
     he_go = TimeField(null=True)
     he_difference = TimeField(null=True)
     he_note = CharField(null=True)
-    he_user = CharField(null=True)
+    he_user = ForeignKeyField(User, backref='hodoor_ensraf')
 
 class Permissions(BaseModel):
     user = ForeignKeyField(User, backref='permissions', on_update='CASCADE', on_delete='CASCADE')
