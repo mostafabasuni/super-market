@@ -49,7 +49,7 @@ class Main(QtWidgets.QMainWindow):
         
 
         self.groupBox_14.hide()
-        self.tab_4.setEnabled(False)
+        #self.tab_4.setEnabled(False)
         #self.tabWidget.setCurrentIndex(0)
         self.checkBox.stateChanged.connect(self.user_enabled)        
         self.comboBox_9.currentTextChanged.connect(self.importer_info)
@@ -117,7 +117,7 @@ class Main(QtWidgets.QMainWindow):
         self.company_table_fill()        
         self.grp_combo_fill()
         self.company_combo_fill()        
-        self.Hodor_table_fill()
+        self.hodoor_table_fill()
         self.user_combo_fill()
         self.importer_combo_fill()
         self.item_combo_fill()
@@ -128,7 +128,7 @@ class Main(QtWidgets.QMainWindow):
         if source == self.lineEdit_64 and event.type() == event.FocusIn:  # عند التركيز                                    
             #self.lineEdit_64.setText('0')
             self.lineEdit_64.selectAll()  # تحديد النص بالكامل
-            print('Mostafa')
+           
             
         return super(Main, self).eventFilter(source, event)    
     '''
@@ -1450,12 +1450,13 @@ class Main(QtWidgets.QMainWindow):
 
 #=========== حضور وانصراف ===========
     
-    def Hodor_table_fill(self):        
+    def hodoor_table_fill(self):        
         self.tableWidget_8.setRowCount(0)
         self.tableWidget_8.insertRow(0)
-        sql = ''' SELECT he_date, he_time, he_employee,
-        he_come, he_go, he_difference, he_note, he_user
-        FROM hodoor_ensraf
+        sql = ''' SELECT h.he_date, h.he_time, h.he_employee,
+        h.he_come, h.he_go, h.he_difference, h.he_note, u.user_fullname
+        FROM hodoor_ensraf h
+        JOIN user u ON u.id = h.he_user
         '''
         self.cur.execute(sql)
         data = self.cur.fetchall()
@@ -1488,8 +1489,7 @@ class Main(QtWidgets.QMainWindow):
         WHERE h.he_date = %s AND h.he_employee = u.id''')
         self.cur.execute(sql, [(emp_name), (he_date)])
         data = self.cur.fetchone()
-        if data == None:
-            print(data)
+        if data == None:           
             he_time = self.timeEdit_6.time().toString(QtCore.Qt.ISODate)                
             he_come = self.timeEdit_7.time().toString(QtCore.Qt.ISODate)                    
             he_go = self.timeEdit_8.time().toString(QtCore.Qt.ISODate)
@@ -1507,7 +1507,7 @@ class Main(QtWidgets.QMainWindow):
             msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم تسجيل حضور الموظف بنجاح :  %s" % emp_name, QMessageBox.Ok)
             msgbox.exec_()    
             self.db.commit()        
-            self.Hodor_table_fill()
+            self.hodoor_table_fill()
         else:                       
             msgbox = QMessageBox(QMessageBox.Warning, "تنويه", "لقد تم تسجيل حضور الموظف : %s   هذا اليوم بالفعل" % emp_name, QMessageBox.Ok)
             msgbox.exec_()            
@@ -1521,7 +1521,7 @@ class Main(QtWidgets.QMainWindow):
         self.cur.execute(sql, [(data[0])])
 
         self.db.commit()       
-        self.Hodor_table_fill()
+        self.hodoor_table_fill()
 
     def hodor_update(self):
         self.timeEdit_6.setTime(QTime.currentTime())
@@ -1544,12 +1544,11 @@ class Main(QtWidgets.QMainWindow):
             msgbox = QMessageBox(QMessageBox.Warning, "تنويه", "لقد تم تسجيل انصراف الموظف : %s بنجاح هذا اليوم" % emp_name, QMessageBox.Ok)
             msgbox.exec_()   
             return
-        h, m, s = map(int, (he_come).split(":"))
-        print(type(he_come))
+        h, m, s = map(int, (he_come).split(":"))        
         self.timeEdit_7.setTime(QTime(h, m))
-        he_come = datetime.strptime(he_come,"%H:%M:%S")
+        he_come = datetime.datetime.strptime(he_come,"%H:%M:%S")
         he_go =  self.timeEdit_6.time().toString(QtCore.Qt.ISODate)        
-        he_go = datetime.strptime(he_go, '%H:%M:%S')        
+        he_go = datetime.datetime.strptime(he_go, '%H:%M:%S')        
         he_diff = timedelta(hours=(he_go.hour - he_come.hour), \
                       minutes=(he_go.minute - he_come.minute), \
                       seconds=(he_go.second - he_come.second))
@@ -1564,7 +1563,7 @@ class Main(QtWidgets.QMainWindow):
         self.cur.execute(sql, (emp_name, he_go, he_diff, he_date))
 
         self.db.commit()          
-        self.Hodor_table_fill()
+        self.hodoor_table_fill()
 
         msgbox = QMessageBox(QMessageBox.Information, "تنويه", "تم تسجيل انصراف الموظف :  %s" % emp_name, QMessageBox.Ok)
         msgbox.exec_()
