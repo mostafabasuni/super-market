@@ -9813,12 +9813,12 @@
   <tabstop>pushButton_4</tabstop>
   <tabstop>lineEdit_2</tabstop>
   <tabstop>lineEdit_3</tabstop>
-  <tabstop>lineEdit_5</tabstop>
-  <tabstop>comboBox</tabstop>
-  <tabstop>comboBox_2</tabstop>
   <tabstop>lineEdit_4</tabstop>
-  <tabstop>dateEdit</tabstop>
+  <tabstop>comboBox</tabstop>
+  <tabstop>lineEdit_5</tabstop>
   <tabstop>lineEdit_6</tabstop>
+  <tabstop>comboBox_2</tabstop>
+  <tabstop>dateEdit</tabstop>
   <tabstop>lineEdit_7</tabstop>
   <tabstop>lineEdit_8</tabstop>
   <tabstop>lineEdit</tabstop>
@@ -10075,6 +10075,7 @@
   <tabstop>pushButton_81</tabstop>
   <tabstop>pushButton_82</tabstop>
   <tabstop>pushButton_83</tabstop>
+  <tabstop>lineEdit_42</tabstop>
  </tabstops>
  <resources/>
  <connections/>

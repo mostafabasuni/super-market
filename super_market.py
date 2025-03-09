@@ -53,7 +53,7 @@ class Main(QtWidgets.QMainWindow):
         #self.tabWidget.setCurrentIndex(0)
         self.checkBox.stateChanged.connect(self.user_enabled)        
         self.comboBox_9.currentTextChanged.connect(self.importer_info)
-        self.comboBox_12.currentTextChanged.connect(self.job_info)
+        #self.comboBox_12.currentTextChanged.connect(self.job_info)
         self.comboBox_24.currentTextChanged.connect(self.customer_info)        
         self.comboBox_15.activated.connect(self.shift_change)
         self.lineEdit_3.textEdited.connect(self.user_save_enabled)
@@ -356,6 +356,7 @@ class Main(QtWidgets.QMainWindow):
         self.dateEdit.setDate(data[9])
         self.pushButton.setEnabled(True)
         self.pushButton_3.setEnabled(True)
+        self.pushButton_2.setEnabled(False)
         self.pushButton_4.setEnabled(True)
 
     def job_info(self):
@@ -433,9 +434,11 @@ class Main(QtWidgets.QMainWindow):
 
         self.db.commit()        
         self.user_table_fill()
-        self.user_combo_fill()
-        self.user_field_clear()   
-
+        self.user_combo_fill()       
+        self.user_field_clear()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حفظ بيانات الموظف الجديد بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
+        
     def user_search(self):
         name = self.lineEdit.text()
         if name == '' :
@@ -468,48 +471,58 @@ class Main(QtWidgets.QMainWindow):
         self.pushButton_4.setEnabled(True)
         
     def user_update(self):
-
-        u_id = self.lineEdit_2.text()
-        user_full_name = self.lineEdit_3.text()
-        user_nid = self.lineEdit_4.text()
-        user_gender = self.comboBox.currentText()
-        user_phone = self.lineEdit_5.text()
-        user_address = self.lineEdit_6.text()
-        user_job = self.comboBox_2.currentText()
-        user_date = self.dateEdit.date()
-        user_date = user_date.toString(QtCore.Qt.ISODate)
-        user_name = self.lineEdit_7.text()
-        user_password = self.lineEdit_8.text()
-        if self.checkBox.isChecked() == True:
-            is_user = True
-        else:
-            is_user = False
-            user_name = ''
-            user_password = ''
-
-        self.cur.execute('''
-        UPDATE user SET un_id=%s, user_fullname=%s, user_gender=%s, user_phone=%s, user_address=%s, user_job=%s, user_name=%s, user_password=%s, user_date=%s, is_user=%s
-        WHERE id=%s''', (user_nid, user_full_name, user_gender, user_phone, user_address, user_job, user_name, user_password, user_date, is_user, u_id))
-
-        self.db.commit()       
-        self.user_table_fill()
-        self.user_field_clear()
-
-    def user_delete(self):
-                
-        u_id = int(self.lineEdit_2.text())
-        try:        
-            sql = ('''DELETE FROM user WHERE id = %s ''')
-            self.cur.execute(sql, [(u_id)])
-            self.db.commit()
-        except Exception as e:
-            # Rollback the transaction in case of an error
-            self.db.rollback()
-            # print(f"Error: {e}")  # Optionally log or show the error to the user 
-            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+        update_item = QMessageBox.warning(self, 'تعديل بيانات' , 'هل تريد حقا تعديل هذه البيانات', QMessageBox.Yes | QMessageBox.No)
+        if update_item == QMessageBox.No :
             return
-        self.user_table_fill()
-        self.user_field_clear()
+        else:
+            u_id = self.lineEdit_2.text()
+            user_full_name = self.lineEdit_3.text()
+            user_nid = self.lineEdit_4.text()
+            user_gender = self.comboBox.currentText()
+            user_phone = self.lineEdit_5.text()
+            user_address = self.lineEdit_6.text()
+            user_job = self.comboBox_2.currentText()
+            user_date = self.dateEdit.date()
+            user_date = user_date.toString(QtCore.Qt.ISODate)
+            user_name = self.lineEdit_7.text()
+            user_password = self.lineEdit_8.text()
+            if self.checkBox.isChecked() == True:
+                is_user = True
+            else:
+                is_user = False
+                user_name = ''
+                user_password = ''
+
+            self.cur.execute('''
+            UPDATE user SET un_id=%s, user_fullname=%s, user_gender=%s, user_phone=%s, user_address=%s, user_job=%s, user_name=%s, user_password=%s, user_date=%s, is_user=%s
+            WHERE id=%s''', (user_nid, user_full_name, user_gender, user_phone, user_address, user_job, user_name, user_password, user_date, is_user, u_id))
+
+            self.db.commit()       
+            self.user_table_fill()
+            self.user_field_clear()
+            msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم تعديل البيانات بنجاح ", QMessageBox.Ok)
+            msgbox.exec_()
+
+    def user_delete(self):        
+        del_item = QMessageBox.warning(self, 'حذف بيانات' , 'هل تريد حقا حذف هذه البيانات', QMessageBox.Yes | QMessageBox.No)
+        if del_item == QMessageBox.No :
+            return
+        else:                
+            u_id = int(self.lineEdit_2.text())
+            try:        
+                sql = ('''DELETE FROM user WHERE id = %s ''')
+                self.cur.execute(sql, [(u_id)])
+                self.db.commit()
+            except Exception as e:
+                # Rollback the transaction in case of an error
+                self.db.rollback()
+                # print(f"Error: {e}")  # Optionally log or show the error to the user 
+                QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+                return
+            self.user_table_fill()
+            self.user_field_clear()
+            msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حذف البيانات بنجاح ", QMessageBox.Ok)
+            msgbox.exec_()
 
     def user_combo_fill(self):
         self.comboBox_7.clear()
@@ -577,6 +590,7 @@ class Main(QtWidgets.QMainWindow):
         self.dateEdit_2.setDate(data[4])
         #self.timeEdit.setTime(x)
         self.pushButton_6.setEnabled(True)
+        self.pushButton_7.setEnabled(False)
         self.pushButton_8.setEnabled(True)
         self.pushButton_9.setEnabled(True)
 
@@ -652,7 +666,9 @@ class Main(QtWidgets.QMainWindow):
         self.db.commit()        
         self.customer_table_fill()
         self.customer_combo_fill()
-        self.customer_field_clear() 
+        self.customer_field_clear()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حفظ بيانات العميل الجديد بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
 
     def customer_search(self):
         name = self.lineEdit_15.text()
@@ -684,41 +700,54 @@ class Main(QtWidgets.QMainWindow):
         self.pushButton_9.setEnabled(True)
 
     def customer_update(self):
-        id = self.lineEdit_9.text()
-        customer_name = self.lineEdit_10.text()
-        customer_gender = self.comboBox_3.currentText()
-        customer_phone = self.lineEdit_12.text()
-        customer_address = self.lineEdit_13.text()
-        customer_type = self.lineEdit_11.text()
-        customer_balance = self.lineEdit_14.text()
-        customer_date = self.dateEdit_2.date()
-        customer_date = customer_date.toString(QtCore.Qt.ISODate)
-        customer_time = self.timeEdit.time()
-        customer_time = customer_time.toString(QtCore.Qt.ISODate)
-        
-        self.cur.execute('''
-        UPDATE customer SET customer_name=%s, customer_phone=%s, customer_address=%s, customer_date=%s
-        WHERE id=%s''', (customer_name, customer_phone, customer_address, customer_date, id))
+        update_item = QMessageBox.warning(self, 'تعديل بيانات' , 'هل تريد حقا تعديل هذه البيانات', QMessageBox.Yes | QMessageBox.No)
+        if update_item == QMessageBox.No :
+            return
+        else:
+            id = self.lineEdit_9.text()
+            customer_name = self.lineEdit_10.text()
+            customer_gender = self.comboBox_3.currentText()
+            customer_phone = self.lineEdit_12.text()
+            customer_address = self.lineEdit_13.text()
+            customer_type = self.lineEdit_11.text()
+            customer_balance = self.lineEdit_14.text()
+            customer_date = self.dateEdit_2.date()
+            customer_date = customer_date.toString(QtCore.Qt.ISODate)
+            customer_time = self.timeEdit.time()
+            customer_time = customer_time.toString(QtCore.Qt.ISODate)
+            
+            self.cur.execute('''
+            UPDATE customer SET customer_name=%s, customer_phone=%s, customer_address=%s, customer_date=%s
+            WHERE id=%s''', (customer_name, customer_phone, customer_address, customer_date, id))
 
-        self.db.commit()       
-        self.customer_table_fill()        
-        self.customer_field_clear()
+            self.db.commit()       
+            self.customer_table_fill()        
+            self.customer_field_clear()
+            msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم تعديل البيانات بنجاح ", QMessageBox.Ok)
+            msgbox.exec_()
 
-    def customer_delete(self):        
-        id = self.lineEdit_9.text()
 
-        try:        
-            sql = ('''DELETE FROM customer WHERE id = %s ''')
-            self.cur.execute(sql, [(id)])
-            self.db.commit()
-        except Exception as e:
-            # Rollback the transaction in case of an error
-            self.db.rollback()
-            # print(f"Error: {e}")  # Optionally log or show the error to the user 
-            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
-            return              
-        self.customer_table_fill()
-        self.customer_field_clear()
+    def customer_delete(self):
+        del_item = QMessageBox.warning(self, 'حذف بيانات' , 'هل تريد حقا حذف هذه البيانات', QMessageBox.Yes | QMessageBox.No)
+        if del_item == QMessageBox.No :
+            return
+        else: 
+            id = self.lineEdit_9.text()
+
+            try:        
+                sql = ('''DELETE FROM customer WHERE id = %s ''')
+                self.cur.execute(sql, [(id)])
+                self.db.commit()
+            except Exception as e:
+                # Rollback the transaction in case of an error
+                self.db.rollback()
+                # print(f"Error: {e}")  # Optionally log or show the error to the user 
+                QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+                return              
+            self.customer_table_fill()
+            self.customer_field_clear()
+            msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حذف البيانات بنجاح ", QMessageBox.Ok)
+            msgbox.exec_()
 
     def customer_combo_fill(self):
         self.comboBox_24.clear()
@@ -765,6 +794,7 @@ class Main(QtWidgets.QMainWindow):
         self.dateEdit_3.setDate(data[7])        
         self.timeEdit_2.setTime(x)
         self.pushButton_12.setEnabled(True)
+        self.pushButton_13.setEnabled(False)
         self.pushButton_14.setEnabled(True)
         self.pushButton_15.setEnabled(True)
 
@@ -836,6 +866,8 @@ class Main(QtWidgets.QMainWindow):
         self.importer_table_fill()
         self.importer_combo_fill()
         self.importer_field_clear()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حفظ بيانات العميل الجديد بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()        
 
     def importer_search(self):
         name = self.lineEdit_16.text()
@@ -867,42 +899,54 @@ class Main(QtWidgets.QMainWindow):
 
 
     def importer_update(self):
-        id = self.lineEdit_17.text()
-        importer_name = self.lineEdit_18.text()        
-        importer_type = self.lineEdit_19.text()
-        importer_phone = self.lineEdit_20.text()
-        importer_address = self.lineEdit_21.text()
-        importer_balance = self.lineEdit_22.text()
-        grp_name = self.comboBox_22.currentText()
-        company_name = self.comboBox_23.currentText()
-        importer_date = self.dateEdit_3.date().toString(QtCore.Qt.ISODate)        
-        importer_time = self.timeEdit_2.time().toString(QtCore.Qt.ISODate)        
-        
-        self.cur.execute('''
-        UPDATE importer SET importer_name=%s, importer_phone=%s, 
-        importer_address=%s, importer_grp_id=(SELECT id FROM grp WHERE grp_name=%s), 
-        importer_company_id=(SELECT id FROM company WHERE company_name=%s),
-        importer_balance=%s, importer_date=%s, importer_time=%s
-        WHERE id=%s''', (importer_name, importer_phone, importer_address, grp_name, company_name, importer_balance, importer_date, importer_time, id))
-        self.db.commit()       
-        self.importer_table_fill()
-        self.importer_field_clear()
-
-    def importer_delete(self):        
-        id = self.lineEdit_17.text()
-        try:        
-            sql = ('''DELETE FROM importer WHERE id = %s ''')
-            self.cur.execute(sql, [(id)])
-            self.db.commit()
-        except Exception as e:
-            # Rollback the transaction in case of an error
-            self.db.rollback()
-            # print(f"Error: {e}")  # Optionally log or show the error to the user 
-            QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+        update_item = QMessageBox.warning(self, 'تعديل بيانات' , 'هل تريد حقا تعديل هذه البيانات', QMessageBox.Yes | QMessageBox.No)
+        if update_item == QMessageBox.No :
             return
-        self.db.commit()       
-        self.importer_table_fill()
-        self.importer_field_clear()
+        else:
+            id = self.lineEdit_17.text()
+            importer_name = self.lineEdit_18.text()        
+            importer_type = self.lineEdit_19.text()
+            importer_phone = self.lineEdit_20.text()
+            importer_address = self.lineEdit_21.text()
+            importer_balance = self.lineEdit_22.text()
+            grp_name = self.comboBox_22.currentText()
+            company_name = self.comboBox_23.currentText()
+            importer_date = self.dateEdit_3.date().toString(QtCore.Qt.ISODate)        
+            importer_time = self.timeEdit_2.time().toString(QtCore.Qt.ISODate)        
+            
+            self.cur.execute('''
+            UPDATE importer SET importer_name=%s, importer_phone=%s, 
+            importer_address=%s, importer_grp_id=(SELECT id FROM grp WHERE grp_name=%s), 
+            importer_company_id=(SELECT id FROM company WHERE company_name=%s),
+            importer_balance=%s, importer_date=%s, importer_time=%s
+            WHERE id=%s''', (importer_name, importer_phone, importer_address, grp_name, company_name, importer_balance, importer_date, importer_time, id))
+            self.db.commit()       
+            self.importer_table_fill()
+            self.importer_field_clear()
+            msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم تعديل البيانات بنجاح ", QMessageBox.Ok)
+            msgbox.exec_()
+
+    def importer_delete(self):
+        del_item = QMessageBox.warning(self, 'حذف بيانات' , 'هل تريد حقا حذف هذه البيانات', QMessageBox.Yes | QMessageBox.No)
+        if del_item == QMessageBox.No :
+            return
+        else: 
+            id = self.lineEdit_17.text()
+            try:        
+                sql = ('''DELETE FROM importer WHERE id = %s ''')
+                self.cur.execute(sql, [(id)])
+                self.db.commit()
+            except Exception as e:
+                # Rollback the transaction in case of an error
+                self.db.rollback()
+                # print(f"Error: {e}")  # Optionally log or show the error to the user 
+                QMessageBox.warning(self, 'رسالة تحذير', 'لايمكن حذف هذا السجل نظرا للاعتماد عليه في بعض سجلات قاعدة البيانات', QMessageBox.Ok)
+                return
+            self.db.commit()       
+            self.importer_table_fill()
+            self.importer_field_clear()
+            msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حذف البيانات بنجاح ", QMessageBox.Ok)
+            msgbox.exec_()
 
     def importer_info(self):
         
