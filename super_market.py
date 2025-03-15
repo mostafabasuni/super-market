@@ -53,7 +53,7 @@ class Main(QtWidgets.QMainWindow):
         #self.tabWidget.setCurrentIndex(0)
         self.checkBox.stateChanged.connect(self.user_enabled)        
         self.comboBox_9.currentTextChanged.connect(self.importer_info)
-        #self.comboBox_12.currentTextChanged.connect(self.job_info)
+        self.comboBox_7.currentTextChanged.connect(self.hodoor_info)
         self.comboBox_24.currentTextChanged.connect(self.customer_info)        
         self.comboBox_15.activated.connect(self.shift_change)
         self.lineEdit_3.textEdited.connect(self.user_save_enabled)
@@ -156,7 +156,7 @@ class Main(QtWidgets.QMainWindow):
         self.dateEdit_6.setDate(current_date)
         #self.dateEdit_7.setDate(current_date)
         self.dateEdit_8.setDate(current_date)
-        self.dateEdit_9.setDate(current_date)
+        #self.dateEdit_9.setDate(current_date)
         self.dateEdit_10.setDate(current_date)
         self.dateEdit_11.setDate(current_date)
         self.dateEdit_12.setDate(current_date)
@@ -854,6 +854,9 @@ class Main(QtWidgets.QMainWindow):
         importer_company = self.comboBox_23.currentText()
         importer_date = self.dateEdit_3.date().toString(QtCore.Qt.ISODate)
         importer_time = self.timeEdit_2.time().toString(QtCore.Qt.ISODate)
+        if importer_name == '' or importer_phone == '' or importer_address == '' or importer_grp == '' or importer_company == '':
+            QMessageBox.warning(self, 'رسالة تحذير', 'من فضلك ادخل جميع البيانات المطلوبة', QMessageBox.Ok)
+            return
 
         insert_sql = '''
             INSERT INTO importer(importer_name, importer_phone, importer_address, importer_balance, importer_date, importer_time, importer_grp_id, importer_company_id)
@@ -1081,6 +1084,8 @@ class Main(QtWidgets.QMainWindow):
         self.item_combo_fill()
         self.item_clear()
         self.pushButton_17.setEnabled(False)
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حفظ بيانات الصنف الجديد بنجاح ", QMessageBox.Ok)
+        msgbox.exec_() 
 
     def item_search(self):
         name = self.lineEdit_23.text()
@@ -1137,7 +1142,8 @@ class Main(QtWidgets.QMainWindow):
         pub_price, barcode))
         self.db.commit()
         self.item_table_fill()
-        
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم تعديل البيانات بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
 
     def item_delete(self):        
         barcode = self.lineEdit_25.text()
@@ -1150,6 +1156,8 @@ class Main(QtWidgets.QMainWindow):
         self.pushButton_16.setEnabled(True)        
         self.pushButton_18.setEnabled(False)
         self.pushButton_19.setEnabled(False)
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حذف البيانات بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
 
     def item_combo_fill(self):        
         self.comboBox_13.clear()
@@ -1196,6 +1204,10 @@ class Main(QtWidgets.QMainWindow):
         grp_time = self.timeEdit_3.time().toString(Qt.ISODate)
         grp_user = self.comboBox_17.currentText()
 
+        if grp_name == '' :
+            QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل البيانات الناقصة', QMessageBox.Ok)
+            return
+
         # Insert directly using a subquery to get the user_id
         insert_sql = '''
             INSERT INTO grp (grp_name, grp_date, grp_time, grp_user_id)
@@ -1218,6 +1230,8 @@ class Main(QtWidgets.QMainWindow):
         self.grp_table_fill()
         self.grp_combo_fill()        
         self.grp_field_clear()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حفظ البيانات  بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
 
     def grp_update(self):
         grp_id = self.lineEdit_35.text()
@@ -1238,6 +1252,8 @@ class Main(QtWidgets.QMainWindow):
         self.db.commit()
         self.grp_table_fill()
         self.grp_field_clear()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم تعديل البيانات بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
 
     def grp_delete(self):
         id = self.lineEdit_35.text()
@@ -1257,8 +1273,10 @@ class Main(QtWidgets.QMainWindow):
         self.grp_table_fill()
         self.grp_combo_fill()
         self.grp_field_clear()
-        self.company_combo_fill
-        self.company_table_fill
+        self.company_combo_fill()
+        self.company_table_fill()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حذف البيانات بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
         
 
     def grp_combo_fill(self):
@@ -1353,6 +1371,9 @@ class Main(QtWidgets.QMainWindow):
         company_time = self.timeEdit_4.time().toString(Qt.ISODate)        
         company_user = self.comboBox_18.currentText()
         company_grp = self.comboBox_21.currentText()
+        if company_name == '' :
+            QMessageBox.warning(self, 'بيانات ناقصة', 'من فضلك أدخل البيانات الناقصة', QMessageBox.Ok)
+            return
 
         # Combine the SELECT queries into the INSERT statement
         insert_sql = '''
@@ -1377,6 +1398,8 @@ class Main(QtWidgets.QMainWindow):
         self.company_table_fill()
         self.company_combo_fill()
         self.company_field_clear()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حفظ البيانات  بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
 
     def company_update(self):
         id = self.lineEdit_37.text()
@@ -1393,6 +1416,8 @@ class Main(QtWidgets.QMainWindow):
         self.db.commit()       
         self.company_table_fill()
         self.company_field_clear()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم تعديل البيانات بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
 
     def company_delete(self):
         id = self.lineEdit_37.text()
@@ -1410,7 +1435,9 @@ class Main(QtWidgets.QMainWindow):
      
         self.company_table_fill()
         self.company_combo_fill()
-        self.company_field_clear()       
+        self.company_field_clear()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حذف البيانات بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
 
     def company_combo_fill(self):
         self.comboBox_5.clear()
@@ -1557,15 +1584,16 @@ class Main(QtWidgets.QMainWindow):
             msgbox.exec_()            
 
     def hodor_delete(self):
-        emp_name = self.comboBox_7.currentText()
-        sql = ('''SELECT id FROM users WHERE user_fullname = %s ''')
+        emp_name = self.comboBox_7.currentText()        
+        sql = ('''DELETE h FROM hodoor_ensraf h
+               JOIN user u ON u.user_fullname = %s 
+               WHERE h.he_employee = u.id ''')
         self.cur.execute(sql, [(emp_name)])
-        data = self.cur.fetchone()
-        sql = ('''DELETE FROM hodoor_ensraf WHERE he_employee_id = %s ''')
-        self.cur.execute(sql, [(data[0])])
 
         self.db.commit()       
         self.hodoor_table_fill()
+        msgbox = QMessageBox(QMessageBox.Information, "تنويه", " تم حذف البيانات بنجاح ", QMessageBox.Ok)
+        msgbox.exec_()
 
     def hodor_update(self):
         self.timeEdit_6.setTime(QTime.currentTime())
@@ -1578,12 +1606,12 @@ class Main(QtWidgets.QMainWindow):
                JOIN user u ON u.user_fullname = %s
                WHERE h.he_employee = u.id AND h.he_date = %s ''')
         self.cur.execute(sql, [(emp_name), (he_date)])
-        data = self.cur.fetchone()
-        he_come = str(data[0])
-        he_go = str(data[1])        
-        if he_come == '00:00:00' :
+        data = self.cur.fetchone()        
+        if data == None :
             QMessageBox.warning(self, 'تنويه', 'من فضلك يجب تسجيل الحضور أولا', QMessageBox.Ok)
             return
+        he_come = str(data[0])
+        he_go = str(data[1])
         if he_go != '0:00:00' :            
             msgbox = QMessageBox(QMessageBox.Warning, "تنويه", "لقد تم تسجيل انصراف الموظف : %s بنجاح هذا اليوم" % emp_name, QMessageBox.Ok)
             msgbox.exec_()   
@@ -1612,46 +1640,63 @@ class Main(QtWidgets.QMainWindow):
         msgbox = QMessageBox(QMessageBox.Information, "تنويه", "تم تسجيل انصراف الموظف :  %s" % emp_name, QMessageBox.Ok)
         msgbox.exec_()
 
+    def hodoor_info(self):
+        pass
+        """
+        emp_name = self.comboBox_7.currentText()
+        he_date = self.dateEdit_8.date().toString(QtCore.Qt.ISODate)
+        sql = ('''SELECT h.he_come, h.he_go, h.he_difference, h.he_note
+               FROM hodoor_ensraf h
+               JOIN user u ON u.user_fullname = %s
+               WHERE h.he_employee = u.id AND h.he_date = %s ''')
+        self.cur.execute(sql, [(emp_name), (he_date)])
+        data = self.cur.fetchone()
+        print(data)
+        if data == None :
+            msgbox = QMessageBox(QMessageBox.Information, "تنويه", "لم يتم تسجيل حضور الموظف :  %s" % emp_name, QMessageBox.Ok)
+            msgbox.exec_()
+        else:
+            self.lineEdit_44.setText(data[2])
+            self.lineEdit_45.setText(data[3])
+            he_come = str(data[0])
+            he_go = str(data[1])
+            h, m, s = map(int, (he_come).split(":"))        
+            self.timeEdit_8.setTime(QTime(h, m))
+            h, m, s = map(int, (he_go).split(":"))        
+            self.timeEdit_8.setTime(QTime(h, m))
+        """
 #=========== تقارير الحضور والانصراف ===========
     def hodor_report(self):
 
         total_time = 0
-        date_1 = self.dateEdit_9.date()        
-        date_1 = date_1.toString(QtCore.Qt.ISODate)       
+        date_1 = self.dateEdit_9.date().toString(QtCore.Qt.ISODate)              
         #date_1 = datetime.datetime.strptime(date_1, '%Y-%m-%d').date()
-        date_2 = self.dateEdit_10.date()
-        date_2 = date_2.toString(QtCore.Qt.ISODate)        
+        date_2 = self.dateEdit_10.date().toString(QtCore.Qt.ISODate)       
         #date_2 = datetime.datetime.strptime(date_2, '%Y-%m-%d').date()
         emp_name = self.comboBox_8.currentText()
-        sql = ('''SELECT id FROM users WHERE user_fullname = %s ''')
+        sql = ('''SELECT id FROM user WHERE user_fullname = %s ''')
         self.cur.execute(sql, [(emp_name)])
         data = self.cur.fetchone()
 
         self.tableWidget_9.setRowCount(0)
         self.tableWidget_9.insertRow(0)
 
-        sql = '''SELECT he_employee_id, he_date, \
-            he_come, he_go, he_difference, \
-            he_note, he_user FROM hodoor_ensraf \
-            WHERE (he_employee_id=%s \
-            AND  he_date BETWEEN %s AND %s)'''
+        sql = '''SELECT h.he_date, h.he_come, h.he_go,\
+            h.he_difference, h.he_note, h.he_user\
+            FROM hodoor_ensraf h \
+            JOIN user u ON u.user_fullname = %s
+            WHERE (h.he_employee=u.id \
+            AND  h.he_date BETWEEN %s AND %s)'''
         
-        self.cur.execute(sql, [data[0], date_1, date_2])
-        data = self.cur.fetchall()
+        self.cur.execute(sql, [emp_name, date_1, date_2])
+        data = self.cur.fetchall()        
         if data == [] :
             QMessageBox.warning(self, 'بيانات غير موجودة', 'لاتوجد معلومات تطابق البيانات التي أدخلتها', QMessageBox.Ok)
             return 
         
         for row, form in enumerate(data):            
-            for col , item in enumerate(form):                
-                if col == 0:                    
-                    sql = '''SELECT user_fullname FROM users WHERE id=%s'''
-                    self.cur.execute(sql, [((item))])                                      
-                    emp_name = self.cur.fetchone()                    
-                    if emp_name != None:
-                        employee_name = emp_name[0]                        
-                        self.tableWidget_9.setItem(row, col, QTableWidgetItem(employee_name))
-                elif col == 4:                    
+            for col , item in enumerate(form):  
+                if col == 3:                    
                     item = str(item)                    
                     h, m, s = map(int, item.split(":"))                    
                     total_time += 3600*h + 60*m + s                    
@@ -3278,6 +3323,10 @@ class Main(QtWidgets.QMainWindow):
 
         user_name = self.lineEdit_40.text()
         password = self.lineEdit_41.text()
+        if user_name == '' or password == '' :
+            QMessageBox.warning(self, 'بيانات خاطئة', 'هناك خطأ في اسم المستخدم أو كلمة المرور', QMessageBox.Ok)
+            return
+
         sql = ("SELECT id, user_fullname FROM user WHERE user_name=%s AND user_password=%s")
         self.cur.execute(sql, (user_name, password))
         data = self.cur.fetchone()        

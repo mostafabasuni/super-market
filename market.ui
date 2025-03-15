@@ -3372,7 +3372,7 @@
        <enum>Qt::ClickFocus</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tab_9">
        <attribute name="title">
@@ -3944,11 +3944,6 @@
         <property name="selectionBehavior">
          <enum>QAbstractItemView::SelectRows</enum>
         </property>
-        <column>
-         <property name="text">
-          <string>اسم الموظف</string>
-         </property>
-        </column>
         <column>
          <property name="text">
           <string>التــاريخ</string>
