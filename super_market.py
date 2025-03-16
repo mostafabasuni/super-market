@@ -149,7 +149,7 @@ class Main(QtWidgets.QMainWindow):
         # الحصول على التاريخ الحالي
         current_date = QDate.currentDate()
         # تحديث عنصر dateEdit
-        self.dateEdit.setDate(current_date)         
+        #self.dateEdit.setDate(current_date)         
         self.dateEdit_2.setDate(current_date)
         self.dateEdit_3.setDate(current_date)         
         self.dateEdit_5.setDate(current_date)
