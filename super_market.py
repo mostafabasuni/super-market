@@ -2622,12 +2622,12 @@ class Main(QtWidgets.QMainWindow):
         self.lineEdit_88.setText(data[2])
         self.lineEdit_99.setText(str(discount))
         unit = self.lineEdit_88.text()
-        wight_chk = bar_code[0]        
-        if unit == 'كيلو جرام' and wight_chk == '2':
-            wight = int(bar_code[7:12])
-            wight = Decimal(wight/1000)
-            wight = f"{wight:.3f}"            
-            self.lineEdit_83.setText(str(wight))
+        weight_chk = bar_code[0]        
+        if unit == 'كيلو جرام' and weight_chk == '2':
+            weight = int(bar_code[7:12])
+            weight = Decimal(weight/1000)
+            weight = f"{weight:.3f}"            
+            self.lineEdit_83.setText(str(weight))
 
         self.item_qty_x_sale_price()
 
