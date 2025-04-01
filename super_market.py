@@ -172,9 +172,22 @@ class Main(QtWidgets.QMainWindow):
         self.setWindowTitle(current_time)  # تحديث عنوان النافذة
 
     def db_connect(self):
-        self.db = mysql.connector.connect(user='root', password=str(""),
-                    host='localhost', db='market')
-        self.cur = self.db.cursor(buffered=True)
+        try:
+            self.db = mysql.connector.connect(
+                user='root',
+                password="",
+                host='localhost',
+                db='market'
+            )
+            self.cur = self.db.cursor(buffered=True)
+
+        except mysql.connector.Error as err:
+            QMessageBox.warning(None, "خطأ في الاتصال", f"حدث خطأ أثناء الاتصال بقاعدة البيانات:\n{err}")
+
+        except Exception as e:
+            QMessageBox.warning(None, "خطأ غير متوقع", f"حدث خطأ غير متوقع:\n{e}")
+
+        
 
     def handel_buttons(self):
         
