@@ -8605,11 +8605,6 @@
         </column>
         <column>
          <property name="text">
-          <string>الكمية</string>
-         </property>
-        </column>
-        <column>
-         <property name="text">
           <string>المتوفر</string>
          </property>
         </column>

@@ -3082,7 +3082,8 @@ class Main(QtWidgets.QMainWindow):
         date = self.dateEdit_14.date().toString(QtCore.Qt.ISODate)
         
         
-        sql = ''' SELECT u.user_fullname, s.date, SUM(s.cash),
+        sql = ''' SELECT u.user_fullname, s.date,
+            SUM(s.cash - s.cash_return),
             SUM(s.visa) FROM salebill s
             JOIN user u ON u.user_fullname = %s
             WHERE s.date = %s AND s.user_id = u.id '''
@@ -3139,7 +3140,7 @@ class Main(QtWidgets.QMainWindow):
 
     def daily_sales(self):
         date = self.dateEdit_15.date().toString(QtCore.Qt.ISODate)        
-        query = ''' SELECT SUM(cash), SUM(visa) FROM salebill WHERE date=%s '''
+        query = ''' SELECT SUM(cash - cash_return), SUM(visa) FROM salebill WHERE date=%s '''
         self.cur.execute(query, [(date)])
         data = self.cur.fetchone()        
         self.lineEdit_91.setText(str(data[0]))
@@ -3149,7 +3150,7 @@ class Main(QtWidgets.QMainWindow):
 
         date1 = self.dateEdit_15.date().toString(QtCore.Qt.ISODate)        
         date2 = self.dateEdit_16.date().toString(QtCore.Qt.ISODate)        
-        query = ''' SELECT SUM(cash), SUM(visa) FROM salebill WHERE date BETWEEN %s AND %s '''
+        query = ''' SELECT SUM(cash - cash_return), SUM(visa) FROM salebill WHERE date BETWEEN %s AND %s '''
         self.cur.execute(query, [(date1), (date2)])
         data = self.cur.fetchone()        
         self.lineEdit_93.setText(str(data[0]))
